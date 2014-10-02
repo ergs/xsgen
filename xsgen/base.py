@@ -8,10 +8,10 @@ import os
 import sys
 from warnings import warn
 
-from bright.xsgen.utils import RunControl, NotSpecified, writenewonly, \
+from xsgen.utils import RunControl, NotSpecified, writenewonly, \
     DEFAULT_RC_FILE, DEFAULT_PLUGINS, nyansep, indent
-from bright.xsgen.plugins import Plugin
-from bright.xsgen.version import report_versions
+from xsgen.plugins import Plugin
+from xsgen.version import report_versions
 
 if sys.version_info[0] >= 3:
     basestring = str
@@ -31,7 +31,7 @@ class XSGenPlugin(Plugin):
     rcdocs = {
         'rc': "Path to run control file",
         'plugins': "Plugins to include",
-        'debug': 'Build in debugging mode', 
+        'debug': 'Build in debugging mode',
         'verbose': "Print more output.",
         'version': "Print version information.",
         'bash_completion': ("Flag for enabling / disabling BASH completion. "

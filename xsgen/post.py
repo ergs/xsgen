@@ -1,4 +1,4 @@
-from bright.xsgen.plugins import Plugin
+from xsgen.plugins import Plugin
 
 class XSGenPlugin(Plugin):
     def execute(self, rc):

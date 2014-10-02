@@ -148,7 +148,7 @@ import importlib
 import argparse
 import textwrap
 
-from utils import RunControl, NotSpecified, nyansep
+from xsgen.utils import RunControl, NotSpecified, nyansep
 
 if sys.version_info[0] >= 3:
     basestring = str
