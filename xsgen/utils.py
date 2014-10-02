@@ -9,9 +9,8 @@ from pyne import nucname
 
 USE_COLOR = (os.name is 'posix')
 DEFAULT_RC_FILE = "defaultrc.py"
-DEFAULT_PLUGINS = ("bright.xsgen.pre", "bright.xsgen.make_mc_input", 
-                   "bright.xsgen.run_transport", "bright.xsgen.post", 
-                   "bright.xsgen.test")
+DEFAULT_PLUGINS = ("xsgen.pre", "xsgen.make_mc_input", "xsgen.run_transport",
+                   "xsgen.post", "xsgen.test")
 
 def load_nuc_file(path):
     """Takes a file that contains whitespace separated nuclide names and

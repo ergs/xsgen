@@ -6,8 +6,8 @@ try:
 except ImportError:
     argcomplete = None
 
-from bright.xsgen.plugins import Plugins
-from bright.xsgen.utils import NotSpecified, RunControl, exec_file, \
+from xsgen.plugins import Plugins
+from xsgen.utils import NotSpecified, RunControl, exec_file, \
     DEFAULT_RC_FILE, DEFAULT_PLUGINS
 
 def main():

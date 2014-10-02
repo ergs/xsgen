@@ -75,11 +75,11 @@ def check_le(arr1, arr2, names=None):
 
         if names is None:
             names = ['arr1', 'arr2']
-        print names[0] + ' = ' + repr(arr1)
-        print names[1] + ' = ' + repr(arr2)
+        print(names[0] + ' = ' + repr(arr1))
+        print(names[1] + ' = ' + repr(arr2))
         msg = 'not ({0} <= {1})'.format(*names)
-        print (arr1 <= arr2)
-        print msg
+        print((arr1 <= arr2))
+        print(msg)
         raise AssertionError(msg)
 
 
@@ -89,10 +89,10 @@ def check_eq(arr1, arr2, names=None):
     if not cond:
         if names is None:
             names = ['arr1', 'arr2']
-        print names[0] + ' = ' + repr(arr1)
-        print names[1] + ' = ' + repr(arr2)
+        print(names[0] + ' = ' + repr(arr1))
+        print(names[1] + ' = ' + repr(arr2))
         msg = '{0} != {1}'.format(*names)
-        print msg
+        print(msg)
         raise AssertionError(msg)
 
 
@@ -101,7 +101,7 @@ def check_array_eq(arr1, arr2, names=None):
         assert_array_equal(arr1, arr2)
     except AssertionError as e:
         msg = '{0} != {1}'.format(*names)
-        print msg
+        print(msg)
         raise e
 
 
@@ -117,7 +117,7 @@ def check_array_almost_eq(arr1, arr2, names=None, decimal=6):
             pass
 
         msg = '{0} != {1}'.format(*names)
-        print msg
+        print(msg)
         raise e
 
 
@@ -126,9 +126,9 @@ def check_shape(arr, npert, G, name=None):
     if not cond:
         if name is None:
             name = 'arr'
-        print name + '.shape = ' + repr(arr.shape)
+        print(name + '.shape = ' + repr(arr.shape))
         msg = '{0} not in {1}'.format(name, [(npert, ), (npert, G), (npert, G, G)])
-        print msg
+        print(msg)
         raise AssertionError(msg)
 
 

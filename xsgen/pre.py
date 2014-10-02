@@ -12,11 +12,10 @@ from pyne import nucname
 from pyne.material import Material, from_atom_frac
 from pyne.utils import failure
 
-import bright.xsgen.utils as utils
-from bright.xsgen.utils import NotSpecified
-from bright.xsgen.plugins import Plugin
-from bright.xsgen.tally_types import restricted_tallies
-from bright.xsgen.brightlite import BrightliteWriter
+from xsgen.utils import NotSpecified
+from xsgen.plugins import Plugin
+from xsgen.tally_types import restricted_tallies
+from xsgen.brightlite import BrightliteWriter
 
 if sys.version_info[0] > 2:
     basestring = str
@@ -33,9 +32,9 @@ def run_ui():
     """Runs the cross section user interface."""
     # Test to see if ui library is installed
     try:
-        from bright.xsgen.ui import app
+        from xsgen.ui import app
     except ImportError:
-        sys.exit(failure("Please install the Enthought Tool Suite (ETS) for CHAR UI."))
+        sys.exit(failure("Please install the Enthought Tool Suite (ETS) for XSGen UI."))
     # Open UI
     application = app.Application()
     application.configure_traits()
@@ -46,14 +45,14 @@ def run_ui():
 
 class XSGenPlugin(Plugin):
 
-    requires = ('bright.xsgen.base',)
+    requires = ('xsgen.base',)
 
     defaultrc = {'formats': ('h5',),
                  'ui': False,
-                 'is_thermal': True, 
+                 'is_thermal': True,
                  }
 
-    rcdocs = { 
+    rcdocs = {
         'formats': 'The output formats to write out.',
         'is_thermal': ('Whether the reactor is a thermal system (True) or a '
                        'fast one (False)'),
@@ -64,9 +63,9 @@ class XSGenPlugin(Plugin):
             help="Launches the char ui.")
         parser.add_argument("-c", "--clean", action="store_true", dest="clean",
             help="Cleans the reactor directory of current files.")
-        parser.add_argument('--formats', dest='formats', help=self.rcdocs['formats'], 
+        parser.add_argument('--formats', dest='formats', help=self.rcdocs['formats'],
                             nargs='+')
-        parser.add_argument('--is-thermal', dest='is_thermal', type=bool, 
+        parser.add_argument('--is-thermal', dest='is_thermal', type=bool,
                             help=self.rcdocs['is_thermal'])
 
     def setup(self, rc):
@@ -187,9 +186,9 @@ class XSGenPlugin(Plugin):
         else:
             raise ValueError("Please specify a fuel.")
 
-        if 'clad_material' in rc: 
+        if 'clad_material' in rc:
             rc.clad_material = ensure_mat(rc.clad_material)
-        else: 
+        else:
             rc.clad_material = Material({
                 # Natural Zirconium
                 400900: 0.98135 * 0.5145,
@@ -228,9 +227,9 @@ class XSGenPlugin(Plugin):
                 80160:  0.00125,
                 })
 
-        if 'cool_material' in rc: 
+        if 'cool_material' in rc:
             rc.cool_material = ensure_mat(rc.cool_material)
-        else: 
+        else:
             MW = (2 * 1.0) + (1 * 16.0) + (0.199 * 550 * 10.0**-6 * 10.0) + \
                                           (0.801 * 550 * 10.0**-6 * 11.0)
             rc.cool_material = Material({
