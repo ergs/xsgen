@@ -6,7 +6,7 @@ import subprocess
 
 import numpy as np
 
-from statepoint import StatePoint
+from xsgen.statepoint import StatePoint
 
 from pyne import rxname
 from pyne import nucname
@@ -15,7 +15,7 @@ from pyne.material import Material
 from pyne.xs import data_source 
 from pyne.xs.cache import XSCache
 
-from utils import indir
+from xsgen.utils import indir
 
 # templates are from openmc/examples/lattice/simple
 
@@ -290,9 +290,10 @@ class OpenMCOrigen(object):
         return data
 
     def origen(self, state, xs):
-        """Runs ORIGEN calulations to obtain transmutation matix."""
-        t9 = origen22.xslibs(xscache=self.xscache, verbose=self.rc.verbose)
+        # """Runs ORIGEN calulations to obtain transmutation matix."""
+        """Does nothing right now."""
         import pdb; pdb.set_trace()
+        return 
 
 def _mat_to_nucs(mat):
     nucs = []

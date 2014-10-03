@@ -94,6 +94,7 @@ class XSGenPlugin(Plugin):
         if 'burn_times' in rc:
             rc.burn_times = np.asarray(rc.burn_times, dtype=float)
         else:
+            import pdb; pdb.set_trace()
             bt_upper_lim = rc.burn_time + rc.time_step/10.0
             rc.burn_times = np.arange(0, bt_upper_lim, rc.time_step)
         rc.burn_times_index = list(range(len(rc.burn_times)))

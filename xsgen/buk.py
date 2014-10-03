@@ -3,15 +3,15 @@
 from __future__ import print_function
 import os
 
-from bright.xsgen.plugins import Plugin
-from bright.xsgen.utils import RunControl, NotSpecified
-from bright.xsgen.openmc_origen import OpenMCOrigen
+from xsgen.plugins import Plugin
+from xsgen.utils import RunControl, NotSpecified
+from xsgen.openmc_origen import OpenMCOrigen
 
 SOLVER_ENGINES = {'openmc+origen': OpenMCOrigen}
 
 class XSGenPlugin(Plugin):
 
-    requires = ('bright.xsgen.pre',)
+    requires = ('xsgen.pre',)
 
     defaultrc = RunControl(
         solver=NotSpecified,

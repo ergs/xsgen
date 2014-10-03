@@ -14,7 +14,8 @@ def main():
     base = Plugins(["xsgen.base"])
     preparser = base.build_cli()
     prens = preparser.parse_known_args()[0]
-    predefaultrc = base.defaultrc
+    base.merge_rcs()
+    predefaultrc = base.rc
     prerc = RunControl()
     prerc._update(predefaultrc)
     prerc.rc = prens.rc
