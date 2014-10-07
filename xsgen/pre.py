@@ -94,7 +94,6 @@ class XSGenPlugin(Plugin):
         if 'burn_times' in rc:
             rc.burn_times = np.asarray(rc.burn_times, dtype=float)
         else:
-            import pdb; pdb.set_trace()
             bt_upper_lim = rc.burn_time + rc.time_step/10.0
             rc.burn_times = np.arange(0, bt_upper_lim, rc.time_step)
         rc.burn_times_index = list(range(len(rc.burn_times)))
@@ -108,17 +107,11 @@ class XSGenPlugin(Plugin):
 
     def _ensure_nl(self, rc):
         # Make nuclide lists
-        if isinstance(rc.core_load_nucs, basestring):
-            core_load = load_nuc_file(rc.core_load_nucs)
+        if isinstance(rc.track_nucs, basestring):
+            track_nucs = load_nuc_file(rc.track_nucs)
         else:
-            core_load = [nucname.id(nuc) for nuc in rc.core_load_nucs]
-        rc.core_load = sorted(set(core_load))
-
-        if isinstance(rc.core_transmute_nucs, basestring):
-            core_transmute = load_nuc_file(rc.core_transmute_nucs)
-        else:
-            core_transmute = [nucname.id(nuc) for nuc in rc.core_transmute_nucs]
-        rc.core_transmute = sorted(set(core_transmute))
+            track_nucs = [nucname.id(nuc) for nuc in rc.track_nucs]
+        rc.track_nucs = sorted(set(track_nucs))
 
     def _ensure_temp(self, rc):
         # Make temperature

@@ -276,7 +276,7 @@ class OpenMCOrigen(object):
         G = len(phi_g)
         temp = rc.temperature
         rxs = self.reactions
-        nucs = rc.core_transmute
+        nucs = rc.track_nucs
         dt = np.dtype([('nuc', 'i4'), ('rx', np.uint32), ('xs', 'f8', G)])
         data = np.empty(len(nucs)*len(rxs), dtype=dt)
         i = 0
