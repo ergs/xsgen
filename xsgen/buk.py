@@ -42,7 +42,6 @@ class XSGenPlugin(Plugin):
     def execute(self, rc):
         for state in rc.states:
             lib = rc.engine.generate(state)
-            import pdb; pdb.set_trace()
             for writer in rc.writers:
                 writer.write(state, lib)
 

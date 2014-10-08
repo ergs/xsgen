@@ -47,7 +47,7 @@ class XSGenPlugin(Plugin):
 
     requires = ('xsgen.base',)
 
-    defaultrc = {'formats': ('h5',),
+    defaultrc = {'formats': ('brightlite',),
                  'ui': False,
                  'is_thermal': True,
                  }
@@ -74,7 +74,6 @@ class XSGenPlugin(Plugin):
 
         self.ensure_rc(rc)
         self.make_states(rc)
-
         rc.writers = [FORMAT_WRITERS[format](rc) for format in rc.formats]
 
     def ensure_rc(self, rc):

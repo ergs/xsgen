@@ -12,7 +12,7 @@ from pyne import rxname
 from pyne import nucname
 from pyne import origen22
 from pyne.material import Material
-from pyne.xs import data_source 
+from pyne.xs import data_source
 from pyne.xs.cache import XSCache
 
 from xsgen.utils import indir
@@ -292,7 +292,6 @@ class OpenMCOrigen(object):
     def origen(self, state, xs):
         # """Runs ORIGEN calulations to obtain transmutation matix."""
         """Does nothing right now."""
-        import pdb; pdb.set_trace()
         return 
 
 def _mat_to_nucs(mat):

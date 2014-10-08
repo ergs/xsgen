@@ -23,3 +23,11 @@ burn_regions = 1
 fuel_specific_power = 1 # maybe a gross underestimation
 
 fuel_material = {'U238': 0.96, 'U235': 0.04}
+
+# currently available formats: "brightlite"
+formats = ["brightlite"]
+
+# currently available solvers: "openmc+origen"
+solver = "openmc+origen"
+
+reactor = "lwr"
