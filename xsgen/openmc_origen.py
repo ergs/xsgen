@@ -292,7 +292,7 @@ class OpenMCOrigen(object):
     def origen(self, state, xs):
         # """Runs ORIGEN calulations to obtain transmutation matix."""
         """Does nothing right now."""
-        return 
+        pass
 
 def _mat_to_nucs(mat):
     nucs = []
