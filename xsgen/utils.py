@@ -198,7 +198,10 @@ nyansep = r'~\_/' * 17 + '~=[,,_,,]:3'
 def indent(s, n=4, join=True):
     """Indents all lines in the string or list s by n spaces."""
     spaces = " " * n
-    lines = s.splitlines() if isinstance(s, basestring) else s
+    try:
+        lines = s.splitlines() if isinstance(s, basestring) else s
+    except NameError:
+        lines = s.splitlines() if isinstance(s, str) else s
     lines = lines or ()
     if join:
         return '\n'.join([spaces + l for l in lines if l is not None])

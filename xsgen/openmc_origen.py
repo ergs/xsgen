@@ -181,11 +181,10 @@ class OpenMCOrigen(object):
             raise ValueError('Burn must start at t=0.')
         k, phi_g, xs = self.openmc(state)
         self.origen(state, xs)
-        return self.statelibs[state]
 
     def openmc(self, state):
         """Runs OpenMC for a given state."""
-        # make inpurs
+        # make inputs
         pwd = self.pwd(state)
         if not os.path.isdir(pwd):
             os.makedirs(pwd)
@@ -231,7 +230,8 @@ class OpenMCOrigen(object):
             f.write(geometry)
         # tallies
         ctx['_egrid'] = " ".join(map(str, sorted(ctx['group_structure'])))
-        ctx['_cds_egrid'] = " ".join(map(str, sorted(self.cinderds.src_group_struct)))
+        # ctx['_cds_egrid'] = " ".join(map(str, sorted(self.cinderds.src_group_struct)))
+        ctx['_cds_egrid'] = " 1 10 100 1000"
         ctx['_eafds_egrid'] = " ".join(map(str, sorted(self.eafds.src_group_struct)))
         ctx['_omcds_egrid'] = " ".join(map(str, sorted(self.omcds.src_group_struct)))
         nucs = core_nucs & valid_nucs
@@ -245,7 +245,7 @@ class OpenMCOrigen(object):
             f.write(plots)
 
     def nucs_in_cross_sections(self):
-        """Returns the set of nulcides present in the cross_sections.xml file.
+        """Returns the set of nuclides present in the cross_sections.xml file.
         """
         return {n.nucid for n in self.omcds.cross_sections.ace_tables \
                 if n.nucid is not None}
@@ -292,7 +292,7 @@ class OpenMCOrigen(object):
     def origen(self, state, xs):
         # """Runs ORIGEN calulations to obtain transmutation matix."""
         """Does nothing right now."""
-        pass
+        return Material({"U235": 0.04, "U238": 0.96})
 
 def _mat_to_nucs(mat):
     nucs = []
