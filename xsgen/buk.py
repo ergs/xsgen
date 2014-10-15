@@ -58,7 +58,7 @@ class XSGenPlugin(Plugin):
                     already_existed = True
             if not already_existed:
                 runs.append([state])
-            rc.runs = runs
+        rc.runs = runs
 
         for run in rc.runs:
             lib = rc.engine.generate(run)
