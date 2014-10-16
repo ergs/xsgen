@@ -173,16 +173,44 @@ class OpenMCOrigen(object):
         ctx.update(zip(rc.perturbation_params, state))
         return ctx
 
-    def generate(self, state):
+    def generate_run(self, run):
+        mat_hist = []
+        run_lib = {"time": [], "neut_prod": [], "neut_dest": [], "BUd":  []}
+        for i, state in enumerate(run):
+            if i < len(run) - 1 :
+                transmute_time = run[i+1].burn_times - state.burn_times
+            else:
+                transmute_time = 0
+            k, phi_g, xs, mat = self.generate(state, transmute_time)
+            run_lib["time"].append(state.burn_times)
+            run_lib["neut_prod"].append(0)
+            run_lib["neut_dest"].append(0)
+            run_lib["BUd"].append(0)
+            mat_hist.append(mat)
+        nucs = []
+        for mat in mat_hist:
+            nucs.extend(mat.comp.keys())
+        nucs = set(nucs)
+        nucs = [(nucname.name(nuc), [mat.comp[nuc] for mat in mat_hist]) for nuc in nucs]
+        nucs = dict(nucs)
+
+        run_lib.update(nucs)
+
+        return run_lib
+        # return mat_hist
+
+
+    def generate(self, state, transmute_time):
         """Generates a library for a given state."""
+
         if state in self.statelibs:
             return self.statelibs[state]
         # if state.burn_times != 0.0:
         #     raise ValueError('Burn must start at t=0.')
         k, phi_g, xs = self.openmc(state)
         self.statelibs[state] = (k, phi_g, xs)
-        self.rc.fuel_material = self.origen(state, xs)
-        return (k, phi_g, xs)
+        self.rc.fuel_material = self.origen(state, xs, transmute_time)
+        return (k, phi_g, xs, self.rc.fuel_material)
 
     def openmc(self, state):
         """Runs OpenMC for a given state."""
@@ -291,7 +319,7 @@ class OpenMCOrigen(object):
                 i += 1
         return data
 
-    def origen(self, state, xs):
+    def origen(self, state, xs, transmute_time):
         # """Runs ORIGEN calulations to obtain transmutation matrix."""
         """Uses arithmetic to obtain transmutation matrix"""
         small = (1000 - state.burn_times)*0.05/1000

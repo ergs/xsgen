@@ -61,10 +61,12 @@ class XSGenPlugin(Plugin):
         rc.runs = runs
 
         for run in rc.runs:
-            for state in run:
-                lib = rc.engine.generate(state)
-                for writer in rc.writers:
-                    writer.write(state, lib)
+            lib = rc.engine.generate_run(run)
+            print(lib)
+            # for state in run:
+            #     lib = rc.engine.generate(state)
+            #     for writer in rc.writers:
+            #         writer.write(state, lib)
 
     #
     # ensure functions
