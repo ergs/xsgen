@@ -23,6 +23,10 @@ from collections import OrderedDict
 import numpy as np
 import scipy.stats
 
+import sys
+if sys.version_info[0] >= 3:
+    long = int
+
 REVISION_STATEPOINT = 12
 
 filter_types = {1: 'universe', 2: 'material', 3: 'cell', 4: 'cellborn',
@@ -319,7 +323,7 @@ class StatePoint(object):
 
             # Set up stride
             stride = 1
-            for f in t.filters.values()[::-1]:
+            for f in list(t.filters.values())[::-1]:
                 f.stride = stride
                 stride *= f.length
 

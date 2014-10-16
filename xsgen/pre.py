@@ -51,7 +51,7 @@ class XSGenPlugin(Plugin):
                  'ui': False,
                  'is_thermal': True,
                  'burn_times': [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
-                 'group_structure': [1, 10, 100, 1000],
+                 'group_structure': [10 ** x for x in range(1, -3, -1)],
                  'track_nucs': ["U235", "U238"],
                  'fuel_density': 19.1,
                  'clad_density': 6.56,
