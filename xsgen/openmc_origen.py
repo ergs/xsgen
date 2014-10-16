@@ -175,12 +175,13 @@ class OpenMCOrigen(object):
 
     def generate(self, state):
         """Generates a library for a given state."""
-        if state in self.statelibs:
-            return self.statelibs[state]
-        if state.burn_times != 0.0:
-            raise ValueError('Burn must start at t=0.')
-        k, phi_g, xs = self.openmc(state)
-        self.origen(state, xs)
+        print(state)
+        # if state in self.statelibs:
+        #     return self.statelibs[state]
+        # if state.burn_times != 0.0:
+        #     raise ValueError('Burn must start at t=0.')
+        # k, phi_g, xs = self.openmc(state)
+        # self.origen(state, xs)
 
     def openmc(self, state):
         """Runs OpenMC for a given state."""
