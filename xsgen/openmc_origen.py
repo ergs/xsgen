@@ -175,16 +175,16 @@ class OpenMCOrigen(object):
 
     def generate_run(self, run):
         mat_hist = []
-        run_lib = {"time": [], "neut_prod": [], "neut_dest": [], "BUd":  []}
+        run_lib = {"TIME": [], "NEUT_PROD": [], "NEUT_DEST": [], "BUd":  []}
         for i, state in enumerate(run):
             if i < len(run) - 1 :
                 transmute_time = run[i+1].burn_times - state.burn_times
             else:
                 transmute_time = 0
             k, phi_g, xs, mat = self.generate(state, transmute_time)
-            run_lib["time"].append(state.burn_times)
-            run_lib["neut_prod"].append(0)
-            run_lib["neut_dest"].append(0)
+            run_lib["TIME"].append(state.burn_times)
+            run_lib["NEUT_PROD"].append(0)
+            run_lib["NEUT_DEST"].append(0)
             run_lib["BUd"].append(0)
             mat_hist.append(mat)
         nucs = []
