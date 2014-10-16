@@ -175,13 +175,14 @@ class OpenMCOrigen(object):
 
     def generate(self, state):
         """Generates a library for a given state."""
-        print(state)
-        # if state in self.statelibs:
-        #     return self.statelibs[state]
+        if state in self.statelibs:
+            return self.statelibs[state]
         # if state.burn_times != 0.0:
         #     raise ValueError('Burn must start at t=0.')
-        # k, phi_g, xs = self.openmc(state)
-        # self.origen(state, xs)
+        k, phi_g, xs = self.openmc(state)
+        self.statelibs[state] = (k, phi_g, xs)
+        self.rc.fuel_material = self.origen(state, xs)
+        return (k, phi_g, xs)
 
     def openmc(self, state):
         """Runs OpenMC for a given state."""
@@ -211,7 +212,7 @@ class OpenMCOrigen(object):
             f.write(settings)
         # materials
         valid_nucs = self.nucs_in_cross_sections()
-        core_nucs = set(ctx['core_transmute'])
+        # core_nucs = set(ctx['core_transmute'])
         ctx['_fuel_nucs'] = _mat_to_nucs(rc.fuel_material[valid_nucs])
         ctx['_clad_nucs'] = _mat_to_nucs(rc.clad_material[valid_nucs])
         ctx['_cool_nucs'] = _mat_to_nucs(rc.cool_material[valid_nucs])
@@ -232,11 +233,11 @@ class OpenMCOrigen(object):
         # tallies
         ctx['_egrid'] = " ".join(map(str, sorted(ctx['group_structure'])))
         # ctx['_cds_egrid'] = " ".join(map(str, sorted(self.cinderds.src_group_struct)))
-        ctx['_cds_egrid'] = " 1 10 100 1000"
+        ctx['_cds_egrid'] = " 1 10 100 1000" # I don't have cinder
         ctx['_eafds_egrid'] = " ".join(map(str, sorted(self.eafds.src_group_struct)))
         ctx['_omcds_egrid'] = " ".join(map(str, sorted(self.omcds.src_group_struct)))
-        nucs = core_nucs & valid_nucs
-        ctx['_nucs'] = " ".join([nucname.serpent(nuc) for nuc in sorted(nucs)])
+        # nucs = core_nucs & valid_nucs
+        # ctx['_nucs'] = " ".join([nucname.serpent(nuc) for nuc in sorted(nucs)])
         tallies = TALLIES_TEMPLATE.format(**ctx)
         with open(os.path.join(pwd, 'tallies.xml'), 'w') as f:
             f.write(tallies)
@@ -291,9 +292,10 @@ class OpenMCOrigen(object):
         return data
 
     def origen(self, state, xs):
-        # """Runs ORIGEN calulations to obtain transmutation matix."""
-        """Does nothing right now."""
-        return Material({"U235": 0.04, "U238": 0.96})
+        # """Runs ORIGEN calulations to obtain transmutation matrix."""
+        """Uses arithmetic to obtain transmutation matrix"""
+        small = (1000 - state.burn_times)*0.05/1000
+        return Material({'U235': small, 'U238': 1-small})
 
 def _mat_to_nucs(mat):
     nucs = []
