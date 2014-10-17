@@ -64,7 +64,6 @@ class XSGenPlugin(Plugin):
                  'burn_regions': 1,
                  'fuel_specific_power': 1,
                  'fuel_material': {'U238': 0.96, 'U235': 0.04},
-                 'formats': ["brightlite"],
                  'solver': "openmc+origen",
                  'reactor': "lwr",
                  'k_cycles': 20,
@@ -76,6 +75,7 @@ class XSGenPlugin(Plugin):
         'formats': 'The output formats to write out.',
         'is_thermal': ('Whether the reactor is a thermal system (True) or a '
                        'fast one (False)'),
+        'outfiles': 'Names of output files to write out. Must correspond with formats.',
         }
 
     def update_argparser(self, parser):
@@ -84,6 +84,8 @@ class XSGenPlugin(Plugin):
         parser.add_argument("-c", "--clean", action="store_true", dest="clean",
             help="Cleans the reactor directory of current files.")
         parser.add_argument('--formats', dest='formats', help=self.rcdocs['formats'],
+                            nargs='+')
+        parser.add_argument('--outfiles', dest='outfiles', type=list, help=self.rcdocs['outfiles'],
                             nargs='+')
         parser.add_argument('--is-thermal', dest='is_thermal', type=bool,
                             help=self.rcdocs['is_thermal'])
@@ -107,6 +109,7 @@ class XSGenPlugin(Plugin):
         self._ensure_pp(rc)
         self._ensure_mats(rc)
         self._ensure_lattice(rc)
+        self._ensure_outfiles(rc)
 
     def _ensure_bt(self, rc):
         # Make Time Steps
@@ -273,6 +276,16 @@ class XSGenPlugin(Plugin):
                           "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 \n")
         if 'lattice_shape' not in rc:
             rc.lattice_shape = (17, 17)
+
+    def _ensure_outfiles(self, rc):
+        if rc.outfiles is NotSpecified:
+            print("No outfiles specified, defaulting to format names...")
+            rc.outfiles = ["{}.out".format(f) for f in rc.formats]
+        elif len(rc.outfiles) > len(rc.formats):
+            raise ValueError("More outfiles defined than formats!")
+        elif len(rc.outfiles) < len(rc.formats):
+            raise ValueError("More formats defined than outfiles!")
+        return
 
     def make_states(self, rc):
         """Makes the reactor state table."""
