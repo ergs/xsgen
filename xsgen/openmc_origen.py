@@ -1,7 +1,5 @@
 from __future__ import print_function
 import os
-import io
-import sys
 import subprocess
 
 import numpy as np
@@ -164,8 +162,8 @@ class OpenMCOrigen(object):
             ds.load()
         self.xscache = XSCache(data_sources=data_sources)
 
-    def pwd(self, state):
-        return os.path.join(self.builddir, str(hash(state)), 'omc')
+    def pwd(self, state, directory):
+        return os.path.join(self.builddir, str(hash(state)), directory)
 
     def context(self, state):
         rc = self.rc
@@ -209,13 +207,13 @@ class OpenMCOrigen(object):
         #     raise ValueError('Burn must start at t=0.')
         k, phi_g, xs = self.openmc(state)
         self.statelibs[state] = (k, phi_g, xs)
-        self.rc.fuel_material = self.origen(state, xs, transmute_time)
+        self.rc.fuel_material = self.origen(state, xs, transmute_time, phi_g)
         return (k, phi_g, xs, self.rc.fuel_material)
 
     def openmc(self, state):
         """Runs OpenMC for a given state."""
         # make inputs
-        pwd = self.pwd(state)
+        pwd = self.pwd(state, "omc")
         if not os.path.isdir(pwd):
             os.makedirs(pwd)
         self._make_omc_input(state)
@@ -231,7 +229,7 @@ class OpenMCOrigen(object):
         return k, phi_g, xstab
 
     def _make_omc_input(self, state):
-        pwd = self.pwd(state)
+        pwd = self.pwd(state, "omc")
         ctx = self.context(state)
         rc = self.rc
         # settings
@@ -319,11 +317,29 @@ class OpenMCOrigen(object):
                 i += 1
         return data
 
-    def origen(self, state, xs, transmute_time):
+    def origen(self, state, xs, transmute_time, phi_g):
         # """Runs ORIGEN calulations to obtain transmutation matrix."""
         """Uses arithmetic to obtain transmutation matrix"""
-        small = (1000 - state.burn_times)*0.05/1000
-        return Material({'U235': small, 'U238': 1-small})
+        pwd = self.pwd(state, "origen")
+        if not os.path.isdir(pwd):
+            os.makedirs(pwd)
+        self._make_origen_input(state, transmute_time, phi_g)
+        with indir(pwd):
+            try:
+                subprocess.check_call("o2_therm_linux.exe")
+            except FileNotFoundError:
+                print("You don't have origen!")
+                small = (1000 - state.burn_times)*0.05/1000
+                return Material({'U235': small, 'U238': 1-small})
+
+    def _make_origen_input(self, state, transmute_time, phi_g):
+        pwd = self.pwd(state, "origen")
+        ctx = self.context(state)
+        with indir(pwd):
+            origen22.write_tape4(self.rc.fuel_material)
+        with indir(pwd):
+            total_flux = phi_g.sum()
+            origen22.write_tape5_irradiation("IRF", transmute_time, total_flux)
 
 def _mat_to_nucs(mat):
     nucs = []
@@ -337,4 +353,4 @@ def _find_statepoint(pwd):
     for f in os.listdir(pwd):
         if f.startswith('statepoint'):
             return os.path.join(pwd, f)
-    return None
+    return 

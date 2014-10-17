@@ -564,7 +564,7 @@ class StatePoint(object):
 
         # get bounds of filter bins
         for akey in tally.filters.keys():
-            idx = tally.filters.keys().index(akey)
+            idx = list(tally.filters.keys()).index(akey)
             filtmax[n_filters - idx] = tally.filters[akey].length
 
         # compute bin info
@@ -575,11 +575,11 @@ class StatePoint(object):
                    np.prod(filtmax[0:i+2]))/(np.prod(filtmax[0:i+1]))) + 1
 
             # append in dictionary bin with filter
-            data.update({tally.filters.keys()[n_filters - i - 1]:
+            data.update({list(tally.filters.keys())[n_filters - i - 1]:
                          filters[:,n_filters - i - 1]})
 
             # check for mesh
-            if tally.filters.keys()[n_filters - i - 1] == 'mesh':
+            if list(tally.filters.keys())[n_filters - i - 1] == 'mesh':
                 dims = list(self.meshes[tally.filters['mesh'].bins[0] - 1].dimension)
                 dims.reverse()
                 dims = np.asarray(dims)
@@ -598,7 +598,7 @@ class StatePoint(object):
             i += 1
 
         # add in maximum bin filters and order
-        b = tally.filters.keys()
+        b = list(tally.filters.keys())
         b.reverse()
         filtmax = list(filtmax[1:])
         try:
