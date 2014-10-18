@@ -7,6 +7,10 @@ from contextlib import contextmanager
 
 from pyne import nucname
 
+import sys
+if sys.version_info[0] >= 3:
+    basestring = str
+
 USE_COLOR = (os.name is 'posix')
 DEFAULT_RC_FILE = "defaultrc.py"
 DEFAULT_PLUGINS = ("xsgen.pre", "xsgen.buk", "xsgen.post")

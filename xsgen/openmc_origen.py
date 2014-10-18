@@ -1,7 +1,5 @@
 from __future__ import print_function
 import os
-import io
-import sys
 import subprocess
 
 import numpy as np
@@ -164,8 +162,8 @@ class OpenMCOrigen(object):
             ds.load()
         self.xscache = XSCache(data_sources=data_sources)
 
-    def pwd(self, state):
-        return os.path.join(self.builddir, str(hash(state)), 'omc')
+    def pwd(self, state, directory):
+        return os.path.join(self.builddir, str(hash(state)), directory)
 
     def context(self, state):
         rc = self.rc
@@ -173,20 +171,49 @@ class OpenMCOrigen(object):
         ctx.update(zip(rc.perturbation_params, state))
         return ctx
 
-    def generate(self, state):
+    def generate_run(self, run):
+        mat_hist = []
+        run_lib = {"TIME": [], "NEUT_PROD": [], "NEUT_DEST": [], "BUd":  []}
+        for i, state in enumerate(run):
+            if i < len(run) - 1 :
+                transmute_time = run[i+1].burn_times - state.burn_times
+            else:
+                transmute_time = 0
+            k, phi_g, xs, mat = self.generate(state, transmute_time)
+            run_lib["TIME"].append(state.burn_times)
+            run_lib["NEUT_PROD"].append(0)
+            run_lib["NEUT_DEST"].append(0)
+            run_lib["BUd"].append(0)
+            mat_hist.append(mat)
+        nucs = []
+        for mat in mat_hist:
+            nucs.extend(mat.comp.keys())
+        nucs = set(nucs)
+        nucs = [(nucname.name(nuc), [mat.comp[nuc] for mat in mat_hist]) for nuc in nucs]
+        nucs = dict(nucs)
+
+        run_lib.update(nucs)
+
+        return run_lib
+        # return mat_hist
+
+
+    def generate(self, state, transmute_time):
         """Generates a library for a given state."""
+
         if state in self.statelibs:
             return self.statelibs[state]
-        if state.burn_times != 0.0:
-            raise ValueError('Burn must start at t=0.')
+        # if state.burn_times != 0.0:
+        #     raise ValueError('Burn must start at t=0.')
         k, phi_g, xs = self.openmc(state)
-        self.origen(state, xs)
-        return self.statelibs[state]
+        self.statelibs[state] = (k, phi_g, xs)
+        self.rc.fuel_material = self.origen(state, xs, transmute_time, phi_g)
+        return (k, phi_g, xs, self.rc.fuel_material)
 
     def openmc(self, state):
         """Runs OpenMC for a given state."""
-        # make inpurs
-        pwd = self.pwd(state)
+        # make inputs
+        pwd = self.pwd(state, "omc")
         if not os.path.isdir(pwd):
             os.makedirs(pwd)
         self._make_omc_input(state)
@@ -202,7 +229,7 @@ class OpenMCOrigen(object):
         return k, phi_g, xstab
 
     def _make_omc_input(self, state):
-        pwd = self.pwd(state)
+        pwd = self.pwd(state, "omc")
         ctx = self.context(state)
         rc = self.rc
         # settings
@@ -211,7 +238,7 @@ class OpenMCOrigen(object):
             f.write(settings)
         # materials
         valid_nucs = self.nucs_in_cross_sections()
-        core_nucs = set(ctx['core_transmute'])
+        # core_nucs = set(ctx['core_transmute'])
         ctx['_fuel_nucs'] = _mat_to_nucs(rc.fuel_material[valid_nucs])
         ctx['_clad_nucs'] = _mat_to_nucs(rc.clad_material[valid_nucs])
         ctx['_cool_nucs'] = _mat_to_nucs(rc.cool_material[valid_nucs])
@@ -231,11 +258,12 @@ class OpenMCOrigen(object):
             f.write(geometry)
         # tallies
         ctx['_egrid'] = " ".join(map(str, sorted(ctx['group_structure'])))
-        ctx['_cds_egrid'] = " ".join(map(str, sorted(self.cinderds.src_group_struct)))
+        # ctx['_cds_egrid'] = " ".join(map(str, sorted(self.cinderds.src_group_struct)))
+        ctx['_cds_egrid'] = " 1 10 100 1000" # I don't have cinder
         ctx['_eafds_egrid'] = " ".join(map(str, sorted(self.eafds.src_group_struct)))
         ctx['_omcds_egrid'] = " ".join(map(str, sorted(self.omcds.src_group_struct)))
-        nucs = core_nucs & valid_nucs
-        ctx['_nucs'] = " ".join([nucname.serpent(nuc) for nuc in sorted(nucs)])
+        # nucs = core_nucs & valid_nucs
+        # ctx['_nucs'] = " ".join([nucname.serpent(nuc) for nuc in sorted(nucs)])
         tallies = TALLIES_TEMPLATE.format(**ctx)
         with open(os.path.join(pwd, 'tallies.xml'), 'w') as f:
             f.write(tallies)
@@ -245,7 +273,7 @@ class OpenMCOrigen(object):
             f.write(plots)
 
     def nucs_in_cross_sections(self):
-        """Returns the set of nulcides present in the cross_sections.xml file.
+        """Returns the set of nuclides present in the cross_sections.xml file.
         """
         return {n.nucid for n in self.omcds.cross_sections.ace_tables \
                 if n.nucid is not None}
@@ -289,10 +317,29 @@ class OpenMCOrigen(object):
                 i += 1
         return data
 
-    def origen(self, state, xs):
-        # """Runs ORIGEN calulations to obtain transmutation matix."""
-        """Does nothing right now."""
-        pass
+    def origen(self, state, xs, transmute_time, phi_g):
+        # """Runs ORIGEN calulations to obtain transmutation matrix."""
+        """Uses arithmetic to obtain transmutation matrix"""
+        pwd = self.pwd(state, "origen")
+        if not os.path.isdir(pwd):
+            os.makedirs(pwd)
+        self._make_origen_input(state, transmute_time, phi_g)
+        with indir(pwd):
+            try:
+                subprocess.check_call("o2_therm_linux.exe")
+            except FileNotFoundError:
+                print("You don't have origen!")
+                small = (1000 - state.burn_times)*0.05/1000
+                return Material({'U235': small, 'U238': 1-small})
+
+    def _make_origen_input(self, state, transmute_time, phi_g):
+        pwd = self.pwd(state, "origen")
+        ctx = self.context(state)
+        with indir(pwd):
+            origen22.write_tape4(self.rc.fuel_material)
+        with indir(pwd):
+            total_flux = phi_g.sum()
+            origen22.write_tape5_irradiation("IRF", transmute_time, total_flux)
 
 def _mat_to_nucs(mat):
     nucs = []
@@ -306,4 +353,4 @@ def _find_statepoint(pwd):
     for f in os.listdir(pwd):
         if f.startswith('statepoint'):
             return os.path.join(pwd, f)
-    return None
+    return 

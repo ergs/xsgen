@@ -382,7 +382,11 @@ class Plugins(object):
                     msg += sep
                     msg += plugin_msg
             with io.open(os.path.join('debug.txt'), 'a+') as f:
-                f.write(msg.decode())
+                try:
+                    f.write(msg.decode())
+                except AttributeError:
+                    if isinstance(msg, basestring):
+                        f.write(msg)
             raise
         else:
             sys.exit(str(err))
