@@ -7,11 +7,11 @@ except ImportError:
 
 if has_setuptools:
     setup_kwargs = {
-        "entry_points": {"console_scripts": ["xsgen=xsgen.xsgen:main"]}
+        "entry_points": {"console_scripts": ["xsgen=xsgen.main:main"]}
     }
 else:
     setup_kwargs = {
-        "scripts": ["xsgen/xsgen.py"]
+        "scripts": ["scripts/xsgen"]
     }
 
 setup(name="xsgen",
