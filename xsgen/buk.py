@@ -20,6 +20,7 @@ class XSGenPlugin(Plugin):
 
     rcdocs = {
         'openmc_cross_sections': 'Path to the cross_sections.xml file for OpenMC',
+        'origen': 'ORIGEN 2.2 command',
         'solver': ('The physics codes that are used to solve the '
                    'burnup-criticality problem and compute cross sections and '
                    'transmutation matrices.'),
@@ -27,6 +28,7 @@ class XSGenPlugin(Plugin):
 
     def update_argparser(self, parser):
         parser.add_argument('--solver', dest='solver', help=self.rcdocs['solver'])
+        parser.add_argument('--origen', dest='origen_call', help=self.rcdocs['origen'])
         parser.add_argument("--openmc-cross-sections", dest="openmc_cross_sections",
             help=self.rcdocs['openmc_cross_sections'])
 
