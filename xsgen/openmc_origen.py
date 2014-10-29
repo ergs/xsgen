@@ -13,7 +13,7 @@ from pyne.material import Material
 from pyne.xs import data_source
 from pyne.xs.cache import XSCache
 
-from xsgen.utils import indir
+from xsgen.utils import indir, NotSpecified
 
 # templates are from openmc/examples/lattice/simple
 
@@ -324,22 +324,28 @@ class OpenMCOrigen(object):
         if not os.path.isdir(pwd):
             os.makedirs(pwd)
         self._make_origen_input(state, transmute_time, phi_g)
+
+        if self.rc.origen_call is NotSpecified:
+            if self.rc.is_thermal:
+                origen_call = "o2_therm_linux.exe"
+            else:
+                origen_call = "o2_fast_linux.exe"
+        else:
+            origen_call = self.rc.origen_call
+
         with indir(pwd):
-            try:
-                subprocess.check_call("o2_therm_linux.exe")
-            except FileNotFoundError:
-                print("You don't have origen!")
-                small = (1000 - state.burn_times)*0.05/1000
-                return Material({'U235': small, 'U238': 1-small})
+            subprocess.check_call(origen_call)
 
     def _make_origen_input(self, state, transmute_time, phi_g):
         pwd = self.pwd(state, "origen")
         ctx = self.context(state)
         with indir(pwd):
             origen22.write_tape4(self.rc.fuel_material)
-        with indir(pwd):
             total_flux = phi_g.sum()
             origen22.write_tape5_irradiation("IRF", transmute_time, total_flux)
+            tape9 = origen22.make_tape9([k for k in self.rc.fuel_material.keys()])
+            origen22.write_tape9(tape9)
+
 
 def _mat_to_nucs(mat):
     nucs = []
