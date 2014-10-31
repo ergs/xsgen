@@ -203,11 +203,11 @@ class OpenMCOrigen(object):
 
         if state in self.statelibs:
             return self.statelibs[state]
-        # if state.burn_times != 0.0:
-        #     raise ValueError('Burn must start at t=0.')
         k, phi_g, xs = self.openmc(state)
         self.statelibs[state] = (k, phi_g, xs)
         self.rc.fuel_material = self.origen(state, xs, transmute_time, phi_g)
+        # store what has become of each tracked nuclide
+        # run origen on 1 kg of each nuclide, write out
         return (k, phi_g, xs, self.rc.fuel_material)
 
     def openmc(self, state):
@@ -335,15 +335,19 @@ class OpenMCOrigen(object):
 
         with indir(pwd):
             subprocess.check_call(origen_call)
+            tape6 = origen22.parse_tape6("TAPE6.OUT")
+            return tape6.materials[-1]
 
     def _make_origen_input(self, state, transmute_time, phi_g):
         pwd = self.pwd(state, "origen")
         ctx = self.context(state)
         with indir(pwd):
+            # may need to filter tape4 for Bad Nuclides
             origen22.write_tape4(self.rc.fuel_material)
             total_flux = phi_g.sum()
             origen22.write_tape5_irradiation("IRF", transmute_time, total_flux)
-            tape9 = origen22.make_tape9([k for k in self.rc.fuel_material.keys()])
+            tape9 = origen22.make_tape9(self.rc.track_nucs)
+            import pdb; pdb.set_trace()
             origen22.write_tape9(tape9)
 
 
