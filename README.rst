@@ -11,8 +11,8 @@ Installation
 Dependencies
 ------------
 
-xsgen depends on `PyNE <http://www.pyne.io>`. You can find installation
-instructions for PyNE `here <http://pyne.io/install.html>`.
+xsgen depends on `PyNE <http://www.pyne.io>`_. You can find installation
+instructions for PyNE `here <http://pyne.io/install.html>`_.
 
 To install from source, simply download the source code from the
 official GitHub repo::
