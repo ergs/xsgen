@@ -1,6 +1,7 @@
 build/
 build-*/
 dist/
+docs/_build
 xsgen.egg-info/
 *.pyc
 *.*~
