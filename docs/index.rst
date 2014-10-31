@@ -30,14 +30,12 @@ Contents:
 ---------
 
 **Usage:**
+
 .. toctree::
    :maxdepth: 1
+
    install
    usersguide/index
-   ..
-      tutorial/index
-   ..
-      users
 
 Indices and tables
 ------------------
