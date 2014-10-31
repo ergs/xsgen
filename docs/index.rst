@@ -6,13 +6,20 @@
 Welcome to xsgen's documentation!
 =================================
 
+xsgen is a tool for computing multi-group neutron cross-section, burnup, and
+multiplication factor (k\ :sub:`inf`\ ) as a function of reactor state, which
+includes time/fluence, material properties, and reactor geometry.
+
+We use a plugin-based system to allow a flexible approach with respect to
+underlying physics engines.
+
+The source code can be found 
+
+
 Contents:
 
 .. toctree::
-   :maxdepth: 2
-   includeme
-
-
+   :maxdepth: 1
 
 Indices and tables
 ==================
