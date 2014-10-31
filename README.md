@@ -1,4 +1,0 @@
-xsgen
-=====
-
-Cross section generation
