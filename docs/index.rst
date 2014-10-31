@@ -29,8 +29,15 @@ Now you should be able to run it simply with::
 Contents:
 ---------
 
+**Usage:**
 .. toctree::
    :maxdepth: 1
+   install
+   usersguide/index
+   ..
+      tutorial/index
+   ..
+      users
 
 Indices and tables
 ------------------
