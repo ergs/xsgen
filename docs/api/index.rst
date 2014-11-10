@@ -6,6 +6,7 @@ API Reference
 **Core Plugins:**
 .. toctree::
    :maxdepth: 1
+
    base
    pre
    buk
@@ -13,4 +14,5 @@ API Reference
 
 **Physics Engines:**
 .. toctree::
+
    openmc_origen
