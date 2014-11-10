@@ -153,6 +153,7 @@ class OpenMCOrigen(object):
                         cross_sections=rc.openmc_cross_sections,
                         #src_group_struct=self.eafds.src_group_struct)
                         src_group_struct=np.logspace(1, -9, 1001))
+        self.trans_nucs = {}
         data_sources = [self.omcds]
         if not rc.is_thermal:
             data_sources.append(self.eafds)

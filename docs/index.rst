@@ -36,6 +36,7 @@ Contents:
 
    install
    usersguide/index
+   api/index
 
 Indices and tables
 ------------------
