@@ -35,9 +35,6 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="../api/index.html" title="API Reference"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -82,7 +79,35 @@
             
   <div class="section" id="xsgen-user-s-guide">
 <h1>xsgen User&#8217;s Guide<a class="headerlink" href="#xsgen-user-s-guide" title="Permalink to this headline">¶</a></h1>
-<p>Stuff goes here.</p>
+<ol class="arabic">
+<li><p class="first">Installation</p>
+<p>xsgen depends on <a class="reference external" href="http://www.pyne.io">PyNE</a>. You can find installation
+instructions for PyNE <a class="reference external" href="http://pyne.io/install.html">here</a>.</p>
+<p>To install from source, simply download the source code from the
+official GitHub repo and run <tt class="docutils literal"><span class="pre">setup.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>git clone git://github.com/bright-dev/xsgen.git
+cd xsgen/
+python setup.py install --user
+</pre></div>
+</div>
+<p>Currently, we require <a class="reference external" href="http://mit-crpg.github.io/openmc/">OpenMC</a>
+and <a class="reference external" href="https://rsicc.ornl.gov/CustomerService.aspx">ORIGEN 2.2</a> for
+burnup and criticality computations. Installation instructions, along
+with a wealth of documentation, for OpenMC can be found <a class="reference external" href="http://mit-crpg.github.io/openmc/quickinstall.html">here</a>. ORIGEN 2.2 is
+distributed by RSICC at the above link.</p>
+<p>For this example, we will be using the OpenMC/ORIGEN physics code.</p>
+</li>
+<li><p class="first">Usage</p>
+<p>For this example, we&#8217;ll use the <a class="reference external" href="https://github.com/bright-dev/xslibs">xslibs</a> project repository by
+Anthony Scopatz. This provides some useful run-control files for
+light water reactors.</p>
+<div class="highlight-python"><div class="highlight"><pre>git clone git@github.com:bright-dev/xslibs.git
+cd xslibs
+xsgen --rc lwr1g.py
+</pre></div>
+</div>
+</li>
+</ol>
 </div>
 
 
@@ -97,9 +122,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="../api/index.html" title="API Reference"
              >next</a> |</li>
