@@ -39,6 +39,20 @@ class XSGenPlugin(Plugin):
         }
 
     def update_argparser(self, parser):
+        """This updates the argument parser with the base options:
+
+        rc: Path to run control file
+
+        plugins: Plugins to include
+
+        debug: Build in debugging mode
+
+        verbose: Print more output.
+
+        version: Print version information.
+
+        bash_completion: Flag for enabling/disabling BASH completion when using argcomplete.
+        """
         parser.add_argument('--rc', help=self.rcdocs['rc'])
         parser.add_argument('--plugins', nargs="+", help=self.rcdocs["plugins"])
         parser.add_argument('--debug', action='store_true', 

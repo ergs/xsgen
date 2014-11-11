@@ -1,7 +1,7 @@
 .. _xsgen_base
-xsgen Base plugin -- :mod: `xsgen.base`
+xsgen Base plugin -- :mod:`xsgen.base`
 =======================================
 
-.. automodule:: xsgen.base
+.. autoclass:: xsgen.base.XSGenPlugin
    :members:
 
