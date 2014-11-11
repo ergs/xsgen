@@ -134,11 +134,11 @@ PLOTS_TEMPLATE = """<?xml version="1.0"?>
 """
 
 class OpenMCOrigen(object):
-    """An that combines OpenMC for k-code calculations and ORIGEN for 
+    """An that combines OpenMC for k-code calculations and ORIGEN for
     transmutation.
     """
 
-    reactions = {rxname.id(_) for _ in ('total', 'absorption', 'gamma', 'gamma_1', 
+    reactions = {rxname.id(_) for _ in ('total', 'absorption', 'gamma', 'gamma_1',
                  'z_2n', 'z_2n_1', 'z_3n', 'proton', 'alpha', 'fission')}
 
     def __init__(self, rc):
@@ -153,7 +153,6 @@ class OpenMCOrigen(object):
                         cross_sections=rc.openmc_cross_sections,
                         #src_group_struct=self.eafds.src_group_struct)
                         src_group_struct=np.logspace(1, -9, 1001))
-        self.trans_nucs = {}
         data_sources = [self.omcds]
         if not rc.is_thermal:
             data_sources.append(self.eafds)
@@ -210,20 +209,31 @@ class OpenMCOrigen(object):
             A list of States that has the same initial conditions at increasing
             burnup times.
 
+        Returns
+        -------
+        libs : list of dicts
+            Libraries to write out - one for the full fuel and one for each tracked nuclide.
         """
-        mat_hist = []
-        run_lib = {"TIME": [], "NEUT_PROD": [], "NEUT_DEST": [], "BUd":  []}
+        libs = {"fuel": {
+            "TIME": [],
+            "NEUT_PROD": [],
+            "NEUT_DEST": [],
+            "BUd":  [],
+            "transmutation": []}
+        }
+        libs.update(dict(zip(self.rc.track_nucs,
+                             [{"TIME": [],
+                               "NEUT_PROD": [],
+                               "BUd": [],
+                               "transmutation": []} for _ in self.rc.track_nucs])))
         for i, state in enumerate(run):
             if i < len(run) - 1 :
                 transmute_time = run[i+1].burn_times - state.burn_times
             else:
                 transmute_time = 0
-            k, phi_g, xs, mat = self.generate(state, transmute_time)
-            run_lib["TIME"].append(state.burn_times)
-            run_lib["NEUT_PROD"].append(0)
-            run_lib["NEUT_DEST"].append(0)
-            run_lib["BUd"].append(0)
-            mat_hist.append(mat)
+            results = self.generate(state, transmute_time)
+            # looks like {"fuel": {"TIME": 0, "NEUT_PROD": ...}, 92350000:
+            # {"TIME": ...}}
         nucs = []
         for mat in mat_hist:
             nucs.extend(mat.comp.keys())
@@ -231,11 +241,7 @@ class OpenMCOrigen(object):
         nucs = [(nucname.name(nuc), [mat.comp[nuc] for mat in mat_hist]) for nuc in nucs]
         nucs = dict(nucs)
 
-        run_lib.update(nucs)
-
-        return run_lib
-        # return mat_hist
-
+        return libs
 
     def generate(self, state, transmute_time):
         """Runs physics codes on a specific state. First runs OpenMC for transport,
@@ -364,7 +370,7 @@ class OpenMCOrigen(object):
                 if n.nucid is not None}
 
     def _parse_statepoint(self, statepoint):
-        """Parses a statepoint file and reads in the relevant fluxes, assigns them 
+        """Parses a statepoint file and reads in the relevant fluxes, assigns them
         to the DataSources or the XSCache, and returns k and phi_g.
 
         Parameters
@@ -426,8 +432,28 @@ class OpenMCOrigen(object):
                 i += 1
         return data
 
-    def origen(self, state, xs, transmute_time, phi_g):
+    def origen(self, state, transmute_time, phi_g):
         """Run ORIGEN on a state.
+
+        Parameters
+        ----------
+        state : named tuple (State)
+            A named tuple containing the state parameters.
+        transmute_time : float
+            Length of transmutation timestep.
+        phi_g : list of floats
+            Group flux.
+
+        Returns
+        -------
+        neut_prod : float
+            Neutron production over this timestep.
+        neut_dest : float
+            Neutron destruction over this timestep.
+        burnup : float
+            Burnup over this timestep.
+        mat : pyne.material.Material
+            Result of transmutation.
         """
         pwd = self.pwd(state, "origen")
         if not os.path.isdir(pwd):
@@ -445,7 +471,9 @@ class OpenMCOrigen(object):
         with indir(pwd):
             subprocess.check_call(origen_call)
             tape6 = origen22.parse_tape6("TAPE6.OUT")
-            return tape6.materials[-1]
+            material = tape6.materials[-1]
+
+        return material
 
     def _make_origen_input(self, state, transmute_time, phi_g):
         """Make ORIGEN input files for a given state.
@@ -472,6 +500,18 @@ class OpenMCOrigen(object):
 
 
 def _mat_to_nucs(mat):
+    """Convert a ``pyne.material.Material`` into OpenMC ``materials.xml`` format.
+
+    Parameters
+    ----------
+    mat : ``pyne.material.Material``
+        Material to convert.
+
+    Returns
+    -------
+    nucs : string
+        OpenMC-friendly XML tag with material composition.
+    """
     nucs = []
     template = '<nuclide name="{nuc}" wo="{mass}" />'
     for nuc, mass in mat.comp.items():
@@ -479,8 +519,21 @@ def _mat_to_nucs(mat):
     nucs = "\n    ".join(nucs)
     return nucs
 
+
 def _find_statepoint(pwd):
+    """Find a statepoint in a directory. Returns None if none found.
+
+    Parameters
+    ----------
+    pwd : str
+        Directory to search.
+
+    Returns
+    -------
+    path : str or None
+        The path of the statepoint directory, or None.
+    """
     for f in os.listdir(pwd):
         if f.startswith('statepoint'):
             return os.path.join(pwd, f)
-    return 
+    return None
