@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Burnup-criticality – xsgen.buk &mdash; xsgen 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="xsgen 0.1 documentation" href="../index.html" />
+    <link rel="up" title="API Reference" href="index.html" />
+    <link rel="next" title="OpenMC+Origen – xsgen.openmc_origen" href="openmc_origen.html" />
+    <link rel="prev" title="Pre-processing – xsgen.pre" href="pre.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="openmc_origen.html" title="OpenMC+Origen – xsgen.openmc_origen"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pre.html" title="Pre-processing – xsgen.pre"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">xsgen 0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">API Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Burnup-criticality &#8211; <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt></a><ul>
+<li><a class="reference internal" href="#burnup-criticality-plugin-api">Burnup-criticality plugin API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pre.html"
+                        title="previous chapter">Pre-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="openmc_origen.html"
+                        title="next chapter">OpenMC+Origen &#8211; <tt class="docutils literal"><span class="pre">xsgen.openmc_origen</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/buk.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-xsgen.buk">
+<span id="burnup-criticality-xsgen-buk"></span><h1>Burnup-criticality &#8211; <a class="reference internal" href="../plugins.html#module-xsgen.buk" title="xsgen.buk"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.buk</span></tt></a><a class="headerlink" href="#module-xsgen.buk" title="Permalink to this headline">¶</a></h1>
+<p>Plugin that runs burnup-criticality calculation.</p>
+<dl class="docutils">
+<dt>Provides the following command-line arguments:</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">--openmc-cross-sections</span></tt>: Path to the cross_sections.xml file for OpenMC</li>
+<li><tt class="docutils literal"><span class="pre">--origen</span></tt>: ORIGEN 2.2 command</li>
+<li><tt class="docutils literal"><span class="pre">--solver</span></tt>: The physics codes that are used to solve the burnup-criticality problem and compute cross sections and transmutation matrices.</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="burnup-criticality-plugin-api">
+<h2>Burnup-criticality plugin API<a class="headerlink" href="#burnup-criticality-plugin-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="xsgen.buk.XSGenPlugin">
+<em class="property">class </em><tt class="descclassname">xsgen.buk.</tt><tt class="descname">XSGenPlugin</tt><a class="headerlink" href="#xsgen.buk.XSGenPlugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>The plugin class, inheriting from xsgen.plugins.Plugin.</p>
+<dl class="method">
+<dt id="xsgen.buk.XSGenPlugin.execute">
+<tt class="descname">execute</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.buk.XSGenPlugin.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort states into runs by initial parameters, then generate libraries
+for each run and write them to an output file.</p>
+<dl class="docutils">
+<dt>rc <span class="classifier-delimiter">:</span> <span class="classifier">xsgen.utils.RunControl</span></dt>
+<dd>The RunControl controlling this instance of xsgen.</dd>
+</dl>
+<p>None</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xsgen.buk.XSGenPlugin.requires">
+<tt class="descname">requires</tt><em class="property"> = ('xsgen.pre',)</em><a class="headerlink" href="#xsgen.buk.XSGenPlugin.requires" title="Permalink to this definition">¶</a></dt>
+<dd><p>The burnup-criticality plugin requires <a class="reference internal" href="../plugins.html#module-xsgen.pre" title="xsgen.pre"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.pre</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.buk.XSGenPlugin.same_except_burnup_time">
+<tt class="descname">same_except_burnup_time</tt><big>(</big><em>state1</em>, <em>state2</em><big>)</big><a class="headerlink" href="#xsgen.buk.XSGenPlugin.same_except_burnup_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if two different states are equivalent except for their burnup time.</p>
+<dl class="docutils">
+<dt>state1, state2 <span class="classifier-delimiter">:</span> <span class="classifier">namedtuple (State)</span></dt>
+<dd>The states to compare.</dd>
+</dl>
+<dl class="docutils">
+<dt>bool</dt>
+<dd>True if the two state are the same except burnup time, else False.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.buk.XSGenPlugin.setup">
+<tt class="descname">setup</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.buk.XSGenPlugin.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if we have OpenMC cross-section data in the RC and set the appropriate
+physics code in rc.engine.</p>
+<dl class="docutils">
+<dt>rc <span class="classifier-delimiter">:</span> <span class="classifier">xsgen.utils.RunControl</span></dt>
+<dd>The RunControl that controls this instance of xsgen.</dd>
+</dl>
+<p>None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.buk.XSGenPlugin.update_argparser">
+<tt class="descname">update_argparser</tt><big>(</big><em>parser</em><big>)</big><a class="headerlink" href="#xsgen.buk.XSGenPlugin.update_argparser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds plugin-specific command-line arguments.</p>
+<dl class="docutils">
+<dt>parser <span class="classifier-delimiter">:</span> <span class="classifier">argparse.ArgumentParser</span></dt>
+<dd>The parser that belongs to xsgen. We update this.</dd>
+</dl>
+<p>None</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="openmc_origen.html" title="OpenMC+Origen – xsgen.openmc_origen"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pre.html" title="Pre-processing – xsgen.pre"
+             >previous</a> |</li>
+        <li><a href="../index.html">xsgen 0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >API Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Anthony Scopatz, John Xia.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

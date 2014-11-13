@@ -32,6 +32,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
@@ -39,7 +42,10 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">xsgen</a></li>
+<li><a class="reference internal" href="#">xsgen</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#installation">Installation</a><ul>
 <li><a class="reference internal" href="#dependencies">Dependencies</a></li>
 </ul>
@@ -74,7 +80,25 @@
             
   <div class="section" id="xsgen">
 <h1>xsgen<a class="headerlink" href="#xsgen" title="Permalink to this headline">¶</a></h1>
-<p>The defending heavyweight champion of the world returns to defend its title as the King Of Kross Sektions!</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>xsgen is a tool for computing multi-group neutron cross-section, burnup, and
+multiplication factor (k<sub>inf</sub>) as a function of reactor state, which
+includes time/fluence, material properties, and reactor geometry.</p>
+<img src="_images/xsgen-flow.svg" /><p>xsgen reads in reactor parameters, simulation parameters, and specific
+quantities to keep track of from a run-control file. After validation, we use
+these parameters to generate the set of possible reactor states. We group these
+states into runs, by finding the ones that have the same initial conditions and
+differ only by time.</p>
+<p>For each run we have several timesteps, and for each timestep we run a neutron
+transport code like OpenMC to find the multiplication factor k and the group
+flux, φ<sub>g</sub>. We then feed these values to a transmutation code such as
+ORIGEN2.2 to find the burnup and neutron production/destruction rates, as well
+as the transmutation of the material itself. Once we have done this for all
+timesteps, we write this out to libraries, theoretically of a variety of
+formats.
+.. overview-end</p>
+</div>
 </div>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
@@ -109,6 +133,9 @@ distributed by RSICC at the above link.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>

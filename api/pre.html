@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Pre-processing – xsgen.pre &mdash; xsgen 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="xsgen 0.1 documentation" href="../index.html" />
+    <link rel="up" title="API Reference" href="index.html" />
+    <link rel="next" title="Burnup-criticality – xsgen.buk" href="buk.html" />
+    <link rel="prev" title="xsgen Base plugin – xsgen.base" href="base.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="buk.html" title="Burnup-criticality – xsgen.buk"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="base.html" title="xsgen Base plugin – xsgen.base"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">xsgen 0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">API Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="base.html"
+                        title="previous chapter">xsgen Base plugin &#8211; <tt class="docutils literal"><span class="pre">xsgen.base</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="buk.html"
+                        title="next chapter">Burnup-criticality &#8211; <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/pre.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-xsgen.pre">
+<span id="pre-processing-xsgen-pre"></span><h1>Pre-processing &#8211; <a class="reference internal" href="../plugins.html#module-xsgen.pre" title="xsgen.pre"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.pre</span></tt></a><a class="headerlink" href="#module-xsgen.pre" title="Permalink to this headline">¶</a></h1>
+<p>Pre-processing plugin. Validates input and does sundry pre-calculation tasks.</p>
+<dl class="docutils">
+<dt>Provides the following command-line arguments:</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">--ui</span></tt>: Launches the xsgen ui</li>
+<li><tt class="docutils literal"><span class="pre">-c</span></tt>, <tt class="docutils literal"><span class="pre">--clean</span></tt>: Cleans reactor directory of current files.</li>
+<li><tt class="docutils literal"><span class="pre">--formats</span></tt>: The output formats to write out.</li>
+<li><tt class="docutils literal"><span class="pre">--formats</span></tt>: The output formats to write out.</li>
+<li><tt class="docutils literal"><span class="pre">--is-thermal</span></tt>: Whether the reactor is a thermal system (True) or a fast one (False)</li>
+<li><tt class="docutils literal"><span class="pre">--outfiles</span></tt>: Names of output files to write out. Must correspond with formats.</li>
+</ul>
+</dd>
+</dl>
+<dl class="class">
+<dt id="xsgen.pre.XSGenPlugin">
+<em class="property">class </em><tt class="descclassname">xsgen.pre.</tt><tt class="descname">XSGenPlugin</tt><a class="headerlink" href="#xsgen.pre.XSGenPlugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>The plugin itself.</p>
+<dl class="attribute">
+<dt id="xsgen.pre.XSGenPlugin.defaultrc">
+<tt class="descname">defaultrc</tt><em class="property"> = {'void_cell_radius': 0.8, 'k_particles': 1000, 'ui': False, 'group_structure': [10, 1, 0.1, 0.01], 'burn_times': [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000], 'reactor': 'lwr', 'clad_density': 6.56, 'burn_regions': 1, 'is_thermal': True, 'formats': ('brightlite',), 'k_cycles': 20, 'fuel_material': {'U235': 0.04, 'U238': 0.96}, 'solver': 'openmc+origen', 'clad_cell_radius': 0.9, 'fuel_specific_power': 1, 'unit_cell_pitch': 1.5, 'fuel_cell_radius': 0.7, 'fuel_density': 19.1, 'track_nucs': ['Ac227', 'Ag108m', 'AM239', 'AM240', 'Am241', 'AM242', 'Am242m', 'Am243', 'AM244', 'AM244M', 'AM245', 'AM246', 'BA133', 'BA140', 'BA141', 'Bi209', 'BK249', 'C14', 'CD113M', 'Cf249', 'Cf250', 'Cf251', 'Cf252', 'Cl36', 'CM241', 'CM242', 'Cm243', 'Cm244', 'Cm245', 'Cm246', 'CM247', 'CM248', 'CM249', 'CM250', 'CM251', 'CS134', 'CS134M', 'Cs135', 'CS136', 'Cs137', 'CS140', 'CS141', 'CS142', 'CS143', 'CS144', 'CS145', 'CS147', 'EU149', 'EU150', 'EU152', 'EU154', 'EU155', 'EU156', 'H1', 'H3', 'He4', 'I129', 'KR85', 'Mo93', 'NA23', 'NB91', 'NB93M', 'Nb94', 'NB95', 'NB95M', 'Ni59', 'Ni63', 'NP235', 'NP236', 'NP236M', 'Np237', 'NP238', 'NP239', 'NP240', 'NP240M', 'NP241', 'O16', 'Pa231', 'Pb206', 'Pb207', 'Pb208', 'Pb210', 'Pd107', 'PM146', 'PM147', 'PU236', 'PU237', 'Pu238', 'Pu239', 'Pu240', 'Pu241', 'Pu242', 'PU243', 'PU244', 'PU245', 'PU246', 'Ra226', 'Ra228', 'RU106', 'SB124', 'SB124M', 'SB125', 'SB126', 'Se79', 'SM145', 'SM148', 'Sm151', 'SM155', 'SN117M', 'SN119M', 'Sn121m', 'SN123', 'SN125', 'SN125M', 'Sn126', 'SR103', 'SR87M', 'SR89', 'Sr90', 'SR91', 'SR93', 'SR95', 'SR99', 'TC98', 'Tc99', 'TE125M', 'Th228', 'Th229', 'Th230', 'Th232', 'U230', 'U231', 'U232', 'U233', 'U234', 'U235', 'U236', 'U237', 'U238', 'U239', 'Y91', 'Y93', 'Zr93', 'ZR95'], 'cool_density': 1.0, 'unit_cell_height': 2, 'k_cycles_skip': 10}</em><a class="headerlink" href="#xsgen.pre.XSGenPlugin.defaultrc" title="Permalink to this definition">¶</a></dt>
+<dd><p>A default run control for all the parameters one may desire.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.pre.XSGenPlugin.ensure_rc">
+<tt class="descname">ensure_rc</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.pre.XSGenPlugin.ensure_rc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate the run control parameters.</p>
+<dl class="docutils">
+<dt>rc <span class="classifier-delimiter">:</span> <span class="classifier">xsgen.utils.RunControl</span></dt>
+<dd>The run control that has been read in.</dd>
+</dl>
+<p>None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.pre.XSGenPlugin.load_nuc_file">
+<tt class="descname">load_nuc_file</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#xsgen.pre.XSGenPlugin.load_nuc_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load list nucs from a file. Should be a file containing just a Python list.</p>
+<dl class="docutils">
+<dt>path <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The path to the nuc file.</dd>
+</dl>
+<dl class="docutils">
+<dt>nucs <span class="classifier-delimiter">:</span> <span class="classifier">list of ints</span></dt>
+<dd>The nuclides listed in the file, in nuc ID form.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.pre.XSGenPlugin.make_states">
+<tt class="descname">make_states</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.pre.XSGenPlugin.make_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes the reactor state table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.pre.XSGenPlugin.setup">
+<tt class="descname">setup</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.pre.XSGenPlugin.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run UI if requested; validate input; generate reactor states.</p>
+<dl class="docutils">
+<dt>rc <span class="classifier-delimiter">:</span> <span class="classifier">xsgen.utils.RunControl</span></dt>
+<dd>The run control that has been read in.</dd>
+</dl>
+<p>None</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="xsgen.pre.run_ui">
+<tt class="descclassname">xsgen.pre.</tt><tt class="descname">run_ui</tt><big>(</big><big>)</big><a class="headerlink" href="#xsgen.pre.run_ui" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the cross section user interface.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="buk.html" title="Burnup-criticality – xsgen.buk"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="base.html" title="xsgen Base plugin – xsgen.base"
+             >previous</a> |</li>
+        <li><a href="../index.html">xsgen 0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >API Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Anthony Scopatz, John Xia.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

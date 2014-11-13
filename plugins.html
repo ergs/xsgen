@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>xsgen Core Plugins: base, pre, buk, and post &mdash; xsgen 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="xsgen 0.1 documentation" href="index.html" />
+    <link rel="next" title="xsgen Plugin System – xsgen.plugins" href="plugins-module.html" />
+    <link rel="prev" title="xsgen User’s Guide" href="usersguide.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plugins-module.html" title="xsgen Plugin System – xsgen.plugins"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="usersguide.html" title="xsgen User’s Guide"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">xsgen Core Plugins: base, pre, buk, and post</a><ul>
+<li><a class="reference internal" href="#module-xsgen.base">Base &#8211; <tt class="docutils literal"><span class="pre">xsgen.base</span></tt></a><ul>
+<li><a class="reference internal" href="#base-plugin-api">Base Plugin API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-xsgen.pre">Pre-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt></a></li>
+<li><a class="reference internal" href="#module-xsgen.buk">Burnup-criticality &#8211; <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt></a><ul>
+<li><a class="reference internal" href="#burnup-criticality-plugin-api">Burnup-criticality plugin API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-xsgen.post">Post-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.post</span></tt></a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="usersguide.html"
+                        title="previous chapter">xsgen User&#8217;s Guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="plugins-module.html"
+                        title="next chapter">xsgen Plugin System &#8211; <tt class="docutils literal"><span class="pre">xsgen.plugins</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/plugins.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="xsgen-core-plugins-base-pre-buk-and-post">
+<h1>xsgen Core Plugins: base, pre, buk, and post<a class="headerlink" href="#xsgen-core-plugins-base-pre-buk-and-post" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-xsgen.base">
+<span id="base-xsgen-base"></span><h2>Base &#8211; <a class="reference internal" href="#module-xsgen.base" title="xsgen.base"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.base</span></tt></a><a class="headerlink" href="#module-xsgen.base" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>The base plugin for xsgen. Provides the following command-line arguments:</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">--rc</span></tt>: Path to run control file</li>
+<li><tt class="docutils literal"><span class="pre">--plugins</span></tt>: Plugins to include</li>
+<li><tt class="docutils literal"><span class="pre">--debug</span></tt>: Build in debugging mode</li>
+<li><tt class="docutils literal"><span class="pre">--verbose</span></tt>: Print more output.</li>
+<li><tt class="docutils literal"><span class="pre">--version</span></tt>: Print version information.</li>
+<li><tt class="docutils literal"><span class="pre">--bash_completion</span></tt>: Flag for enabling/disabling BASH completion when using argcomplete.</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="base-plugin-api">
+<h3>Base Plugin API<a class="headerlink" href="#base-plugin-api" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="module-xsgen.pre">
+<span id="pre-processing-xsgen-pre"></span><h2>Pre-processing &#8211; <a class="reference internal" href="#module-xsgen.pre" title="xsgen.pre"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.pre</span></tt></a><a class="headerlink" href="#module-xsgen.pre" title="Permalink to this headline">¶</a></h2>
+<p>Pre-processing plugin. Validates input and does sundry pre-calculation tasks.</p>
+<dl class="docutils">
+<dt>Provides the following command-line arguments:</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">--ui</span></tt>: Launches the xsgen ui</li>
+<li><tt class="docutils literal"><span class="pre">-c</span></tt>, <tt class="docutils literal"><span class="pre">--clean</span></tt>: Cleans reactor directory of current files.</li>
+<li><tt class="docutils literal"><span class="pre">--formats</span></tt>: The output formats to write out.</li>
+<li><tt class="docutils literal"><span class="pre">--formats</span></tt>: The output formats to write out.</li>
+<li><tt class="docutils literal"><span class="pre">--is-thermal</span></tt>: Whether the reactor is a thermal system (True) or a fast one (False)</li>
+<li><tt class="docutils literal"><span class="pre">--outfiles</span></tt>: Names of output files to write out. Must correspond with formats.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="module-xsgen.buk">
+<span id="burnup-criticality-xsgen-buk"></span><h2>Burnup-criticality &#8211; <a class="reference internal" href="#module-xsgen.buk" title="xsgen.buk"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.buk</span></tt></a><a class="headerlink" href="#module-xsgen.buk" title="Permalink to this headline">¶</a></h2>
+<p>Plugin that runs burnup-criticality calculation.</p>
+<dl class="docutils">
+<dt>Provides the following command-line arguments:</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">--openmc-cross-sections</span></tt>: Path to the cross_sections.xml file for OpenMC</li>
+<li><tt class="docutils literal"><span class="pre">--origen</span></tt>: ORIGEN 2.2 command</li>
+<li><tt class="docutils literal"><span class="pre">--solver</span></tt>: The physics codes that are used to solve the burnup-criticality problem and compute cross sections and transmutation matrices.</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="burnup-criticality-plugin-api">
+<h3>Burnup-criticality plugin API<a class="headerlink" href="#burnup-criticality-plugin-api" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="module-xsgen.post">
+<span id="post-processing-xsgen-post"></span><h2>Post-processing &#8211; <a class="reference internal" href="#module-xsgen.post" title="xsgen.post"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.post</span></tt></a><a class="headerlink" href="#module-xsgen.post" title="Permalink to this headline">¶</a></h2>
+<p>The post-processing plugin for xsgen.
+Post-processing Plugin API
+===============</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plugins-module.html" title="xsgen Plugin System – xsgen.plugins"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="usersguide.html" title="xsgen User’s Guide"
+             >previous</a> |</li>
+        <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Anthony Scopatz, John Xia.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

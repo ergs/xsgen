@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="xsgen 0.1 documentation" href="../index.html" />
     <link rel="up" title="API Reference" href="index.html" />
-    <link rel="prev" title="xsgen Base plugin – xsgen.base" href="base.html" /> 
+    <link rel="prev" title="Burnup-criticality – xsgen.buk" href="buk.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,7 +35,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="base.html" title="xsgen Base plugin – xsgen.base"
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="buk.html" title="Burnup-criticality – xsgen.buk"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">xsgen 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">API Reference</a> &raquo;</li> 
@@ -44,8 +47,8 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="base.html"
-                        title="previous chapter">xsgen Base plugin &#8211; <tt class="docutils literal"><span class="pre">xsgen.base</span></tt></a></p>
+  <p class="topless"><a href="buk.html"
+                        title="previous chapter">Burnup-criticality &#8211; <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/api/openmc_origen.txt"
@@ -72,19 +75,20 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="openmc-origen-xsgen-openmc-origen">
-<h1>OpenMC+Origen &#8211; <tt class="xref py py-mod docutils literal"><span class="pre">xsgen.openmc_origen</span></tt><a class="headerlink" href="#openmc-origen-xsgen-openmc-origen" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-xsgen.openmc_origen">
+<span id="openmc-origen-xsgen-openmc-origen"></span><h1>OpenMC+Origen &#8211; <a class="reference internal" href="#module-xsgen.openmc_origen" title="xsgen.openmc_origen"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.openmc_origen</span></tt></a><a class="headerlink" href="#module-xsgen.openmc_origen" title="Permalink to this headline">¶</a></h1>
+<p>An engine that uses OpenMC and ORIGEN2.2 to do burnup-criticality computations.</p>
 <dl class="class">
 <dt id="xsgen.openmc_origen.OpenMCOrigen">
 <em class="property">class </em><tt class="descclassname">xsgen.openmc_origen.</tt><tt class="descname">OpenMCOrigen</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.openmc_origen.OpenMCOrigen" title="Permalink to this definition">¶</a></dt>
-<dd><p>An that combines OpenMC for k-code calculations and ORIGEN for 
+<dd><p>An that combines OpenMC for k-code calculations and ORIGEN for
 transmutation.</p>
 <dl class="method">
 <dt id="xsgen.openmc_origen.OpenMCOrigen.context">
 <tt class="descname">context</tt><big>(</big><em>state</em><big>)</big><a class="headerlink" href="#xsgen.openmc_origen.OpenMCOrigen.context" title="Permalink to this definition">¶</a></dt>
 <dd><p>Unite parameters in the run-control file and  the current state.</p>
 <dl class="docutils">
-<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">named tuple (State)</span></dt>
+<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">namedtuple (State)</span></dt>
 <dd>A State tuple that contains perturbation parameters specific to that
 state.</dd>
 </dl>
@@ -100,12 +104,16 @@ state.</dd>
 <dd><p>Runs physics codes on a specific state. First runs OpenMC for transport,
 then uses the results to run ORIGEN for a single timestep.</p>
 <dl class="docutils">
-<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">named tuple (State)</span></dt>
-<dd>A named tuple containing the state parameters.</dd>
+<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">namedtuple (State)</span></dt>
+<dd>A namedtuple containing the state parameters.</dd>
 <dt>transmute_time <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
 <dd>The length of the time step we would like to run ORIGEN for.</dd>
 </dl>
-<p>None</p>
+<dl class="docutils">
+<dt>results <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd>Dict of physics code results. Keys are either nuclide ID&#8217;s or &#8220;fuel&#8221;
+for the full fuel results.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -118,6 +126,10 @@ conditions.</p>
 <dt>run <span class="classifier-delimiter">:</span> <span class="classifier">list of States</span></dt>
 <dd>A list of States that has the same initial conditions at increasing
 burnup times.</dd>
+</dl>
+<dl class="docutils">
+<dt>libs <span class="classifier-delimiter">:</span> <span class="classifier">list of dicts</span></dt>
+<dd>Libraries to write out - one for the full fuel and one for each tracked nuclide.</dd>
 </dl>
 </dd></dl>
 
@@ -136,8 +148,8 @@ burnup times.</dd>
 <tt class="descname">openmc</tt><big>(</big><em>state</em><big>)</big><a class="headerlink" href="#xsgen.openmc_origen.OpenMCOrigen.openmc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs OpenMC for a given state.</p>
 <dl class="docutils">
-<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">named tuple (State)</span></dt>
-<dd>A named tuple containing the state parameters.</dd>
+<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">namedtuple (State)</span></dt>
+<dd>A namedtuple containing the state parameters.</dd>
 </dl>
 <dl class="docutils">
 <dt>k <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
@@ -154,22 +166,20 @@ burnup times.</dd>
 <tt class="descname">origen</tt><big>(</big><em>state</em>, <em>transmute_time</em>, <em>phi_g</em><big>)</big><a class="headerlink" href="#xsgen.openmc_origen.OpenMCOrigen.origen" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run ORIGEN on a state.</p>
 <dl class="docutils">
-<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">named tuple (State)</span></dt>
-<dd>A named tuple containing the state parameters.</dd>
+<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">namedtuple (State)</span></dt>
+<dd>A namedtuple containing the state parameters.</dd>
 <dt>transmute_time <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
 <dd>Length of transmutation timestep.</dd>
 <dt>phi_g <span class="classifier-delimiter">:</span> <span class="classifier">list of floats</span></dt>
 <dd>Group flux.</dd>
+<dt>mat <span class="classifier-delimiter">:</span> <span class="classifier">str or int</span></dt>
+<dd>The material to start transmuting. Either &#8220;fuel&#8221; or a nuclide in ID
+form.</dd>
 </dl>
 <dl class="docutils">
-<dt>neut_prod <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>Neutron production over this timestep.</dd>
-<dt>neut_dest <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>Neutron destruction over this timestep.</dd>
-<dt>burnup <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>Burnup over this timestep.</dd>
-<dt>mat <span class="classifier-delimiter">:</span> <span class="classifier">pyne.material.Material</span></dt>
-<dd>Result of transmutation.</dd>
+<dt>results <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd>Dictionary with neutron production and destruction rates, burnup, and
+transmutation results.</dd>
 </dl>
 </dd></dl>
 
@@ -178,7 +188,7 @@ burnup times.</dd>
 <tt class="descname">pwd</tt><big>(</big><em>state</em>, <em>directory</em><big>)</big><a class="headerlink" href="#xsgen.openmc_origen.OpenMCOrigen.pwd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to directory we will be running specific physics codes in.</p>
 <dl class="docutils">
-<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">named tuple (State)</span></dt>
+<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">namedtuple (State)</span></dt>
 <dd>The state we are running physics codes for.</dd>
 <dt>directory <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
 <dd>The name of the sub-directory we would like.</dd>
@@ -206,7 +216,10 @@ burnup times.</dd>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="base.html" title="xsgen Base plugin – xsgen.base"
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="buk.html" title="Burnup-criticality – xsgen.buk"
              >previous</a> |</li>
         <li><a href="../index.html">xsgen 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >API Reference</a> &raquo;</li> 

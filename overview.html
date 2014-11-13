@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python Module Index &mdash; xsgen 0.1 documentation</title>
+    <title>Overview &mdash; xsgen 0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,9 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="xsgen 0.1 documentation" href="index.html" />
- 
-
-
+    <link rel="next" title="Installation" href="install.html" />
+    <link rel="prev" title="xsgens have awesome rates" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,13 +35,30 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="#" title="Python Module Index"
+          <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="xsgens have awesome rates"
+             accesskey="P">previous</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">xsgens have awesome rates</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="next chapter">Installation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/overview.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -64,54 +80,24 @@
         <div class="bodywrapper">
           <div class="body">
             
-
-   <h1>Python Module Index</h1>
-
-   <div class="modindex-jumpbox">
-   <a href="#cap-x"><strong>x</strong></a>
-   </div>
-
-   <table class="indextable modindextable" cellspacing="0" cellpadding="2">
-     <tr class="pcap"><td></td><td>&nbsp;</td><td></td></tr>
-     <tr class="cap" id="cap-x"><td></td><td>
-       <strong>x</strong></td><td></td></tr>
-     <tr>
-       <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-       <td>
-       <tt class="xref">xsgen</tt></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="plugins.html#module-xsgen.base"><tt class="xref">xsgen.base</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="plugins.html#module-xsgen.buk"><tt class="xref">xsgen.buk</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="api/openmc_origen.html#module-xsgen.openmc_origen"><tt class="xref">xsgen.openmc_origen</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="plugins-module.html#module-xsgen.plugins"><tt class="xref">xsgen.plugins</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="plugins.html#module-xsgen.post"><tt class="xref">xsgen.post</tt></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&nbsp;&nbsp;&nbsp;
-       <a href="plugins.html#module-xsgen.pre"><tt class="xref">xsgen.pre</tt></a></td><td>
-       <em></em></td></tr>
-   </table>
+  <div class="section" id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<p>xsgen is a tool for computing multi-group neutron cross-section, burnup, and
+multiplication factor (k<sub>inf</sub>) as a function of reactor state, which
+includes time/fluence, material properties, and reactor geometry.</p>
+<img src="_images/xsgen-flow.svg" /><p>xsgen reads in reactor parameters, simulation parameters, and specific
+quantities to keep track of from a run-control file. After validation, we use
+these parameters to generate the set of possible reactor states. We group these
+states into runs, by finding the ones that have the same initial conditions and
+differ only by time.</p>
+<p>For each run we have several timesteps, and for each timestep we run a neutron
+transport code like OpenMC to find the multiplication factor k and the group
+flux, φ<sub>g</sub>. We then feed these values to a transmutation code such as
+ORIGEN2.2 to find the burnup and neutron production/destruction rates, as well
+as the transmutation of the material itself. Once we have done this for all
+timesteps, we write this out to libraries, theoretically of a variety of
+formats.</p>
+</div>
 
 
           </div>
@@ -126,8 +112,14 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="#" title="Python Module Index"
+          <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="xsgens have awesome rates"
+             >previous</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>

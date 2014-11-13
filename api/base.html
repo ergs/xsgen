@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="xsgen 0.1 documentation" href="../index.html" />
     <link rel="up" title="API Reference" href="index.html" />
-    <link rel="next" title="OpenMC+Origen – xsgen.openmc_origen" href="openmc_origen.html" />
+    <link rel="next" title="Pre-processing – xsgen.pre" href="pre.html" />
     <link rel="prev" title="API Reference" href="index.html" /> 
   </head>
   <body>
@@ -36,7 +36,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="openmc_origen.html" title="OpenMC+Origen – xsgen.openmc_origen"
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pre.html" title="Pre-processing – xsgen.pre"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="API Reference"
@@ -51,8 +54,8 @@
   <p class="topless"><a href="index.html"
                         title="previous chapter">API Reference</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="openmc_origen.html"
-                        title="next chapter">OpenMC+Origen &#8211; <tt class="docutils literal"><span class="pre">xsgen.openmc_origen</span></tt></a></p>
+  <p class="topless"><a href="pre.html"
+                        title="next chapter">Pre-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/api/base.txt"
@@ -80,21 +83,21 @@
           <div class="body">
             
   <div class="section" id="xsgen-base-plugin-xsgen-base">
-<h1>xsgen Base plugin &#8211; <tt class="xref py py-mod docutils literal"><span class="pre">xsgen.base</span></tt><a class="headerlink" href="#xsgen-base-plugin-xsgen-base" title="Permalink to this headline">¶</a></h1>
+<h1>xsgen Base plugin &#8211; <a class="reference internal" href="../plugins.html#module-xsgen.base" title="xsgen.base"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.base</span></tt></a><a class="headerlink" href="#xsgen-base-plugin-xsgen-base" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="xsgen.base.XSGenPlugin">
 <em class="property">class </em><tt class="descclassname">xsgen.base.</tt><tt class="descname">XSGenPlugin</tt><a class="headerlink" href="#xsgen.base.XSGenPlugin" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class provides base functionality for xdress itself.</p>
+<dd><p>This class provides base functionality for xsgen itself.</p>
+<dl class="method">
+<dt id="xsgen.base.XSGenPlugin.setup">
+<tt class="descname">setup</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.base.XSGenPlugin.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Report version if requested.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="xsgen.base.XSGenPlugin.update_argparser">
 <tt class="descname">update_argparser</tt><big>(</big><em>parser</em><big>)</big><a class="headerlink" href="#xsgen.base.XSGenPlugin.update_argparser" title="Permalink to this definition">¶</a></dt>
-<dd><p>This updates the argument parser with the base options:</p>
-<p>rc: Path to run control file</p>
-<p>plugins: Plugins to include</p>
-<p>debug: Build in debugging mode</p>
-<p>verbose: Print more output.</p>
-<p>version: Print version information.</p>
-<p>bash_completion: Flag for enabling/disabling BASH completion when using argcomplete.</p>
+<dd><p>This updates the argument parser with the base options.</p>
 </dd></dl>
 
 </dd></dl>
@@ -114,7 +117,10 @@
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="openmc_origen.html" title="OpenMC+Origen – xsgen.openmc_origen"
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pre.html" title="Pre-processing – xsgen.pre"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="API Reference"

@@ -1,0 +1,457 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>xsgen Plugin System – xsgen.plugins &mdash; xsgen 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="xsgen 0.1 documentation" href="index.html" />
+    <link rel="next" title="API Reference" href="api/index.html" />
+    <link rel="prev" title="xsgen Core Plugins: base, pre, buk, and post" href="plugins.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api/index.html" title="API Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="plugins.html" title="xsgen Core Plugins: base, pre, buk, and post"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">xsgen Plugin System &#8211; <tt class="docutils literal"><span class="pre">xsgen.plugins</span></tt></a><ul>
+<li><a class="reference internal" href="#writing-plugins">Writing Plugins</a><ul>
+<li><a class="reference internal" href="#interface">Interface</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#plugins-api">Plugins API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="plugins.html"
+                        title="previous chapter">xsgen Core Plugins: base, pre, buk, and post</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api/index.html"
+                        title="next chapter">API Reference</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/plugins-module.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="xsgen-plugin-system-xsgen-plugins">
+<h1>xsgen Plugin System &#8211; <a class="reference internal" href="#module-xsgen.plugins" title="xsgen.plugins"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.plugins</span></tt></a><a class="headerlink" href="#xsgen-plugin-system-xsgen-plugins" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-xsgen.plugins"></span><p>This module provides the architecture for creating and handling xsgen plugins.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Anthony Scopatz &lt;<a class="reference external" href="mailto:scopatz&#37;&#52;&#48;gmail&#46;com">scopatz<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</td>
+</tr>
+</tbody>
+</table>
+<p>The purpose of xsgen is to be as modular and extensible as possible, allowing for
+developers to build and execute their own tools as needed.  As such, xsgen has
+a very nimble plugin interface that easily handles run control, adding arguments to
+the command line interface, setting up &amp; validating the run control, command
+execution, and teardown.  In fact, the entire xsgen execution is based on this
+plugin architecture.  You can be certain that this is well supported feature and
+not some hack&#8217;d add on.</p>
+<div class="section" id="writing-plugins">
+<h2>Writing Plugins<a class="headerlink" href="#writing-plugins" title="Permalink to this headline">¶</a></h2>
+<p>Writing plugins is easy!  You simply need to have a variable named <tt class="docutils literal"><span class="pre">XSGenPlugin</span></tt>
+in a module.  Say your module is called <tt class="docutils literal"><span class="pre">mymod</span></tt> and lives in a package <tt class="docutils literal"><span class="pre">mypack</span></tt>,
+then xsgen would know this plugin by the name <tt class="docutils literal"><span class="pre">&quot;mypack.mymod&quot;</span></tt>.  This is exactly
+the same string that you would use to do an absolute import of <tt class="docutils literal"><span class="pre">mymod</span></tt>.</p>
+<p>To expose this plugin to an xsgen execution, either add it to the <tt class="docutils literal"><span class="pre">plugins</span></tt>
+variable in your <tt class="docutils literal"><span class="pre">xsgenrc.py</span></tt> file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">xsgen.utils</span> <span class="kn">import</span> <span class="n">DEFAULT_PLUGINS</span>
+<span class="n">plugins</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">DEFAULT_PLUGINS</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="s">&#39;mypack.mymod&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Or you can add it on the command line:</p>
+<div class="highlight-python"><div class="highlight"><pre>~ $ xsgen --plugins xsgen.stlwrap xsgen.autoall xsgen.cythongen mypack.mymod
+</pre></div>
+</div>
+<p>Note that in both of the above cases we retain normal functionality by including
+the default plugins that come with xsgen.</p>
+<p>The <tt class="docutils literal"><span class="pre">XSGenPlugin</span></tt> variable must be callable with no arguments and return a
+variable with certain attributes.  Normally this is done as a class but through
+the magic of duck typing it doesn&#8217;t have to be.  The <tt class="docutils literal"><span class="pre">Plugin</span></tt> class is provided
+as a base class which implements a minimal, zero-work interface.  This is useful
+for inheriting your modules plugin from.  You need only override the attributes
+you want.  Again, inheriting from <tt class="docutils literal"><span class="pre">Plugin</span></tt> is suggested but not required.</p>
+<div class="section" id="interface">
+<h3>Interface<a class="headerlink" href="#interface" title="Permalink to this headline">¶</a></h3>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">requires:</th><td class="field-body"><p class="first">This is a list of module names or a function that returns such a list.
+The names in this list will be loaded and executed in order prior to this plugin.
+If multiple plugins require the same upstream plugin, the upstream on will only
+be run once.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">defaultrc:</th><td class="field-body"><p class="first">This is a dictionary or run control instance that maps run control
+parameters to their default values if they are otherwise not specified.  To
+make a parameter have to be given by the user, set the value to the singleton
+<tt class="docutils literal"><span class="pre">xsgen.utils.NotSpecified</span></tt>.  Parameters with the same name in different
+plugins will clobber each other, with the last plugin&#8217;s value being ultimately
+assigned.  The exception to this is if a later plugin&#8217;s parameter value is
+<tt class="docutils literal"><span class="pre">NotSpecified</span></tt> then the previous plugin value will be retained.  See the
+<tt class="docutils literal"><span class="pre">RunControl</span></tt> class for more details.  Generally it is not advised for two
+plugins to share run control parameter names unless you <em>really</em> know what
+you are doing.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">rcupdaters:</th><td class="field-body"><p class="first">This may be a dict, another mapping, a function which returns a mapping.
+The keys are the string names of the run control parameters.  The values
+are callables which indicate how to update or merge two rc parameters with
+this key. The callable should take two instances and return a copy that
+represents the merger, e.g. <tt class="docutils literal"><span class="pre">lambda</span> <span class="pre">old,</span> <span class="pre">new:</span> <span class="pre">old</span> <span class="pre">+</span> <span class="pre">new</span></tt>.  One useful example
+is for paths.  Normally you want new paths to prepend old ones:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">rcupdaters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;includes&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">new</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">old</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>If a callable is not supplied for an rc parameter then the the default
+behaviour is to simply override the old value with the new one.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rcdocs:</th><td class="field-body"><p class="first">This may be a dict, another mapping, a function which returns a mapping.
+The keys are the string names of the run control parameters.  The values
+are docstrings for the rc parameters.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">update_argparser(parser):</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">This is method that takes an argparse.ArgumentParser()
+instance and modifies it in-place.  This allows for run control parameters to be
+exposed as command line arguments and options.  Default arguments in
+<tt class="docutils literal"><span class="pre">parser.add_argument()</span></tt> values should not be given, or should only be set to
+<tt class="docutils literal"><span class="pre">Not</span> <span class="pre">Specified</span></tt>.  This is to prevent collisions with the run controller.
+Default values should instead be given in the plugin&#8217;s <tt class="docutils literal"><span class="pre">defaultrc</span></tt>.  Thus
+argument names or the <tt class="docutils literal"><span class="pre">dest</span></tt> keyword argument should match the keys in
+<tt class="docutils literal"><span class="pre">defaultrc</span></tt>.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">setup(rc):</th><td class="field-body"><p class="first">Performs all setup tasks needed for this plugin.  This may include
+validation and munging of the run control object (rc) as well as creating
+directories and files in the OS environment.  If needed, the rc should be
+modified in-place so that changes propagate to other plugins and further calls
+on this plugin. This should return None.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">execute(rc):</th><td class="field-body"><p class="first">Performs the heavy lifting of the plugin, which may require a run
+controller.If needed, the rc should be modified in-place so that changes
+propagate to other plugins and further calls on this plugin. This should
+return None.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">teardown(rc):</th><td class="field-body"><p class="first">Performs any cleanup tasks needed by the plugin, including removing
+temporary files.  If needed, the rc should be modified in-place so that changes
+propagate to other plugins and further calls on this plugin. This should
+return None.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">report_debug(rc):</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first last">Generates and returns a message to report in the <tt class="docutils literal"><span class="pre">debug.txt</span></tt>
+file in the event that execute() fails and additional debugging information is
+requested.  This message is a string.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<p>Here is simple, if morbid, plugin example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">xsgen.plugins</span> <span class="kn">import</span> <span class="n">Plugin</span>
+
+<span class="k">class</span> <span class="nc">XSGenPlugin</span><span class="p">(</span><span class="n">Plugin</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Which famous person was executed?&#39;&#39;&#39;</span>
+
+    <span class="c"># everything should require base, it is useful!</span>
+    <span class="n">requires</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;xsgen.base&#39;</span><span class="p">,)</span>
+
+    <span class="n">defaultrc</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;choices&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;J. Edgar Hoover&#39;</span><span class="p">,</span> <span class="s">&#39;Hua Mulan&#39;</span><span class="p">,</span> <span class="s">&#39;Leslie&#39;</span><span class="p">],</span>
+        <span class="s">&#39;answer&#39;</span><span class="p">:</span> <span class="s">&#39;Joan of Arc&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="n">rcupdaters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;choices&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">new</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">old</span><span class="p">)}</span>
+
+    <span class="n">rcdocs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;choices&#39;</span><span class="p">:</span> <span class="s">&quot;Possible answers.&quot;</span><span class="p">,</span>
+              <span class="s">&#39;answer&#39;</span><span class="p">:</span> <span class="s">&quot;The correct answer&quot;</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">update_argparser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">):</span>
+        <span class="c"># Note, no &#39;default=&#39; keyword arguments are given</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-c&#39;</span><span class="p">,</span> <span class="s">&#39;--choices&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;choices&#39;</span><span class="p">,</span>
+                            <span class="n">nargs</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;famous people chocies&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-a&#39;</span><span class="p">,</span> <span class="s">&#39;--answer&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;answer&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s">&quot;person who was executed&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Ensures that Joan of Arc is a choice.&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="s">&#39;Joan of Arc&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">choices</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;Joan of Arc&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Kills Joan...&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">answer</span> <span class="o">==</span> <span class="s">&#39;Joan of Arc&#39;</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Joan has met an untimely demise!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Joan of Arc was executed, not &#39;</span> <span class="o">+</span> <span class="n">rc</span><span class="o">.</span><span class="n">answer</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">report_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;the possible choices were &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">choices</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="plugins-api">
+<h2>Plugins API<a class="headerlink" href="#plugins-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="xsgen.plugins.Plugin">
+<em class="property">class </em><tt class="descclassname">xsgen.plugins.</tt><tt class="descname">Plugin</tt><a class="headerlink" href="#xsgen.plugins.Plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>A base plugin for other xsgen pluigins to inherit.</p>
+<dl class="attribute">
+<dt id="xsgen.plugins.Plugin.defaultrc">
+<tt class="descname">defaultrc</tt><em class="property"> = {}</em><a class="headerlink" href="#xsgen.plugins.Plugin.defaultrc" title="Permalink to this definition">¶</a></dt>
+<dd><p>This may be a dict, RunControl instance, or other mapping or a function
+which returns any of these.  The keys are string names of the run control
+parameters and the values are the associated default values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.plugins.Plugin.execute">
+<tt class="descname">execute</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugin.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs the actual work of the plugin, which may require a run controller.</p>
+<p>rc : xsgen.utils.RunControl</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xsgen.plugins.Plugin.rcdocs">
+<tt class="descname">rcdocs</tt><em class="property"> = {}</em><a class="headerlink" href="#xsgen.plugins.Plugin.rcdocs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This may be a dict, another mapping, a function which returns a mapping.
+The keys are the string names of the run control parameters.  The values
+are docstrings for the rc parameters.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xsgen.plugins.Plugin.rcupdaters">
+<tt class="descname">rcupdaters</tt><em class="property"> = {}</em><a class="headerlink" href="#xsgen.plugins.Plugin.rcupdaters" title="Permalink to this definition">¶</a></dt>
+<dd><p>This may be a dict, another mapping, a function which returns a mapping.
+The keys are the string names of the run control parameters.  The values
+are callables which indicate how to update or merge two rc parameters with
+this key. The callable should take two instances and return a copy that
+represents the merger, e.g. <tt class="docutils literal"><span class="pre">lambda</span> <span class="pre">old,</span> <span class="pre">new:</span> <span class="pre">old</span> <span class="pre">+</span> <span class="pre">new</span></tt>.  One useful example
+is for paths.  Normally you want new paths to prepend old ones:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">rcupdaters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;includes&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">new</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">old</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>If a callable is not supplied for an rc parameter then the the default
+behaviour is to simply override the old value with the new one.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.plugins.Plugin.report_debug">
+<tt class="descname">report_debug</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugin.report_debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>A message to report in the event that execute() fails and additional
+debugging information is requested.</p>
+<p>rc : xsgen.utils.RunControl</p>
+<dl class="docutils">
+<dt>message <span class="classifier-delimiter">:</span> <span class="classifier">str or None</span></dt>
+<dd>A debugging message to report.  If None is returned, this plugin is
+skipped in the debug output.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xsgen.plugins.Plugin.requires">
+<tt class="descname">requires</tt><em class="property"> = ()</em><a class="headerlink" href="#xsgen.plugins.Plugin.requires" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a sequence of strings, or a function which returns such, that
+lists the module names of other plugins that this plugin requires.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.plugins.Plugin.setup">
+<tt class="descname">setup</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugin.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs all setup tasks needed for this plugin.  This may include
+validation and munging of the run control object as well as creating
+the portions of the OS environment.</p>
+<p>rc : xsgen.utils.RunControl</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.plugins.Plugin.teardown">
+<tt class="descname">teardown</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugin.teardown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs any cleanup tasks needed by the plugin.</p>
+<p>rc : xsgen.utils.RunControl</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.plugins.Plugin.update_argparser">
+<tt class="descname">update_argparser</tt><big>(</big><em>parser</em><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugin.update_argparser" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method takes an argparse.ArgumentParser() instance and modifies
+it in-place.  This allows for run control parameters to be modified from
+as command line arguments.</p>
+<dl class="docutils">
+<dt>parser <span class="classifier-delimiter">:</span> <span class="classifier">argparse.ArgumentParser</span></dt>
+<dd>The parser to be updated.  Arguments defaults should not be given, or
+if given should only be <tt class="docutils literal"><span class="pre">xsgen.utils.Not</span> <span class="pre">Specified</span></tt>.  This is to
+prevent collisions with the run controller.  Default values should
+instead be given in this class&#8217;s <tt class="docutils literal"><span class="pre">defaultrc</span></tt> attribute or method.
+Argument names or the <tt class="docutils literal"><span class="pre">dest</span></tt> keyword argument should match the keys
+in <tt class="docutils literal"><span class="pre">defaultrc</span></tt>.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xsgen.plugins.Plugins">
+<em class="property">class </em><tt class="descclassname">xsgen.plugins.</tt><tt class="descname">Plugins</tt><big>(</big><em>modnames</em>, <em>loaddeps=True</em><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a class for managing the instantiation and execution of plugins.</p>
+<p>The execution and control of plugins should happen in the following order:</p>
+<ol class="arabic simple">
+<li><tt class="docutils literal"><span class="pre">build_cli()</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">merge_rcs()</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">setup()</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">execute()</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">teardown()</span></tt></li>
+</ol>
+<dl class="method">
+<dt id="xsgen.plugins.Plugins.build_cli">
+<tt class="descname">build_cli</tt><big>(</big><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugins.build_cli" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds and returns a command line interface based on the plugins.</p>
+<p>parser : argparse.ArgumentParser</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.plugins.Plugins.execute">
+<tt class="descname">execute</tt><big>(</big><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugins.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preforms all plugin executions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.plugins.Plugins.exit">
+<tt class="descname">exit</tt><big>(</big><em>err=0</em><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugins.exit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exits the process, possibly printing debug info.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.plugins.Plugins.merge_rcs">
+<tt class="descname">merge_rcs</tt><big>(</big><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugins.merge_rcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all of the default run controllers and returns a new and
+full default RunControl() instance.  This has also merged all of
+the rc updaters in the process.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.plugins.Plugins.setup">
+<tt class="descname">setup</tt><big>(</big><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugins.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preforms all plugin setup tasks.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xsgen.plugins.Plugins.teardown">
+<tt class="descname">teardown</tt><big>(</big><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugins.teardown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preforms all plugin teardown tasks.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="xsgen.plugins.summarize_rcdocs">
+<tt class="descclassname">xsgen.plugins.</tt><tt class="descname">summarize_rcdocs</tt><big>(</big><em>modnames</em>, <em>headersep='='</em>, <em>maxdflt=2000</em><big>)</big><a class="headerlink" href="#xsgen.plugins.summarize_rcdocs" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a list of plugin module names, return a rST string that
+summarizes the docstrings for all run control parameters.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api/index.html" title="API Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="plugins.html" title="xsgen Core Plugins: base, pre, buk, and post"
+             >previous</a> |</li>
+        <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Anthony Scopatz, John Xia.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

@@ -34,15 +34,19 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
+   overview
    install
-   usersguide/index
+   usersguide
+   plugins
+   plugins-module
    api/index
 
-Indices and tables
-------------------
+..
+   Indices and tables
+   ------------------
 
-* :ref:`genindex`
-* :ref:`modindex`
+   * :ref:`genindex`
+   * :ref:`modindex`
 * :ref:`search`
 
 .. _GitHub project site: https://github.com/bright-dev/xsgen
