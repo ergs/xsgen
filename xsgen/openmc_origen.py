@@ -167,7 +167,7 @@ class OpenMCOrigen(object):
 
         Parameters
         ----------
-        state : named tuple (State)
+        state : namedtuple (State)
             The state we are running physics codes for.
         directory : string
             The name of the sub-directory we would like.
@@ -184,7 +184,7 @@ class OpenMCOrigen(object):
 
         Parameters
         ----------
-        state : named tuple (State)
+        state : namedtuple (State)
             A State tuple that contains perturbation parameters specific to that
             state.
 
@@ -271,8 +271,8 @@ class OpenMCOrigen(object):
 
         Parameters
         ----------
-        state : named tuple (State)
-            A named tuple containing the state parameters.
+        state : namedtuple (State)
+            A namedtuple containing the state parameters.
         transmute_time : float
             The length of the time step we would like to run ORIGEN for.
 
@@ -299,8 +299,8 @@ class OpenMCOrigen(object):
 
         Parameters
         ----------
-        state : named tuple (State)
-            A named tuple containing the state parameters.
+        state : namedtuple (State)
+            A namedtuple containing the state parameters.
 
         Returns
         -------
@@ -331,8 +331,8 @@ class OpenMCOrigen(object):
 
         Parameters
         ----------
-        state : named tuple (State)
-            A named tuple containing the state parameters.
+        state : namedtuple (State)
+            A namedtuple containing the state parameters.
 
         Returns
         -------
@@ -460,8 +460,8 @@ class OpenMCOrigen(object):
 
         Parameters
         ----------
-        state : named tuple (State)
-            A named tuple containing the state parameters.
+        state : namedtuple (State)
+            A namedtuple containing the state parameters.
         transmute_time : float
             Length of transmutation timestep.
         phi_g : list of floats
@@ -506,7 +506,7 @@ class OpenMCOrigen(object):
             "TIME": transmute_time,
             "NEUT_PROD": neutron_prod,
             "NEUT_DEST": neutron_dest,
-            "BUd": burnup
+            "BUd": burnup,
             "transmutation": material
             }
         return results
@@ -516,8 +516,8 @@ class OpenMCOrigen(object):
 
         Parameters
         ----------
-        state : named tuple (State)
-            A named tuple containing the state parameters.
+        state : namedtuple (State)
+            A namedtuple containing the state parameters.
         mat : pyne.material.Material
             The fuel material to transmute.
 
