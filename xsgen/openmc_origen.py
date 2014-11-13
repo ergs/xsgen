@@ -232,6 +232,9 @@ class OpenMCOrigen(object):
             else:
                 transmute_time = 0
             results = self.generate(state, transmute_time)
+            # do stuff with results here:
+            self.rc.fuel_material = results["fuel"]["transmutation"]
+            libs = self._update_libs_with_results(libs, results)
             # looks like {"fuel": {"TIME": 0, "NEUT_PROD": ...}, 92350000:
             # {"TIME": ...}}
         nucs = []
@@ -240,7 +243,26 @@ class OpenMCOrigen(object):
         nucs = set(nucs)
         nucs = [(nucname.name(nuc), [mat.comp[nuc] for mat in mat_hist]) for nuc in nucs]
         nucs = dict(nucs)
+        return libs
 
+    def _update_libs_with_results(libs, results):
+        """Update a set of libraries with results from a single timestep in-place.
+
+        Parameters
+        ----------
+        libs : dict
+            A set of libraries with nuclides as keys.
+        results: dict
+            A set of libraries for a single timestep.
+
+        Returns
+        -------
+        libs : dict
+            The updated library.
+        """
+        for mat in libs.keys():
+            for key in libs[mat].keys():
+                libs[mat][key].append(results[mat][key])
         return libs
 
     def generate(self, state, transmute_time):
@@ -256,20 +278,21 @@ class OpenMCOrigen(object):
 
         Returns
         -------
-        None
+        results : dict
+            Dict of physics code results. Keys are either nuclide ID's or "fuel"
+            for the full fuel results.
         """
-
-        # should only be used to change the transmutation matrices, neutron
-        # production/destruction rates, and burnup.
-
+        results = {"fuel": {}}
+        results.update(dict(zip(self.rc.track_nucs, [{} for _ in self.rc.track_nucs])))
         if state in self.statelibs:
             return self.statelibs[state]
         k, phi_g, xs = self.openmc(state)
         self.statelibs[state] = (k, phi_g, xs)
-        self.rc.fuel_material = self.origen(state, xs, transmute_time, phi_g)
+        for key in results.keys():
+            results[key] = self.origen(state, xs, transmute_time, phi_g, mat)
         # store what has become of each tracked nuclide
         # run origen on 1 kg of each nuclide, write out
-        return (k, phi_g, xs, self.rc.fuel_material)
+        return results
 
     def openmc(self, state):
         """Runs OpenMC for a given state.
@@ -443,22 +466,25 @@ class OpenMCOrigen(object):
             Length of transmutation timestep.
         phi_g : list of floats
             Group flux.
+        mat : str or int
+            The material to start transmuting. Either "fuel" or a nuclide in ID
+            form.
 
         Returns
         -------
-        neut_prod : float
-            Neutron production over this timestep.
-        neut_dest : float
-            Neutron destruction over this timestep.
-        burnup : float
-            Burnup over this timestep.
-        mat : pyne.material.Material
-            Result of transmutation.
+        results : dict
+            Dictionary with neutron production and destruction rates, burnup, and
+            transmutation results.
         """
-        pwd = self.pwd(state, "origen")
+        pwd = self.pwd(state, "origen" + str(mat))
+        if mat == "fuel":
+            mat = self.rc.fuel_material
+        else:
+            mat = Material({mat: 1}, 1000, attrs={"units": "g"});
+
         if not os.path.isdir(pwd):
             os.makedirs(pwd)
-        self._make_origen_input(state, transmute_time, phi_g)
+        self._make_origen_input(state, transmute_time, phi_g, mat)
 
         if self.rc.origen_call is NotSpecified:
             if self.rc.is_thermal:
@@ -472,16 +498,28 @@ class OpenMCOrigen(object):
             subprocess.check_call(origen_call)
             tape6 = origen22.parse_tape6("TAPE6.OUT")
             material = tape6.materials[-1]
+            burnup = tape6.burnup_MWD
+            neutron_prod = tape6.neutron_production_rate
+            neutron_dest = tape6.neutron_destruction_rate
 
-        return material
+        results = {
+            "TIME": transmute_time,
+            "NEUT_PROD": neutron_prod,
+            "NEUT_DEST": neutron_dest,
+            "BUd": burnup
+            "transmutation": material
+            }
+        return results
 
-    def _make_origen_input(self, state, transmute_time, phi_g):
+    def _make_origen_input(self, state, transmute_time, phi_g, mat):
         """Make ORIGEN input files for a given state.
 
         Parameters
         ----------
         state : named tuple (State)
             A named tuple containing the state parameters.
+        mat : pyne.material.Material
+            The fuel material to transmute.
 
         Returns
         -------
@@ -491,11 +529,10 @@ class OpenMCOrigen(object):
         ctx = self.context(state)
         with indir(pwd):
             # may need to filter tape4 for Bad Nuclides
-            origen22.write_tape4(self.rc.fuel_material)
+            origen22.write_tape4(mat)
             total_flux = phi_g.sum()
             origen22.write_tape5_irradiation("IRF", transmute_time, total_flux)
             tape9 = origen22.make_tape9(self.rc.track_nucs)
-            import pdb; pdb.set_trace()
             origen22.write_tape9(tape9)
 
 
