@@ -38,6 +38,7 @@ Contents:
    install
    usersguide
    plugins
+   plugins-module
    api/index
 
 ..

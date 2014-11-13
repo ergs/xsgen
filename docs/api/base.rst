@@ -2,6 +2,6 @@
 xsgen Base plugin -- :mod:`xsgen.base`
 =======================================
 
-.. autoclass:: xsgen.base.XSGenPlugin
+.. automodule:: xsgen.base
    :members:
 

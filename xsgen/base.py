@@ -1,4 +1,10 @@
-"""The base plugin for xsgen.
+"""The base plugin for xsgen. Provides the following command-line arguments:
+  - ``--rc``: Path to run control file
+  - ``--plugins``: Plugins to include
+  - ``--debug``: Build in debugging mode
+  - ``--verbose``: Print more output.
+  - ``--version``: Print version information.
+  - ``--bash_completion``: Flag for enabling/disabling BASH completion when using argcomplete.
 
 Base Plugin API
 ===============
@@ -17,7 +23,7 @@ if sys.version_info[0] >= 3:
     basestring = str
 
 class XSGenPlugin(Plugin):
-    """This class provides base functionality for xdress itself."""
+    """This class provides base functionality for xsgen itself."""
 
     defaultrc = RunControl(
         rc=DEFAULT_RC_FILE,
@@ -39,20 +45,7 @@ class XSGenPlugin(Plugin):
         }
 
     def update_argparser(self, parser):
-        """This updates the argument parser with the base options:
-
-        rc: Path to run control file
-
-        plugins: Plugins to include
-
-        debug: Build in debugging mode
-
-        verbose: Print more output.
-
-        version: Print version information.
-
-        bash_completion: Flag for enabling/disabling BASH completion when using argcomplete.
-        """
+        """This updates the argument parser with the base options. """
         parser.add_argument('--rc', help=self.rcdocs['rc'])
         parser.add_argument('--plugins', nargs="+", help=self.rcdocs["plugins"])
         parser.add_argument('--debug', action='store_true', 
@@ -65,6 +58,7 @@ class XSGenPlugin(Plugin):
                             help="enable bash completion", dest="bash_completion")
 
     def setup(self, rc):
+        """Report version if requested."""
         if rc.version:
             print(report_versions())
             sys.exit()

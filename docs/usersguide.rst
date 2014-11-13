@@ -4,7 +4,7 @@ xsgen User's Guide
 
 1. Installation
 
-   .. include:: ../../README.rst
+   .. include:: ../README.rst
       :start-after: .. install-start
       :end-before: .. install-end
 
@@ -17,8 +17,12 @@ xsgen User's Guide
    <https://github.com/bright-dev/xslibs>`_ project repository by
    Anthony Scopatz. This provides some useful run-control files for
    light water reactors. ::
-     git clone git@github.com:bright-dev/xslibs.git 
+     git clone git@github.com:bright-dev/xslibs.git
      cd xslibs
      xsgen --rc lwr1g.py
 
-For more information about command-line arguments, visit the plugins page.
+   ..
+      To learn more about the run control file, see the `RunControl page<runcontrol.html>`_.
+   For more information on command-line arguments, see the `plugins page <plugins.html>`_.
+
+
