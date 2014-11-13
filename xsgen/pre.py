@@ -1,3 +1,14 @@
+"""Pre-processing plugin. Validates input and does sundry pre-calculation tasks.
+
+Provides the following command-line arguments:
+  - ``--ui``: Launches the xsgen ui
+  - ``-c``, ``--clean``: Cleans reactor directory of current files.
+  - ``--formats``: The output formats to write out.
+  - ``--formats``: The output formats to write out.
+  - ``--is-thermal``: Whether the reactor is a thermal system (True) or a fast one (False)
+  - ``--outfiles``: Names of output files to write out. Must correspond with formats.
+"""
+
 from __future__ import print_function
 import re
 import os
@@ -44,7 +55,9 @@ def run_ui():
         application.rx_h5.close()
     sys.exit()
 
+
 class XSGenPlugin(Plugin):
+    "The plugin itself."
 
     requires = ('xsgen.base',)
 
@@ -71,6 +84,8 @@ class XSGenPlugin(Plugin):
                  'k_cycles_skip': 10,
                  'k_particles': 1000,
                  }
+    "A default run control for all the parameters one may desire."
+
 
     rcdocs = {
         'formats': 'The output formats to write out.',
@@ -81,7 +96,7 @@ class XSGenPlugin(Plugin):
 
     def update_argparser(self, parser):
         parser.add_argument("--ui", action="store_true", dest="ui",
-            help="Launches the char ui.")
+            help="Launches the xsgen ui.")
         parser.add_argument("-c", "--clean", action="store_true", dest="clean",
             help="Cleans the reactor directory of current files.")
         parser.add_argument('--formats', dest='formats', help=self.rcdocs['formats'],
@@ -92,6 +107,17 @@ class XSGenPlugin(Plugin):
                             help=self.rcdocs['is_thermal'])
 
     def setup(self, rc):
+        """Run UI if requested; validate input; generate reactor states.
+
+        Parameters
+        ----------
+        rc : xsgen.utils.RunControl
+            The run control that has been read in.
+
+        Returns
+        -------
+        None
+        """
         if rc.ui:
             run_ui()
 
@@ -100,6 +126,17 @@ class XSGenPlugin(Plugin):
         rc.writers = [FORMAT_WRITERS[format](rc) for format in rc.formats]
 
     def ensure_rc(self, rc):
+        """Validate the run control parameters.
+
+        Parameters
+        ----------
+        rc : xsgen.utils.RunControl
+            The run control that has been read in.
+
+        Returns
+        -------
+        None
+        """
         self._ensure_bt(rc)
         self._ensure_gs(rc)
         self._ensure_nl(rc)
@@ -113,7 +150,7 @@ class XSGenPlugin(Plugin):
         self._ensure_outfiles(rc)
 
     def _ensure_bt(self, rc):
-        # Make Time Steps
+        "Get or make the burn times in the run control."
         if 'burn_times' in rc:
             rc.burn_times = np.asarray(rc.burn_times, dtype=float)
         else:
@@ -122,32 +159,54 @@ class XSGenPlugin(Plugin):
         rc.burn_times_index = list(range(len(rc.burn_times)))
 
     def _ensure_gs(self, rc):
-        # ensure group structure
+        "Validate the group structure in the run control."
         gs = np.asarray(rc.group_structure, 'f8')
         if gs[0] < gs[-1]:
             gs = gs[::-1]
         rc.group_structure = gs
 
+    def load_nuc_file(self, path):
+        """Load list nucs from a file. Should be a file containing just a Python list.
+
+        Parameters
+        ----------
+        path : str
+            The path to the nuc file.
+
+        Returns
+        -------
+        nucs : list of ints
+            The nuclides listed in the file, in nuc ID form.
+        """
+        with open(path, 'r') as f:
+            text = f.read()
+            if text[0] == "[" and text[-1] == "]":
+                nucs = exec(text)
+        nucs = [nucname.id(nuc) for nuc in nucs]
+        return nucs
+
     def _ensure_nl(self, rc):
-        # Make nuclide lists
+        "Validate the tracked nuclides in the run control."
         if isinstance(rc.track_nucs, basestring):
-            track_nucs = load_nuc_file(rc.track_nucs)
+            track_nucs = self.load_nuc_file(rc.track_nucs)
         else:
             track_nucs = [nucname.id(nuc) for nuc in rc.track_nucs]
         rc.track_nucs = sorted(set(track_nucs))
 
     def _ensure_temp(self, rc):
+        """Get the temperature from the run control file or set it to 600 K.
+        """
         # Make temperature
         rc.temperature = rc.get('temperature', 600)
 
     def _ensure_smf(self, rc):
-        # make sensitivity mass fractions
+        "Make the sensitivity mass fractions in the run control."
         if 'sensitivity_mass_fractions' in rc:
             rc.deltam = np.atleast_1d(rc.sensitivity_mass_fractions)
             rc.deltam.sort()
 
     def _ensure_av(self, rc):
-        # Make arrays out of quatities that are allowed to vary.
+        "Make arrays out of quantities that are allowed to vary."
         rc.fuel_density = np.atleast_1d(rc.fuel_density)
         rc.clad_density = np.atleast_1d(rc.clad_density)
         rc.cool_density = np.atleast_1d(rc.cool_density)
@@ -159,7 +218,7 @@ class XSGenPlugin(Plugin):
         rc.fuel_specific_power = np.atleast_1d(rc.fuel_specific_power)
 
     def _ensure_inp(self, rc):
-        # Grab initial nuc perturbation
+        "Grab the initial nuclide perturbation."
         max_mass = 0.0
         initial_nuc_keys = []
         for key in rc:
@@ -182,7 +241,8 @@ class XSGenPlugin(Plugin):
             sys.exit(failure(msg))
 
     def _ensure_pp(self, rc):
-        # Set up tuple of parameters to perform a burnup step for
+        "Set up tuple of perturbation parameters to perform a burnup step for."
+
         rc.perturbation_params = ['fuel_density', 'clad_density', 'cool_density',
             'fuel_cell_radius', 'void_cell_radius', 'clad_cell_radius',
             'unit_cell_pitch', 'burn_regions', 'fuel_specific_power',]
@@ -192,6 +252,8 @@ class XSGenPlugin(Plugin):
         rc.perturbation_params.append('burn_times')
 
     def _ensure_mats(self, rc):
+        "Ensure we have a fuel material, clad material, and cooling material."
+
         if 'fuel_material'in rc:
             rc.fuel_material = ensure_mat(rc.fuel_material)
         elif 'fuel_chemical_form' in rc and 'initial_heavy_metal' in rc:
@@ -257,6 +319,8 @@ class XSGenPlugin(Plugin):
                 })
 
     def _ensure_lattice(self, rc):
+        "Ensure we have a lattice geometry."
+
         if 'lattice' not in rc:
             rc.lattice = ("1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 \n"
                           "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 \n"
@@ -279,6 +343,8 @@ class XSGenPlugin(Plugin):
             rc.lattice_shape = (17, 17)
 
     def _ensure_outfiles(self, rc):
+        "Ensure we have outfiles to write to."
+
         if rc.outfiles is NotSpecified:
             print("No outfiles specified, defaulting to format names...")
             rc.outfiles = ["{}.out".format(f) for f in rc.formats]
@@ -290,6 +356,7 @@ class XSGenPlugin(Plugin):
 
     def make_states(self, rc):
         """Makes the reactor state table."""
+
         State = rc.State = namedtuple('State', rc.perturbation_params)
         data = [getattr(rc, a) for a in rc.perturbation_params]
         rc.states = [State(*p) for p in product(*data)]

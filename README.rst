@@ -1,7 +1,29 @@
 xsgen
 =====
+.. overview-start
+Overview
+--------
 
-The defending heavyweight champion of the world returns to defend its title as the King Of Kross Sektions!
+xsgen is a tool for computing multi-group neutron cross-section, burnup, and
+multiplication factor (k\ :sub:`inf`\ ) as a function of reactor state, which
+includes time/fluence, material properties, and reactor geometry.
+
+.. image:: /xsgen-flow.svg
+
+xsgen reads in reactor parameters, simulation parameters, and specific
+quantities to keep track of from a run-control file. After validation, we use
+these parameters to generate the set of possible reactor states. We group these
+states into runs, by finding the ones that have the same initial conditions and
+differ only by time.
+
+For each run we have several timesteps, and for each timestep we run a neutron
+transport code like OpenMC to find the multiplication factor k and the group
+flux, φ\ :sub:`g`\ . We then feed these values to a transmutation code such as
+ORIGEN2.2 to find the burnup and neutron production/destruction rates, as well
+as the transmutation of the material itself. Once we have done this for all
+timesteps, we write this out to libraries, theoretically of a variety of
+formats.
+.. overview-end
 
 .. install-start
 
