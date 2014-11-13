@@ -1,4 +1,9 @@
 """Plugin that runs burnup-criticality calculation.
+
+Provides the following command-line arguments:
+  - ``--openmc-cross-sections``: Path to the cross_sections.xml file for OpenMC
+  - ``--origen``: ORIGEN 2.2 command
+  - ``--solver``: The physics codes that are used to solve the burnup-criticality problem and compute cross sections and transmutation matrices.
 """
 from __future__ import print_function
 import os
@@ -11,6 +16,9 @@ SOLVER_ENGINES = {'openmc+origen': OpenMCOrigen}
 
 
 class XSGenPlugin(Plugin):
+    """The plugin class, inheriting from xsgen.plugins.Plugin. Requires the
+    plugin ``xsgen.pre``.
+    """
 
     requires = ('xsgen.pre',)
 

@@ -20,4 +20,5 @@ xsgen User's Guide
      git clone git@github.com:bright-dev/xslibs.git 
      cd xslibs
      xsgen --rc lwr1g.py
-   
+
+For more information about command-line arguments, visit the plugins page.
