@@ -288,8 +288,8 @@ class OpenMCOrigen(object):
             return self.statelibs[state]
         k, phi_g, xs = self.openmc(state)
         self.statelibs[state] = (k, phi_g, xs)
-        for key in results.keys():
-            results[key] = self.origen(state, xs, transmute_time, phi_g, mat)
+        for mat in results.keys():
+            results[mat] = self.origen(state, transmute_time, phi_g, mat)
         # store what has become of each tracked nuclide
         # run origen on 1 kg of each nuclide, write out
         return results
@@ -368,7 +368,7 @@ class OpenMCOrigen(object):
         # tallies
         ctx['_egrid'] = " ".join(map(str, sorted(ctx['group_structure'])))
         # ctx['_cds_egrid'] = " ".join(map(str, sorted(self.cinderds.src_group_struct)))
-        ctx['_cds_egrid'] = " 1 10 100 1000" # I don't have cinder
+        ctx['_cds_egrid'] = " 1 10 100 1000"  # I don't have cinder
         ctx['_eafds_egrid'] = " ".join(map(str, sorted(self.eafds.src_group_struct)))
         ctx['_omcds_egrid'] = " ".join(map(str, sorted(self.omcds.src_group_struct)))
         # nucs = core_nucs & valid_nucs
@@ -389,7 +389,7 @@ class OpenMCOrigen(object):
         nucs : set
             A set of all nuclides known to OpenMC, in ID form.
         """
-        return {n.nucid for n in self.omcds.cross_sections.ace_tables \
+        return {n.nucid for n in self.omcds.cross_sections.ace_tables
                 if n.nucid is not None}
 
     def _parse_statepoint(self, statepoint):
@@ -455,7 +455,7 @@ class OpenMCOrigen(object):
                 i += 1
         return data
 
-    def origen(self, state, transmute_time, phi_g):
+    def origen(self, state, transmute_time, phi_g, mat):
         """Run ORIGEN on a state.
 
         Parameters
@@ -480,7 +480,7 @@ class OpenMCOrigen(object):
         if mat == "fuel":
             mat = self.rc.fuel_material
         else:
-            mat = Material({mat: 1}, 1000, attrs={"units": "g"});
+            mat = Material({mat: 1}, 1000, attrs={"units": "g"})
 
         if not os.path.isdir(pwd):
             os.makedirs(pwd)
@@ -526,7 +526,6 @@ class OpenMCOrigen(object):
         None
         """
         pwd = self.pwd(state, "origen")
-        ctx = self.context(state)
         with indir(pwd):
             # may need to filter tape4 for Bad Nuclides
             origen22.write_tape4(mat)
