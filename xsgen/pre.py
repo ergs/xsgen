@@ -122,6 +122,8 @@ class XSGenPlugin(Plugin):
             run_ui()
 
         self.ensure_rc(rc)
+        if rc.debug:
+            print("making states...")
         self.make_states(rc)
         rc.writers = [FORMAT_WRITERS[format](rc) for format in rc.formats]
 

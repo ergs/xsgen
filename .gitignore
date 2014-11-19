@@ -6,3 +6,5 @@ xsgen.egg-info/
 *.pyc
 *.*~
 debug.txt
+*.INP
+*.OUT

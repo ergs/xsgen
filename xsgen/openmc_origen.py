@@ -282,6 +282,7 @@ class OpenMCOrigen(object):
             Dict of physics code results. Keys are either nuclide ID's or "fuel"
             for the full fuel results.
         """
+
         results = {"fuel": {}}
         results.update(dict(zip(self.rc.track_nucs, [{} for _ in self.rc.track_nucs])))
         if state in self.statelibs:
@@ -323,6 +324,7 @@ class OpenMCOrigen(object):
             statepoint = _find_statepoint(pwd)
         # parse & prepare results
         k, phi_g = self._parse_statepoint(statepoint)
+        print("generating xs")
         xstab = self._generate_xs(phi_g)
         return k, phi_g, xstab
 
@@ -477,6 +479,7 @@ class OpenMCOrigen(object):
             transmutation results.
         """
         pwd = self.pwd(state, "origen" + str(mat))
+        matname = mat
         if mat == "fuel":
             mat = self.rc.fuel_material
         else:
@@ -484,7 +487,7 @@ class OpenMCOrigen(object):
 
         if not os.path.isdir(pwd):
             os.makedirs(pwd)
-        self._make_origen_input(state, transmute_time, phi_g, mat)
+        self._make_origen_input(state, transmute_time, phi_g, mat, matname)
 
         if self.rc.origen_call is NotSpecified:
             if self.rc.is_thermal:
@@ -497,10 +500,11 @@ class OpenMCOrigen(object):
         with indir(pwd):
             subprocess.check_call(origen_call)
             tape6 = origen22.parse_tape6("TAPE6.OUT")
-            material = tape6.materials[-1]
-            burnup = tape6.burnup_MWD
-            neutron_prod = tape6.neutron_production_rate
-            neutron_dest = tape6.neutron_destruction_rate
+            # import pdb; pdb.set_trace()
+            material = tape6["materials"][-1]
+            burnup = tape6["burnup_MWD"]
+            neutron_prod = tape6["neutron_production_rate"][-1]
+            neutron_dest = tape6["neutron_destruction_rate"][-1]
 
         results = {
             "TIME": transmute_time,
@@ -511,7 +515,7 @@ class OpenMCOrigen(object):
             }
         return results
 
-    def _make_origen_input(self, state, transmute_time, phi_g, mat):
+    def _make_origen_input(self, state, transmute_time, phi_g, mat, matname):
         """Make ORIGEN input files for a given state.
 
         Parameters
@@ -520,17 +524,16 @@ class OpenMCOrigen(object):
             A namedtuple containing the state parameters.
         mat : pyne.material.Material
             The fuel material to transmute.
-
         Returns
         -------
         None
         """
-        pwd = self.pwd(state, "origen")
+        pwd = self.pwd(state, "origen"+str(matname))
         with indir(pwd):
             # may need to filter tape4 for Bad Nuclides
             origen22.write_tape4(mat)
             total_flux = phi_g.sum()
-            origen22.write_tape5_irradiation("IRF", transmute_time, total_flux)
+            origen22.write_tape5_irradiation("IRF", transmute_time, total_flux, xsfpy_nlb=(201,202,203))
             tape9 = origen22.make_tape9(self.rc.track_nucs)
             origen22.write_tape9(tape9)
 
