@@ -30,6 +30,7 @@ SETTINGS_TEMPLATE = """<?xml version="1.0"?>
       <parameters>0 0 0 {unit_cell_height} {unit_cell_height} {unit_cell_height}</parameters>
     </space>
   </source>
+  <energy_grid>{energy_grid}</energy_grid>
 </settings>
 """
 
@@ -245,7 +246,7 @@ class OpenMCOrigen(object):
         nucs = dict(nucs)
         return libs
 
-    def _update_libs_with_results(libs, results):
+    def _update_libs_with_results(self, libs, results):
         """Update a set of libraries with results from a single timestep in-place.
 
         Parameters
@@ -289,10 +290,11 @@ class OpenMCOrigen(object):
             return self.statelibs[state]
         k, phi_g, xs = self.openmc(state)
         self.statelibs[state] = (k, phi_g, xs)
+        self.tape9 = origen22.make_tape9(self.rc.track_nucs)
         for mat in results.keys():
             results[mat] = self.origen(state, transmute_time, phi_g, mat)
         # store what has become of each tracked nuclide
-        # run origen on 1 kg of each nuclide, write out
+        # run origen on 1 kg of each nuclide, write ot
         return results
 
     def openmc(self, state):
@@ -324,7 +326,6 @@ class OpenMCOrigen(object):
             statepoint = _find_statepoint(pwd)
         # parse & prepare results
         k, phi_g = self._parse_statepoint(statepoint)
-        print("generating xs")
         xstab = self._generate_xs(phi_g)
         return k, phi_g, xstab
 
@@ -349,7 +350,10 @@ class OpenMCOrigen(object):
             f.write(settings)
         # materials
         valid_nucs = self.nucs_in_cross_sections()
+        # discard Cd-119m1 as a valid nuc
+        valid_nucs.discard(481190001)
         # core_nucs = set(ctx['core_transmute'])
+        # import pdb; pdb.set_trace()
         ctx['_fuel_nucs'] = _mat_to_nucs(rc.fuel_material[valid_nucs])
         ctx['_clad_nucs'] = _mat_to_nucs(rc.clad_material[valid_nucs])
         ctx['_cool_nucs'] = _mat_to_nucs(rc.cool_material[valid_nucs])
@@ -500,7 +504,6 @@ class OpenMCOrigen(object):
         with indir(pwd):
             subprocess.check_call(origen_call)
             tape6 = origen22.parse_tape6("TAPE6.OUT")
-            # import pdb; pdb.set_trace()
             material = tape6["materials"][-1]
             burnup = tape6["burnup_MWD"]
             neutron_prod = tape6["neutron_production_rate"][-1]
@@ -534,8 +537,7 @@ class OpenMCOrigen(object):
             origen22.write_tape4(mat)
             total_flux = phi_g.sum()
             origen22.write_tape5_irradiation("IRF", transmute_time, total_flux, xsfpy_nlb=(201,202,203))
-            tape9 = origen22.make_tape9(self.rc.track_nucs)
-            origen22.write_tape9(tape9)
+            origen22.write_tape9(self.tape9)
 
 
 def _mat_to_nucs(mat):

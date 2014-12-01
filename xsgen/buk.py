@@ -121,10 +121,10 @@ class XSGenPlugin(Plugin):
         rc.runs = runs
 
         for run in rc.runs:
-            lib = rc.engine.generate_run(run)
+            libs = rc.engine.generate_run(run)
             for i, writer in enumerate(rc.writers):
                 fname = os.path.join(rc.engine.builddir, rc.outfiles[i])
-                writer.write(lib, fname)
+                writer.write(libs, fname)
                 print("Wrote output file to " + fname)
 
     #

@@ -67,6 +67,7 @@ class XSGenPlugin(Plugin):
                  'burn_times': [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
                  'group_structure': [10 ** x for x in range(1, -3, -1)],
                  'track_nucs': transmute,
+                 'energy_grid': 'nuclide',
                  'fuel_density': 19.1,
                  'clad_density': 6.56,
                  'cool_density': 1.0,
