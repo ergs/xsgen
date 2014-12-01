@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Run Control files &mdash; xsgen 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="xsgen 0.1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/runcontrol.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="run-control-files">
+<h1>Run Control files<a class="headerlink" href="#run-control-files" title="Permalink to this headline">¶</a></h1>
+<p>Much of the customization of an <tt class="docutils literal"><span class="pre">xsgen</span></tt> run is controlled through
+the run control file. This is a Python file that consists of variable
+assignments. For example, to set the <tt class="docutils literal"><span class="pre">reactor</span></tt> property of the run
+control to <tt class="docutils literal"><span class="pre">&quot;lwr1g&quot;</span></tt>, you would include this in the run control file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">reactor</span> <span class="o">=</span> <span class="s">&quot;lwr1g&quot;</span>
+</pre></div>
+</div>
+<p>As a Python file, you can easily add your own comments and even set
+parameters to Python expressions or objects from other imported
+modules. A sample run control file can be found <a class="reference external" href="https://github.com/bright-dev/xslibs/blob/master/lwr1g.py">here</a>.</p>
+<p>All plugins are able to update the command-line flags which set
+options in the run control. You can see the individual <a class="reference external" href="plugins.html">plugin pages</a> for details.</p>
+<p>However, there are many options that are not set by command line -
+these are reactor parameters that are loaded from the run control
+file and validated by <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt>. To specify the run control file,
+just add the flag <tt class="docutils literal"><span class="pre">--rc</span> <span class="pre">/path/to/file</span></tt> to your <tt class="docutils literal"><span class="pre">xsgen</span></tt> call.</p>
+<p>If any parameters are missing, <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt> will provide the following
+defaults:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">defaultrc</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;formats&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;brightlite&#39;</span><span class="p">,),</span>
+             <span class="s">&#39;ui&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+             <span class="s">&#39;is_thermal&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+             <span class="s">&#39;burn_times&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span>
+             <span class="s">&#39;group_structure&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span> <span class="o">**</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)],</span>
+             <span class="s">&#39;track_nucs&#39;</span><span class="p">:</span> <span class="n">transmute</span><span class="p">,</span>
+             <span class="s">&#39;energy_grid&#39;</span><span class="p">:</span> <span class="s">&#39;nuclide&#39;</span><span class="p">,</span>
+             <span class="s">&#39;fuel_density&#39;</span><span class="p">:</span> <span class="mf">19.1</span><span class="p">,</span>
+             <span class="s">&#39;clad_density&#39;</span><span class="p">:</span> <span class="mf">6.56</span><span class="p">,</span>
+             <span class="s">&#39;cool_density&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+             <span class="s">&#39;fuel_cell_radius&#39;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
+             <span class="s">&#39;void_cell_radius&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+             <span class="s">&#39;clad_cell_radius&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+             <span class="s">&#39;unit_cell_pitch&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
+             <span class="s">&#39;unit_cell_height&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+             <span class="s">&#39;burn_regions&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+             <span class="s">&#39;fuel_specific_power&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+             <span class="s">&#39;fuel_material&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;U238&#39;</span><span class="p">:</span> <span class="mf">0.96</span><span class="p">,</span> <span class="s">&#39;U235&#39;</span><span class="p">:</span> <span class="mf">0.04</span><span class="p">},</span>
+             <span class="s">&#39;solver&#39;</span><span class="p">:</span> <span class="s">&quot;openmc+origen&quot;</span><span class="p">,</span>
+             <span class="s">&#39;reactor&#39;</span><span class="p">:</span> <span class="s">&quot;lwr&quot;</span><span class="p">,</span>
+             <span class="s">&#39;k_cycles&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+             <span class="s">&#39;k_cycles_skip&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+             <span class="s">&#39;k_particles&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+             <span class="p">}</span>
+</pre></div>
+</div>
+<p>There is no guarantee that these are particularly physical, but they
+will certainly allow you to run xsgen.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Anthony Scopatz, John Xia.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
