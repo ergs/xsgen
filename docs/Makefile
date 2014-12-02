@@ -8,6 +8,7 @@ PAPER         =
 BUILDDIR      = _build
 
 COMMITMSG     = "rebuild docs"
+UPSTREAM      = up
 
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
@@ -181,5 +182,7 @@ pseudoxml:
 
 github: html
 	ghp-import -m $(COMMITMSG) -p $(BUILDDIR)/html -n
+	git push $(UPSTREAM) gh-pages
 	@echo
-	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html and have been pushed to origin/gh-pages."
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html and have"
+        @echo "been pushed to origin/gh-pages and up/gh-pages."

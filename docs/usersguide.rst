@@ -1,7 +1,6 @@
 xsgen User's Guide
 ==================
 
-
 1. Installation
 
    .. include:: ../README.rst
