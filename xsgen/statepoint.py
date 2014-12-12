@@ -1,21 +1,4 @@
 #!/usr/bin/env python2
-"""
-Copyright (c) 2011-2014 Massachusetts Institute of Technology
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-"""
 
 import struct
 from collections import OrderedDict
@@ -23,11 +6,7 @@ from collections import OrderedDict
 import numpy as np
 import scipy.stats
 
-import sys
-if sys.version_info[0] >= 3:
-    long = int
-
-REVISION_STATEPOINT = 12
+REVISION_STATEPOINT = 13
 
 filter_types = {1: 'universe', 2: 'material', 3: 'cell', 4: 'cellborn',
                 5: 'surface', 6: 'mesh', 7: 'energyin', 8: 'energyout'}
@@ -203,7 +182,6 @@ class StatePoint(object):
         # Read run information
         self.run_mode = self._get_int(path='run_mode')[0]
         self.n_particles = self._get_long(path='n_particles')[0]
-        self.n_batches = self._get_int(path='n_batches')[0]
 
         # Read current batch
         self.current_batch = self._get_int(path='current_batch')[0]
@@ -576,7 +554,7 @@ class StatePoint(object):
 
             # append in dictionary bin with filter
             data.update({list(tally.filters.keys())[n_filters - i - 1]:
-                         filters[:,n_filters - i - 1]})
+                             filters[:,n_filters - i - 1]})
 
             # check for mesh
             if list(tally.filters.keys())[n_filters - i - 1] == 'mesh':
@@ -593,8 +571,8 @@ class StatePoint(object):
                             np.prod(meshmax[0:3]))/(np.prod(meshmax[0:2]))) + 1
                 mesh_bins[:,0] = np.floor(((filters[:,n_filters - i - 1] - 1) %
                             np.prod(meshmax[0:4]))/(np.prod(meshmax[0:3]))) + 1
-                data.update({'mesh':zip(mesh_bins[:,0],mesh_bins[:,1],
-                            mesh_bins[:,2])})
+                data.update({'mesh': list(zip(mesh_bins[:,0], mesh_bins[:,1],
+                                              mesh_bins[:,2]))})
             i += 1
 
         # add in maximum bin filters and order
@@ -625,9 +603,9 @@ class StatePoint(object):
 
     def _get_long(self, n=1, path=None):
         if self._hdf5:
-            return [long(v) for v in self._f[path].value]
+            return [int(v) for v in self._f[path].value]
         else:
-            return [long(v) for v in self._get_data(n, 'q', 8)]
+            return [int(v) for v in self._get_data(n, 'q', 8)]
 
     def _get_float(self, n=1, path=None):
         if self._hdf5:

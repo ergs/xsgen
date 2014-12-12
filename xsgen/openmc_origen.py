@@ -44,7 +44,7 @@ MATERIALS_TEMPLATE = """<?xml version="1.0"?>
   <material id="2">
     <density value="{cool_density}" units="g/cc" />
     {_cool_nucs}
-    <sab name="lwtr" xs="11t" />
+    <sab name="HH2O" xs="71t" />
   </material>
   <material id="3">
     <density value="{clad_density}" units="g/cc" />
