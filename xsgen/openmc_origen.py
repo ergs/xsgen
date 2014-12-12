@@ -44,14 +44,14 @@ MATERIALS_TEMPLATE = """<?xml version="1.0"?>
   <material id="2">
     <density value="{cool_density}" units="g/cc" />
     {_cool_nucs}
-    <sab name="HH2O" xs="71t" />
+    <sab name="lwtr" xs="11t" />
   </material>
   <material id="3">
     <density value="{clad_density}" units="g/cc" />
     {_clad_nucs}
   </material>
 </materials>
-"""
+"""  # TODO we need to make sab a thing in the rc...
 
 GEOMETRY_TEMPLATE = """<?xml version="1.0"?>
 <geometry>
@@ -353,7 +353,6 @@ class OpenMCOrigen(object):
         # discard Cd-119m1 as a valid nuc
         valid_nucs.discard(481190001)
         # core_nucs = set(ctx['core_transmute'])
-        # import pdb; pdb.set_trace()
         ctx['_fuel_nucs'] = _mat_to_nucs(rc.fuel_material[valid_nucs])
         ctx['_clad_nucs'] = _mat_to_nucs(rc.clad_material[valid_nucs])
         ctx['_cool_nucs'] = _mat_to_nucs(rc.cool_material[valid_nucs])

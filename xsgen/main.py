@@ -1,5 +1,8 @@
 import os
 import argparse
+import warnings
+from pyne.utils import QAWarning
+warnings.simplefilter("ignore", QAWarning)
 
 try:
     import argcomplete
