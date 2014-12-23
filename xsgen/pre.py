@@ -68,6 +68,8 @@ class XSGenPlugin(Plugin):
                  'group_structure': [10 ** x for x in range(1, -3, -1)],
                  'track_nucs': transmute,
                  'energy_grid': 'nuclide',
+                 'sab': 'HH2O',
+                 'sab_xs': '71t',
                  'fuel_density': 19.1,
                  'clad_density': 6.56,
                  'cool_density': 1.0,
