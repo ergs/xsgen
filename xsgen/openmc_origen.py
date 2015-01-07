@@ -4,7 +4,7 @@ import subprocess
 
 import numpy as np
 
-from xsgen.statepoint import StatePoint
+from statepoint import StatePoint
 
 from pyne import rxname
 from pyne import nucname
@@ -238,12 +238,6 @@ class OpenMCOrigen(object):
             libs = self._update_libs_with_results(libs, results)
             # looks like {"fuel": {"TIME": 0, "NEUT_PROD": ...}, 92350000:
             # {"TIME": ...}}
-        nucs = []
-        for mat in mat_hist:
-            nucs.extend(mat.comp.keys())
-        nucs = set(nucs)
-        nucs = [(nucname.name(nuc), [mat.comp[nuc] for mat in mat_hist]) for nuc in nucs]
-        nucs = dict(nucs)
         return libs
 
     def _update_libs_with_results(self, libs, results):
@@ -535,7 +529,10 @@ class OpenMCOrigen(object):
             # may need to filter tape4 for Bad Nuclides
             origen22.write_tape4(mat)
             total_flux = phi_g.sum()
-            origen22.write_tape5_irradiation("IRF", transmute_time, total_flux, xsfpy_nlb=(201,202,203))
+            origen22.write_tape5_irradiation("IRF",
+                                             transmute_time,
+                                             total_flux,
+                                             xsfpy_nlb=(201, 202, 203))
             origen22.write_tape9(self.tape9)
 
 

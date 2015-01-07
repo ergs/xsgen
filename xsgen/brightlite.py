@@ -7,6 +7,8 @@ class BrightliteWriter(object):
         self.rc = rc
 
     def write(self, libs, fname):
+        print("By 'write' you meant to stdout right?")
+        print(libs)
         header = ["TIME", "NEUT_PROD", "NEUT_DEST", "BUd"]
         for name, lib in libs.items():
             lines = [h + " " + " ".join(map(str, lib[h])) for h in header]

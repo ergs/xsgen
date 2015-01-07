@@ -64,7 +64,6 @@ class XSGenPlugin(Plugin):
     defaultrc = {'formats': ('brightlite',),
                  'ui': False,
                  'is_thermal': True,
-                 'burn_times': [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
                  'group_structure': [10 ** x for x in range(1, -3, -1)],
                  'track_nucs': transmute,
                  'energy_grid': 'nuclide',
@@ -158,9 +157,12 @@ class XSGenPlugin(Plugin):
         "Get or make the burn times in the run control."
         if 'burn_times' in rc:
             rc.burn_times = np.asarray(rc.burn_times, dtype=float)
-        else:
+        elif 'burn_time' in rc and 'time_step' in rc:
             bt_upper_lim = rc.burn_time + rc.time_step/10.0
             rc.burn_times = np.arange(0, bt_upper_lim, rc.time_step)
+        else:
+            print("No burn times specified, default to np.arange(0, 1000, 100)")
+            rc.burn_times = np.arange(0, 1000, 100)
         rc.burn_times_index = list(range(len(rc.burn_times)))
 
     def _ensure_gs(self, rc):
@@ -366,4 +368,3 @@ class XSGenPlugin(Plugin):
         data = [getattr(rc, a) for a in rc.perturbation_params]
         rc.states = [State(*p) for p in product(*data)]
         rc.nstates = len(rc.states)
-
