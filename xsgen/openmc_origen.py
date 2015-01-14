@@ -220,45 +220,55 @@ class OpenMCOrigen(object):
             "NEUT_PROD": [],
             "NEUT_DEST": [],
             "BUd":  [],
-            "transmutation": []}
-        }
-        libs.update(dict(zip(self.rc.track_nucs,
-                             [{"TIME": [],
-                               "NEUT_PROD": [],
-                               "BUd": [],
-                               "transmutation": []} for _ in self.rc.track_nucs])))
+            "tracked_nucs": {nucname.name(n): [] for n in self.rc.track_nucs},
+        }}
+
+        for nuc in self.rc.track_nucs:
+            libs[nuc] = {
+                "TIME": [],
+                "NEUT_PROD": [],
+                "NEUT_DEST": [],
+                "BUd": [],
+                "tracked_nucs": {nucname.name(n): [] for n in self.rc.track_nucs}
+            }
+
         for i, state in enumerate(run):
             if i < len(run) - 1 :
                 transmute_time = run[i+1].burn_times - state.burn_times
             else:
                 transmute_time = 0
             results = self.generate(state, transmute_time)
-            # do stuff with results here:
-            self.rc.fuel_material = results["fuel"]["transmutation"]
+            self.rc.fuel_material = results["fuel"]["material"]
             libs = self._update_libs_with_results(libs, results)
-            # looks like {"fuel": {"TIME": 0, "NEUT_PROD": ...}, 92350000:
-            # {"TIME": ...}}
         return libs
 
-    def _update_libs_with_results(self, libs, results):
+    def _update_libs_with_results(self, matlibs, newlibs):
         """Update a set of libraries with results from a single timestep in-place.
 
         Parameters
         ----------
-        libs : dict
+        matlibs : dict
             A set of libraries with nuclides as keys.
-        results: dict
-            A set of libraries for a single timestep.
+        newlibs: dict
+            A set of libraries for a single timestep, with nuclides as keys.
 
         Returns
         -------
         libs : dict
             The updated library.
         """
-        for mat in libs.keys():
-            for key in libs[mat].keys():
-                libs[mat][key].append(results[mat][key])
-        return libs
+        for mat, newlib in newlibs.items():
+            oldlib = matlibs[mat]
+            for nuc in self.rc.track_nucs:
+                name = nucname.name(nuc)
+                nuc_frac = newlib["material"].comp.get(nuc, 0)
+                oldlib["tracked_nucs"][name].append(nuc_frac)
+            for key, value in newlib.items():
+                if isinstance(key, int) or key == "material":
+                    continue
+                else:
+                    oldlib[key].append(value)
+        return matlibs
 
     def generate(self, state, transmute_time):
         """Runs physics codes on a specific state. First runs OpenMC for transport,
@@ -283,12 +293,10 @@ class OpenMCOrigen(object):
         if state in self.statelibs:
             return self.statelibs[state]
         k, phi_g, xs = self.openmc(state)
-        self.statelibs[state] = (k, phi_g, xs)
         self.tape9 = origen22.make_tape9(self.rc.track_nucs)
         for mat in results.keys():
             results[mat] = self.origen(state, transmute_time, phi_g, mat)
-        # store what has become of each tracked nuclide
-        # run origen on 1 kg of each nuclide, write ot
+        self.statelibs[state] = results
         return results
 
     def openmc(self, state):
@@ -316,7 +324,7 @@ class OpenMCOrigen(object):
         statepoint = _find_statepoint(pwd)
         if statepoint is None:
             with indir(pwd):
-                subprocess.check_call(['openmc'])
+                subprocess.check_call(['openmc', '-s', '{}'.format(self.rc.threads)])
             statepoint = _find_statepoint(pwd)
         # parse & prepare results
         k, phi_g = self._parse_statepoint(statepoint)
@@ -484,7 +492,6 @@ class OpenMCOrigen(object):
 
         if not os.path.isdir(pwd):
             os.makedirs(pwd)
-        self._make_origen_input(state, transmute_time, phi_g, mat, matname)
 
         if self.rc.origen_call is NotSpecified:
             if self.rc.is_thermal:
@@ -495,19 +502,22 @@ class OpenMCOrigen(object):
             origen_call = self.rc.origen_call
 
         with indir(pwd):
-            subprocess.check_call(origen_call)
+            if not os.path.isfile("TAPE6.OUT"):
+                self._make_origen_input(state, transmute_time, phi_g, mat, matname)
+                subprocess.check_call(origen_call)
             tape6 = origen22.parse_tape6("TAPE6.OUT")
-            material = tape6["materials"][-1]
-            burnup = tape6["burnup_MWD"]
-            neutron_prod = tape6["neutron_production_rate"][-1]
-            neutron_dest = tape6["neutron_destruction_rate"][-1]
+
+        material = tape6["materials"][-1]
+        burnup = tape6["burnup_MWD"][-1]
+        neutron_prod = tape6["neutron_production_rate"][-1]
+        neutron_dest = tape6["neutron_destruction_rate"][-1]
 
         results = {
             "TIME": transmute_time,
             "NEUT_PROD": neutron_prod,
             "NEUT_DEST": neutron_dest,
             "BUd": burnup,
-            "transmutation": material
+            "material": material
             }
         return results
 
@@ -524,16 +534,14 @@ class OpenMCOrigen(object):
         -------
         None
         """
-        pwd = self.pwd(state, "origen"+str(matname))
-        with indir(pwd):
-            # may need to filter tape4 for Bad Nuclides
-            origen22.write_tape4(mat)
-            total_flux = phi_g.sum()
-            origen22.write_tape5_irradiation("IRF",
-                                             transmute_time,
-                                             total_flux,
-                                             xsfpy_nlb=(201, 202, 203))
-            origen22.write_tape9(self.tape9)
+        # may need to filter tape4 for Bad Nuclides
+        origen22.write_tape4(mat*1000)
+        total_flux = phi_g.sum()
+        origen22.write_tape5_irradiation("IRF",
+                                         transmute_time,
+                                         total_flux,
+                                         xsfpy_nlb=(201, 202, 203))
+        origen22.write_tape9(self.tape9)
 
 
 def _mat_to_nucs(mat):

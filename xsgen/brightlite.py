@@ -7,13 +7,13 @@ class BrightliteWriter(object):
         self.rc = rc
 
     def write(self, libs, fname):
-        print("By 'write' you meant to stdout right?")
-        print(libs)
-        header = ["TIME", "NEUT_PROD", "NEUT_DEST", "BUd"]
-        for name, lib in libs.items():
-            lines = [h + " " + " ".join(map(str, lib[h])) for h in header]
-            lines.extend([str(key).upper() + " " + " ".join(map(str, lib[key]))
-                          for key in lib.keys() if key not in header])
-
-            with open(fname+"-"+str(name), "w") as f:
+        rownames = ["TIME", "NEUT_PROD", "NEUT_DEST", "BUd"]
+        for mat, matlib in libs.items():
+            lines = [row + "   " + "   ".join(map(str, matlib[row]))
+                     for row in rownames]
+            nucs = matlib["tracked_nucs"]
+            lines.extend([n + "   " + "   ".join(map(str, nucs[n]))
+                          for n in nucs])
+            with open(fname+"-"+str(mat), "w") as f:
+                print("Writing out to {}...".format(fname+"-"+str(mat)))
                 f.write("\n".join(lines))
