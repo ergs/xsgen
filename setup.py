@@ -3,6 +3,7 @@ try:
     from setuptools import setup
     has_setuptools = True
 except ImportError:
+    has_setuptools = False
     from distutils.core import setup
 
 if has_setuptools:
