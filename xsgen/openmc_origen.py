@@ -314,8 +314,7 @@ class OpenMCOrigen(object):
         fuel_specific_power_mwcc = self.rc.fuel_density * 1e-6 * self.rc.fuel_specific_power
         # see http://iriaxp.iri.tudelft.nl/~leege/SCALE44/origens.PDF for formula
         # (search for "the specific power due to fission", on p. 22 of the PDF)
-        phi_tot = 3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi
-        import pdb; pdb.set_trace()
+        phi_tot = sum(3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi)
         for mat in results.keys():
             results[mat] = self.origen(state, transmute_time, phi_tot, mat)
         self.statelibs[state] = results
@@ -351,7 +350,8 @@ class OpenMCOrigen(object):
             statepoint = _find_statepoint(pwd)
         # parse & prepare results
         k, phi_g = self._parse_statepoint(statepoint)
-        xstab = self._generate_xs(phi_g)
+        e_g = self.omcds.src_group_struct
+        xstab = self._generate_xs(e_g, phi_g)
         return k, phi_g, xstab
 
     def _make_omc_input(self, state):
@@ -446,16 +446,19 @@ class OpenMCOrigen(object):
             ds.src_phi_g /= ds.src_phi_g.sum()
         # compute return values
         k, kerr = sp.k_combined
-        t_flux = sp.tallies[0]
+        t_flux = sp.tallies[3]
         phi_g = t_flux.results[::-1, :, 0].flatten()
         phi_g /= phi_g.sum()
+
         return k, phi_g
 
-    def _generate_xs(self, phi_g):
+    def _generate_xs(self, e_g, phi_g):
         """Grab xs data from cache depending on group flux.
 
         Parameters
         ----------
+        e_g : list of floats
+            Group structure.
         phi_g : list of floats
             Group flux.
 
@@ -467,7 +470,7 @@ class OpenMCOrigen(object):
         rc = self.rc
         verbose = rc.verbose
         xscache = self.xscache
-        xscache['E_g'] = rc.group_structure
+        xscache['E_g'] = e_g
         xscache['phi_g'] = phi_g
         G = len(phi_g)
         temp = rc.temperature
@@ -530,7 +533,11 @@ class OpenMCOrigen(object):
                 subprocess.check_call(origen_call)
             tape6 = origen22.parse_tape6("TAPE6.OUT")
 
-        out_mat = tape6["materials"][-1]
+        try:
+            out_mat = tape6["materials"][-1]
+        except KeyError:
+            import ipdb
+            ipdb.set_trace()
         out_mat.mass = 1000
         burnup = tape6["burnup_MWD"][-1]
         neutron_prod = tape6["neutron_production_rate"][-1]
@@ -563,6 +570,8 @@ class OpenMCOrigen(object):
         None
         """
         # may need to filter tape4 for Bad Nuclides
+        # if sum(mat.comp.values()) > 1:
+        import ipdb; ipdb.set_trace()
         origen22.write_tape4(mat)
         origen22.write_tape5_irradiation("IRF",
                                          transmute_time,

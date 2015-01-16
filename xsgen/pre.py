@@ -79,7 +79,7 @@ class XSGenPlugin(Plugin):
                  'unit_cell_height': 2,
                  'burn_regions': 1,
                  'fuel_specific_power': 1,
-                 'fuel_material': {'U238': 0.96, 'U235': 0.04},
+                 # 'fuel_material': {'U238': 0.96, 'U235': 0.04},
                  'solver': "openmc+origen",
                  'reactor': "lwr",
                  'k_cycles': 20,
