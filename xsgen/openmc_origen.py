@@ -311,11 +311,13 @@ class OpenMCOrigen(object):
                             for nuc in fuel_material.comp}
         sum_N_i_sig_fi = sum([number_densities[nuc] * fission_xs.get(nuc, 0)
                               for nuc in fuel_material.comp])
+        sum_N_i_sig_fi = sum_N_i_sig_fi[sum_N_i_sig_fi != 0]
         fuel_specific_power_mwcc = self.rc.fuel_density * 1e-6 * self.rc.fuel_specific_power
         # see http://iriaxp.iri.tudelft.nl/~leege/SCALE44/origens.PDF for formula
         # (search for "the specific power due to fission", on p. 22 of the PDF)
         phi_tot = sum(3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi)
-        import ipdb; ipdb.set_trace()
+        if np.isinf(phi_tot) or np.isnan(phi_tot):
+            import ipdb; ipdb.set_trace()
         for mat in results.keys():
             results[mat] = self.origen(state, transmute_time, phi_tot, mat)
         self.statelibs[state] = results
@@ -540,6 +542,7 @@ class OpenMCOrigen(object):
             import ipdb
             ipdb.set_trace()
         out_mat.mass = 1000
+        out_mat.comp = {n: frac for n, frac in out_mat.comp.items() if frac != 0}
         burnup = tape6["burnup_MWD"][-1]
         neutron_prod = tape6["neutron_production_rate"][-1]
         neutron_dest = tape6["neutron_destruction_rate"][-1]
