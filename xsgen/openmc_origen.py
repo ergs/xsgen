@@ -315,6 +315,7 @@ class OpenMCOrigen(object):
         # see http://iriaxp.iri.tudelft.nl/~leege/SCALE44/origens.PDF for formula
         # (search for "the specific power due to fission", on p. 22 of the PDF)
         phi_tot = sum(3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi)
+        import ipdb; ipdb.set_trace()
         for mat in results.keys():
             results[mat] = self.origen(state, transmute_time, phi_tot, mat)
         self.statelibs[state] = results
@@ -571,7 +572,6 @@ class OpenMCOrigen(object):
         """
         # may need to filter tape4 for Bad Nuclides
         # if sum(mat.comp.values()) > 1:
-        import ipdb; ipdb.set_trace()
         origen22.write_tape4(mat)
         origen22.write_tape5_irradiation("IRF",
                                          transmute_time,
