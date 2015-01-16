@@ -14,3 +14,4 @@ class XSGenPlugin(Plugin):
 
         if not rc.get('CWD'):
             os.chdir('..')
+        print("\a")
