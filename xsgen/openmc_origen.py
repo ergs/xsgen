@@ -576,7 +576,8 @@ class OpenMCOrigen(object):
         origen22.write_tape5_irradiation("IRF",
                                          transmute_time,
                                          phi_tot,
-                                         xsfpy_nlb=(201, 202, 203))
+                                         xsfpy_nlb=(201, 202, 203),
+                                         cut_off=1e-6)
         origen22.write_tape9(self.tape9)
 
 
