@@ -316,8 +316,6 @@ class OpenMCOrigen(object):
         # see http://iriaxp.iri.tudelft.nl/~leege/SCALE44/origens.PDF for formula
         # (search for "the specific power due to fission", on p. 22 of the PDF)
         phi_tot = sum(3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi)
-        if np.isinf(phi_tot) or np.isnan(phi_tot):
-            import ipdb; ipdb.set_trace()
         for mat in results.keys():
             results[mat] = self.origen(state, transmute_time, phi_tot, mat)
         self.statelibs[state] = results
@@ -352,8 +350,8 @@ class OpenMCOrigen(object):
                 subprocess.check_call(['openmc', '-s', '{}'.format(self.rc.threads)])
             statepoint = _find_statepoint(pwd)
         # parse & prepare results
-        k, phi_g = self._parse_statepoint(statepoint)
-        e_g = self.omcds.src_group_struct
+        omc_flux_tally_id = 4
+        k, phi_g, e_g = self._parse_statepoint(statepoint, omc_flux_tally_id)
         xstab = self._generate_xs(e_g, phi_g)
         return k, phi_g, xstab
 
@@ -425,14 +423,16 @@ class OpenMCOrigen(object):
         return {n.nucid for n in self.omcds.cross_sections.ace_tables
                 if n.nucid is not None}
 
-    def _parse_statepoint(self, statepoint):
+    def _parse_statepoint(self, statepoint, tally_id):
         """Parses a statepoint file and reads in the relevant fluxes, assigns them
-        to the DataSources or the XSCache, and returns k and phi_g.
+        to the DataSources or the XSCache, and returns k, phi_g, and E_g.
 
         Parameters
         ----------
         statepoint : xsgen.statepoint.StatePoint
             An OpenMC StatePoint.
+        tally_id : int
+            The tally id we wish to read group flux from.
 
         Returns
         -------
@@ -440,6 +440,8 @@ class OpenMCOrigen(object):
             Neutron multiplication factor.
         phi_g : list of floats
             Group flux.
+        e_g : list of floats
+            Group structure.
         """
         sp = StatePoint(statepoint)
         sp.read_results()
@@ -449,11 +451,12 @@ class OpenMCOrigen(object):
             ds.src_phi_g /= ds.src_phi_g.sum()
         # compute return values
         k, kerr = sp.k_combined
-        t_flux = sp.tallies[3]
-        phi_g = t_flux.results[::-1, :, 0].flatten()
+        tally = sp.tallies[tally_id]
+        phi_g = tally.results[::-1, :, 0].flatten()
         phi_g /= phi_g.sum()
+        e_g = tally.filters["energyin"].bins
 
-        return k, phi_g
+        return k, phi_g, e_g
 
     def _generate_xs(self, e_g, phi_g):
         """Grab xs data from cache depending on group flux.
