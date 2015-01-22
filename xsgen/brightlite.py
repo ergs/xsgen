@@ -12,8 +12,8 @@ class BrightliteWriter(object):
             lines = [row + "   " + "   ".join(map(str, matlib[row]))
                      for row in rownames]
             nucs = matlib["tracked_nucs"]
-            lines.extend([n + "   " + "   ".join(map(str, nucs[n]))
-                          for n in nucs])
+            lines.extend(sorted([n + "   " + "   ".join(map(lambda x: "{:.4g}".format(x), nucs[n]))
+                                 for n in nucs]))
             with open(fname+"-"+str(mat), "w") as f:
                 print("Writing out to {}...".format(fname+"-"+str(mat)))
                 f.write("\n".join(lines))

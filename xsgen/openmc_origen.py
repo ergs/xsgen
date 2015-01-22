@@ -224,7 +224,7 @@ class OpenMCOrigen(object):
             "NEUT_DEST": [0],
             "BUd":  [0],
             "material": [self.rc.fuel_material],
-            "tracked_nucs": {nucname.name(n): [self.rc.fuel_material.comp.get(n, 0)]
+            "tracked_nucs": {nucname.name(n): [self.rc.fuel_material.comp.get(n, 0) * 1000]
                              for n in self.rc.track_nucs},
         }}
 
@@ -234,11 +234,11 @@ class OpenMCOrigen(object):
                 "NEUT_PROD": [0],
                 "NEUT_DEST": [0],
                 "BUd": [0],
-                "material": [Material({nuc: 1})],
+                "material": [Material({nuc: 1}, 1000)],
                 "tracked_nucs": {nucname.name(n): [0]
                                  for n in self.rc.track_nucs}
             }
-            self.libs[nuc]["tracked_nucs"][nucname.name(nuc)] = [1]
+            self.libs[nuc]["tracked_nucs"][nucname.name(nuc)] = [1000]
 
         print([state.burn_times for state in run])
         for i, state in enumerate(run):
@@ -271,7 +271,8 @@ class OpenMCOrigen(object):
             for nuc in self.rc.track_nucs:
                 name = nucname.name(nuc)
                 nuc_frac = newlib["material"].comp.get(nuc, 0)
-                oldlib["tracked_nucs"][name].append(nuc_frac)
+                mass = newlib["material"].mass
+                oldlib["tracked_nucs"][name].append(nuc_frac * mass)
             for key, value in newlib.items():
                 if isinstance(key, int):
                     continue
