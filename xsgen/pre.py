@@ -92,7 +92,6 @@ class XSGenPlugin(Plugin):
 
     rcdocs = {
         'formats': 'The output formats to write out.',
-        'threads': 'Number of threads to use for Monte Carlo',
         'is_thermal': ('Whether the reactor is a thermal system (True) or a '
                        'fast one (False)'),
         'outfiles': 'Names of output files to write out. Must correspond with formats.',
@@ -105,8 +104,6 @@ class XSGenPlugin(Plugin):
             help="Cleans the reactor directory of current files.")
         parser.add_argument('--formats', dest='formats', help=self.rcdocs['formats'],
                             nargs='+')
-        parser.add_argument('--threads', dest='threads', help=self.rcdocs['threads'],
-                            type=int)
         parser.add_argument('--outfiles', dest='outfiles', type=list, help=self.rcdocs['outfiles'],
                             nargs='+')
         parser.add_argument('--is-thermal', dest='is_thermal', type=bool,

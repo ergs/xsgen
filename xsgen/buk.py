@@ -10,6 +10,7 @@ Burnup-criticality plugin API
 """
 from __future__ import print_function
 import os
+import shutil
 
 from xsgen.plugins import Plugin
 from xsgen.utils import RunControl, NotSpecified
@@ -32,9 +33,11 @@ class XSGenPlugin(Plugin):
     rcdocs = {
         'openmc_cross_sections': 'Path to the cross_sections.xml file for OpenMC',
         'origen': 'ORIGEN 2.2 command',
+        'threads': 'Number of threads to use for Monte Carlo',
         'solver': ('The physics codes that are used to solve the '
                    'burnup-criticality problem and compute cross sections and '
                    'transmutation matrices.'),
+        'plot_group_flux': 'Output plots of group flux for each OpenMC run.',
         }
 
     def update_argparser(self, parser):
@@ -49,10 +52,14 @@ class XSGenPlugin(Plugin):
         -------
         None
         """
+        parser.add_argument('--threads', dest='threads', help=self.rcdocs['threads'],
+                            type=int)
         parser.add_argument('--solver', dest='solver', help=self.rcdocs['solver'])
         parser.add_argument('--origen', dest='origen_call', help=self.rcdocs['origen'])
         parser.add_argument("--openmc-cross-sections", dest="openmc_cross_sections",
-            help=self.rcdocs['openmc_cross_sections'])
+                            help=self.rcdocs['openmc_cross_sections'])
+        parser.add_argument("--plot-group-flux", dest="plot_group_flux", action="store_true",
+                            help=self.rcdocs["plot_group_flux"])
 
     def setup(self, rc):
         """Check if we have OpenMC cross-section data in the RC and set the appropriate
@@ -73,6 +80,9 @@ class XSGenPlugin(Plugin):
         if rc.solver is NotSpecified:
             raise ValueError('a solver type must be specified')
         rc.engine = SOLVER_ENGINES[rc.solver](rc)
+        if rc.clean and os.path.isdir(rc.engine.builddir):
+            shutil.rmtree(rc.engine.builddir, ignore_errors=True)
+            print("removing builddir")
 
     def same_except_burnup_time(self, state1, state2):
         """Check if two different states are equivalent except for their burnup time.
