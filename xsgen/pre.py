@@ -100,7 +100,7 @@ class XSGenPlugin(Plugin):
     def update_argparser(self, parser):
         parser.add_argument("--ui", action="store_true", dest="ui",
             help="Launches the xsgen ui.")
-        parser.add_argument("-c", "--clean", action="store_true", dest="clean",
+        parser.add_argument("-c", "--clean", action="store_true", dest="clean", default=False,
             help="Cleans the reactor directory of current files.")
         parser.add_argument('--formats', dest='formats', help=self.rcdocs['formats'],
                             nargs='+')

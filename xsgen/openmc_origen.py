@@ -9,9 +9,13 @@ from statepoint import StatePoint
 from pyne import rxname
 from pyne import nucname
 from pyne import origen22
+from pyne.data import atomic_mass
 from pyne.material import Material
 from pyne.xs import data_source
 from pyne.xs.cache import XSCache
+from pyne.bins import stair_step
+
+from matplotlib import pyplot as plt
 
 from xsgen.utils import indir, NotSpecified
 
@@ -244,10 +248,7 @@ class OpenMCOrigen(object):
         for i, state in enumerate(run):
             if i > 0 :
                 transmute_time = state.burn_times - run[i-1].burn_times
-            # else:
-            #     transmute_time = 0
                 results = self.generate(state, transmute_time)
-                # self.rc.fuel_material = results["fuel"]["material"]
                 self.libs = self._update_libs_with_results(self.libs, results)
         return self.libs
 
@@ -351,10 +352,20 @@ class OpenMCOrigen(object):
                 subprocess.check_call(['openmc', '-s', '{}'.format(self.rc.threads)])
             statepoint = _find_statepoint(pwd)
         # parse & prepare results
-        omc_flux_tally_id = 4
-        k, phi_g, e_g = self._parse_statepoint(statepoint, omc_flux_tally_id)
+        k, phi_g, e_g = self._parse_statepoint(statepoint)
+        if self.rc.plot_group_flux:
+            with indir(pwd):
+                self._plot_group_flux(e_g, phi_g)
         xstab = self._generate_xs(e_g, phi_g)
         return k, phi_g, xstab
+
+    def _plot_group_flux(self, e_g, phi_g):
+        fig = plt.figure(figsize=(12, 8))
+        plt.loglog(*stair_step(e_g, phi_g), figure=fig)
+        plt.title("Flux vs Energy in")
+        plt.xlabel('E [MeV]')
+        plt.ylabel('Flux [N/cm$^2\cdot$s]')
+        plt.savefig("flux")
 
     def _make_omc_input(self, state):
         """Make OpenMC input files for a given state.
@@ -399,8 +410,7 @@ class OpenMCOrigen(object):
             f.write(geometry)
         # tallies
         ctx['_egrid'] = " ".join(map(str, sorted(ctx['group_structure'])))
-        # ctx['_cds_egrid'] = " ".join(map(str, sorted(self.cinderds.src_group_struct)))
-        ctx['_cds_egrid'] = " 1 10 100 1000"  # I don't have cinder
+        ctx['_cds_egrid'] = " ".join(map(str, sorted(self.cinderds.src_group_struct)))
         ctx['_eafds_egrid'] = " ".join(map(str, sorted(self.eafds.src_group_struct)))
         ctx['_omcds_egrid'] = " ".join(map(str, sorted(self.omcds.src_group_struct)))
         # nucs = core_nucs & valid_nucs
@@ -424,7 +434,7 @@ class OpenMCOrigen(object):
         return {n.nucid for n in self.omcds.cross_sections.ace_tables
                 if n.nucid is not None}
 
-    def _parse_statepoint(self, statepoint, tally_id):
+    def _parse_statepoint(self, statepoint, tally_id=1):
         """Parses a statepoint file and reads in the relevant fluxes, assigns them
         to the DataSources or the XSCache, and returns k, phi_g, and E_g.
 
@@ -452,7 +462,7 @@ class OpenMCOrigen(object):
             ds.src_phi_g /= ds.src_phi_g.sum()
         # compute return values
         k, kerr = sp.k_combined
-        tally = sp.tallies[tally_id]
+        tally = sp.tallies[tally_id - 1]
         phi_g = tally.results[::-1, :, 0].flatten()
         phi_g /= phi_g.sum()
         e_g = tally.filters["energyin"].bins
@@ -540,13 +550,11 @@ class OpenMCOrigen(object):
                 subprocess.check_call(origen_call)
             tape6 = origen22.parse_tape6("TAPE6.OUT")
 
-        try:
-            out_mat = tape6["materials"][-1]
-        except KeyError:
-            import ipdb
-            ipdb.set_trace()
+        out_mat = tape6["materials"][-1]
         out_mat.mass = 1000
         out_mat.comp = {n: frac for n, frac in out_mat.comp.items() if frac != 0}
+        if mat_id == "fuel":
+            out_mat.atoms_per_molecule = 3;
         burnup = tape6["burnup_MWD"][-1]
         neutron_prod = tape6["neutron_production_rate"][-1]
         neutron_dest = tape6["neutron_destruction_rate"][-1]
