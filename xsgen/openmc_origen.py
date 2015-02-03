@@ -308,7 +308,7 @@ class OpenMCOrigen(object):
                       if xs[1] == rxname.id("fission")}
         fuel_material = self.libs["fuel"]["material"][-1]
         fuel_atom_frac = fuel_material.to_atom_frac()
-        fuel_number_density = 6.022e23 * self.rc.fuel_density / fuel_material.molecular_mass()
+        fuel_number_density = 6.022e23 * self.rc.fuel_density / (fuel_material.molecular_mass() * fuel_material.atoms_per_molecule)
         number_densities = {nuc: fuel_atom_frac[nuc] * fuel_number_density
                             for nuc in fuel_material.comp}
         sum_N_i_sig_fi = sum([number_densities[nuc] * fission_xs.get(nuc, 0)
@@ -366,6 +366,7 @@ class OpenMCOrigen(object):
         plt.xlabel('E [MeV]')
         plt.ylabel('Flux [N/cm$^2\cdot$s]')
         plt.savefig("flux")
+        plt.close()
 
     def _make_omc_input(self, state):
         """Make OpenMC input files for a given state.

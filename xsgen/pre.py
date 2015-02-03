@@ -4,7 +4,6 @@ Provides the following command-line arguments:
   - ``--ui``: Launches the xsgen ui
   - ``-c``, ``--clean``: Cleans reactor directory of current files.
   - ``--formats``: The output formats to write out.
-  - ``--formats``: The output formats to write out.
   - ``--is-thermal``: Whether the reactor is a thermal system (True) or a fast one (False)
   - ``--outfiles``: Names of output files to write out. Must correspond with formats.
 """
@@ -355,7 +354,7 @@ class XSGenPlugin(Plugin):
 
         if rc.outfiles is NotSpecified:
             print("No outfiles specified, defaulting to format names...")
-            rc.outfiles = ["{}.out".format(f) for f in rc.formats]
+            rc.outfiles = rc.formats
         elif len(rc.outfiles) > len(rc.formats):
             raise ValueError("More outfiles defined than formats!")
         elif len(rc.outfiles) < len(rc.formats):
