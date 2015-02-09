@@ -1,6 +1,7 @@
 from __future__ import print_function
 import os
 import subprocess
+from multiprocessing import Pool
 
 import numpy as np
 
@@ -167,6 +168,14 @@ class OpenMCOrigen(object):
             ds.load()
         self.xscache = XSCache(data_sources=data_sources)
 
+        if self.rc.origen_call is NotSpecified:
+            if self.rc.is_thermal:
+                self.origen_call = "o2_therm_linux.exe"
+            else:
+                self.origen_call = "o2_fast_linux.exe"
+        else:
+            self.origen_call = self.rc.origen_call
+
     def pwd(self, state, directory):
         """Path to directory we will be running specific physics codes in.
 
@@ -318,10 +327,25 @@ class OpenMCOrigen(object):
         # see http://iriaxp.iri.tudelft.nl/~leege/SCALE44/origens.PDF for formula
         # (search for "the specific power due to fission", on p. 22 of the PDF)
         phi_tot = sum(3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi)
-        for mat in results.keys():
-            results[mat] = self.origen(state, transmute_time, phi_tot, mat)
+        results = self.run_all_the_origens(state, transmute_time, phi_tot, results)
         self.statelibs[state] = results
         return results
+
+    def run_all_the_origens(self, state, transmute_time, phi_tot, results):
+        origen_results = []
+        import ipdb; ipdb.set_trace()
+        if self.rc.threads == 1:
+            for mat in results.keys():
+                origen_params = (state, transmute_time, phi_tot, mat)
+                origen_results.append(self.origen(origen_params))
+        else:
+            origen_params_ls = [(state, transmute_time, phi_tot, mat) 
+                                for mat in results]
+            pool = Pool(self.rc.threads)
+            origen_results = pool.map(self.origen, origen_params_ls)
+
+
+        return dict(origen_results)
 
     def openmc(self, state):
         """Runs OpenMC for a given state.
@@ -506,7 +530,7 @@ class OpenMCOrigen(object):
                 i += 1
         return data
 
-    def origen(self, state, transmute_time, phi_tot, mat_id):
+    def origen(self, origen_params):
         """Run ORIGEN on a state.
 
         Parameters
@@ -527,6 +551,7 @@ class OpenMCOrigen(object):
             Dictionary with neutron production and destruction rates, burnup, and
             transmutation results.
         """
+        state, transmute_time, phi_tot, mat_id = origen_params
         pwd = self.pwd(state, "origen" + str(mat_id))
         # tracked_nucs = self.libs[mat_id]['tracked_nucs']
         # mat = Material({name: tracked_nucs[name][-1] for name in tracked_nucs})
@@ -537,18 +562,10 @@ class OpenMCOrigen(object):
         if not os.path.isdir(pwd):
             os.makedirs(pwd)
 
-        if self.rc.origen_call is NotSpecified:
-            if self.rc.is_thermal:
-                origen_call = "o2_therm_linux.exe"
-            else:
-                origen_call = "o2_fast_linux.exe"
-        else:
-            origen_call = self.rc.origen_call
-
         with indir(pwd):
             if not os.path.isfile("TAPE6.OUT"):
                 self._make_origen_input(state, transmute_time, phi_tot, mat)
-                subprocess.check_call(origen_call)
+                subprocess.check_call(self.origen_call)
             tape6 = origen22.parse_tape6("TAPE6.OUT")
 
         out_mat = tape6["materials"][-1]
@@ -560,13 +577,13 @@ class OpenMCOrigen(object):
         neutron_prod = tape6["neutron_production_rate"][-1]
         neutron_dest = tape6["neutron_destruction_rate"][-1]
 
-        results = {
+        results = (mat_id, {
             "TIME": state.burn_times,
             "NEUT_PROD": neutron_prod,
             "NEUT_DEST": neutron_dest,
             "BUd": burnup,
             "material": out_mat
-            }
+            })
         return results
 
     def _make_origen_input(self, state, transmute_time, phi_tot, mat):

@@ -33,7 +33,7 @@ class XSGenPlugin(Plugin):
     rcdocs = {
         'openmc_cross_sections': 'Path to the cross_sections.xml file for OpenMC',
         'origen': 'ORIGEN 2.2 command',
-        'threads': 'Number of threads to use for Monte Carlo',
+        'threads': 'Number of threads to use',
         'solver': ('The physics codes that are used to solve the '
                    'burnup-criticality problem and compute cross sections and '
                    'transmutation matrices.'),

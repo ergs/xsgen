@@ -84,7 +84,6 @@ class XSGenPlugin(Plugin):
                  'k_cycles': 20,
                  'k_cycles_skip': 10,
                  'k_particles': 1000,
-                 'threads': 1,
                  }
     "A default run control for all the parameters one may desire."
 
