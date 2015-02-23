@@ -4,6 +4,7 @@ import subprocess
 from multiprocessing import Pool
 
 import numpy as np
+import json
 
 from statepoint import StatePoint
 
@@ -239,6 +240,7 @@ class OpenMCOrigen(object):
             "material": [self.rc.fuel_material],
             "tracked_nucs": {nucname.name(n): [self.rc.fuel_material.comp.get(n, 0) * 1000]
                              for n in self.rc.track_nucs},
+            "phi_tot": [0]
         }}
 
         for nuc in self.rc.track_nucs:
@@ -249,7 +251,8 @@ class OpenMCOrigen(object):
                 "BUd": [0],
                 "material": [Material({nuc: 1}, 1000)],
                 "tracked_nucs": {nucname.name(n): [0]
-                                 for n in self.rc.track_nucs}
+                                 for n in self.rc.track_nucs},
+                "phi_tot": [0]
             }
             self.libs[nuc]["tracked_nucs"][nucname.name(nuc)] = [1000]
 
@@ -316,6 +319,8 @@ class OpenMCOrigen(object):
         fission_xs = {xs[0]: xs[2] * 1e-24 for xs in xstab  # xs is in barns not cm2
                       if xs[1] == rxname.id("fission")}
         fuel_material = self.libs["fuel"]["material"][-1]
+        fuel_material.atoms_per_molecule = sum([self.rc.fuel_chemical_form[m]
+                                                for m in self.rc.fuel_chemical_form])
         fuel_atom_frac = fuel_material.to_atom_frac()
         fuel_number_density = 6.022e23 * self.rc.fuel_density / (fuel_material.molecular_mass() * fuel_material.atoms_per_molecule)
         number_densities = {nuc: fuel_atom_frac[nuc] * fuel_number_density
@@ -332,19 +337,43 @@ class OpenMCOrigen(object):
         return results
 
     def run_all_the_origens(self, state, transmute_time, phi_tot, results):
+        for mat_id in results.keys():
+            pwd = self.pwd(state, "origen{}".format(mat_id))
+            mat = self.libs[mat_id]["material"][-1]
+            if not os.path.isdir(pwd):
+                os.makedirs(pwd)
+            with indir(pwd):
+                self._make_origen_input(transmute_time, phi_tot, mat)
         origen_results = []
-        import ipdb; ipdb.set_trace()
         if self.rc.threads == 1:
-            for mat in results.keys():
-                origen_params = (state, transmute_time, phi_tot, mat)
-                origen_results.append(self.origen(origen_params))
+            for mat_id in results.keys():
+                pwd = self.pwd(state, "origen{}".format(mat_id))
+                origen_params = (state.burn_times,
+                                 transmute_time,
+                                 phi_tot,
+                                 mat_id,
+                                 self.libs[mat_id]["material"][-1],
+                                 pwd,
+                                 self.origen_call)
+                                 # self._make_origen_input)
+                print("calling origen in " + pwd)
+                origen_results.append(_origen(origen_params))
         else:
-            origen_params_ls = [(state, transmute_time, phi_tot, mat) 
-                                for mat in results]
+            origen_params_ls = [(state.burn_times,
+                                 transmute_time,
+                                 phi_tot,
+                                 mat_id,
+                                 self.libs[mat_id]["material"][-1],
+                                 self.pwd(state, "origen{}".format(mat_id)),
+                                 self.origen_call)
+                                for mat_id in results]
+            print([param[-2] for param in origen_params_ls])
             pool = Pool(self.rc.threads)
-            origen_results = pool.map(self.origen, origen_params_ls)
-
-
+            origen_results = pool.map(_origen, origen_params_ls)
+        for result in origen_results:
+            result[1]["material"] = Material(dict(result[1]["material"]),
+                                             1000,
+                                             attrs={"units": "g"})
         return dict(origen_results)
 
     def openmc(self, state):
@@ -530,63 +559,7 @@ class OpenMCOrigen(object):
                 i += 1
         return data
 
-    def origen(self, origen_params):
-        """Run ORIGEN on a state.
-
-        Parameters
-        ----------
-        state : namedtuple (State)
-            A namedtuple containing the state parameters.
-        transmute_time : float
-            Length of transmutation timestep.
-        phi_tot : float
-            Total neutron flux.
-        mat_id : str or int
-            The material to start transmuting. Either "fuel" or a nuclide in ID
-            form.
-
-        Returns
-        -------
-        results : dict
-            Dictionary with neutron production and destruction rates, burnup, and
-            transmutation results.
-        """
-        state, transmute_time, phi_tot, mat_id = origen_params
-        pwd = self.pwd(state, "origen" + str(mat_id))
-        # tracked_nucs = self.libs[mat_id]['tracked_nucs']
-        # mat = Material({name: tracked_nucs[name][-1] for name in tracked_nucs})
-        mat = self.libs[mat_id]["material"][-1]
-        mat.mass = 1000
-        mat.attrs = {"units": "g"}
-
-        if not os.path.isdir(pwd):
-            os.makedirs(pwd)
-
-        with indir(pwd):
-            if not os.path.isfile("TAPE6.OUT"):
-                self._make_origen_input(state, transmute_time, phi_tot, mat)
-                subprocess.check_call(self.origen_call)
-            tape6 = origen22.parse_tape6("TAPE6.OUT")
-
-        out_mat = tape6["materials"][-1]
-        out_mat.mass = 1000
-        out_mat.comp = {n: frac for n, frac in out_mat.comp.items() if frac != 0}
-        if mat_id == "fuel":
-            out_mat.atoms_per_molecule = 3;
-        burnup = tape6["burnup_MWD"][-1]
-        neutron_prod = tape6["neutron_production_rate"][-1]
-        neutron_dest = tape6["neutron_destruction_rate"][-1]
-
-        results = (mat_id, {
-            "TIME": state.burn_times,
-            "NEUT_PROD": neutron_prod,
-            "NEUT_DEST": neutron_dest,
-            "BUd": burnup,
-            "material": out_mat
-            })
-        return results
-
-    def _make_origen_input(self, state, transmute_time, phi_tot, mat):
+    def _make_origen_input(self, transmute_time, phi_tot, mat):
         """Make ORIGEN input files for a given state.
 
         Parameters
@@ -610,7 +583,7 @@ class OpenMCOrigen(object):
                                          transmute_time,
                                          phi_tot,
                                          xsfpy_nlb=(201, 202, 203),
-                                         cut_off=1e-6)
+                                         cut_off=1e-300)
         origen22.write_tape9(self.tape9)
 
 
@@ -652,3 +625,64 @@ def _find_statepoint(pwd):
         if f.startswith('statepoint'):
             return os.path.join(pwd, f)
     return None
+
+
+def _origen(origen_params):
+    """Run ORIGEN on a state.
+
+    Parameters
+    ----------
+    state : namedtuple (State)
+        A namedtuple containing the state parameters.
+    transmute_time : float
+        Length of transmutation timestep.
+    phi_tot : float
+        Total neutron flux.
+    mat_id : str or int
+        The material to start transmuting. Either "fuel" or a nuclide in ID
+        form.
+
+    Returns
+    -------
+    results : dict
+        Dictionary with neutron production and destruction rates, burnup, and
+        transmutation results.
+    """
+    abs_time, transmute_time, phi_tot, mat_id, mat, pwd, origen_call = origen_params
+    mat.mass = 1000
+    mat.attrs = {"units": "g"}
+
+    print("_origen being called")
+    with indir(pwd):
+        if not os.path.isfile("TAPE6.OUT"):
+            # make_inputs(transmute_time, phi_tot, mat)
+            times_called = 0
+            while times_called < 3:
+                times_called += 1
+                try:
+                    subprocess.check_call(origen_call)
+                    break
+                except subprocess.CalledProcessError:
+                    print("Warning: ORIGEN2.2 in " + pwd + "failed. Retrying.")
+
+        print("Parsing " + pwd + "/TAPE6.OUT...")
+        tape6 = origen22.parse_tape6("TAPE6.OUT")
+
+    out_mat = tape6["materials"][-1]
+    out_mat.mass = 1000
+    out_mat.comp = {n: frac for n, frac in out_mat.comp.items() if frac != 0}
+    if mat_id == "fuel":
+        out_mat.atoms_per_molecule = 3
+    burnup = tape6["burnup_MWD"][-1]
+    neutron_prod = tape6["neutron_production_rate"][-1]
+    neutron_dest = tape6["neutron_destruction_rate"][-1]
+
+    results = (mat_id, {
+        "TIME": abs_time,
+        "NEUT_PROD": neutron_prod,
+        "NEUT_DEST": neutron_dest,
+        "BUd": burnup,
+        "material": list(out_mat.comp.items()),
+        "phi_tot": phi_tot
+        })
+    return results

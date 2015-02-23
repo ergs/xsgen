@@ -19,6 +19,7 @@ from collections import namedtuple
 
 import numpy as np
 from pyne import nucname
+from pyne.data import half_life
 from pyne.material import Material, from_atom_frac
 from pyne.utils import failure
 
@@ -65,6 +66,7 @@ class XSGenPlugin(Plugin):
                  'is_thermal': True,
                  'group_structure': [10 ** x for x in range(1, -3, -1)],
                  'track_nucs': transmute,
+                 'track_nuc_threshold': 1e-4,
                  'energy_grid': 'nuclide',
                  'sab': 'HH2O',
                  'sab_xs': '71t',
@@ -78,7 +80,6 @@ class XSGenPlugin(Plugin):
                  'unit_cell_height': 2,
                  'burn_regions': 1,
                  'fuel_specific_power': 1,
-                 # 'fuel_material': {'U238': 0.96, 'U235': 0.04},
                  'solver': "openmc+origen",
                  'reactor': "lwr",
                  'k_cycles': 20,
@@ -197,6 +198,11 @@ class XSGenPlugin(Plugin):
             track_nucs = self.load_nuc_file(rc.track_nucs)
         else:
             track_nucs = [nucname.id(nuc) for nuc in rc.track_nucs]
+
+        avg_timestep = 60*60*24*np.mean(rc.burn_times[1:]-rc.burn_times[:-1])
+        min_halflife = rc.track_nuc_threshold * avg_timestep
+        track_nucs = [nucid for nucid in track_nucs
+                      if half_life(nucid) > min_halflife]
         rc.track_nucs = sorted(set(track_nucs))
 
     def _ensure_temp(self, rc):
