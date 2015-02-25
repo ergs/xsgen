@@ -168,6 +168,7 @@ class OpenMCOrigen(object):
         for ds in data_sources[1:]:
             ds.load()
         self.xscache = XSCache(data_sources=data_sources)
+        self.tape9 = None
 
         if self.rc.origen_call is NotSpecified:
             if self.rc.is_thermal:
@@ -229,9 +230,6 @@ class OpenMCOrigen(object):
         libs : list of dicts
             Libraries to write out - one for the full fuel and one for each tracked nuclide.
         """
-        print("making tape9")
-        self.tape9 = origen22.make_tape9(self.rc.track_nucs, self.xscache)
-        print("tape9 made")
         self.libs = {"fuel": {
             "TIME": [0],
             "NEUT_PROD": [0],
@@ -337,13 +335,17 @@ class OpenMCOrigen(object):
         return results
 
     def run_all_the_origens(self, state, transmute_time, phi_tot, results):
+        print("making tape9")
+        self.tape9 = origen22.make_tape9(self.rc.track_nucs, self.xscache)
+        origen22.write_tape9(self.tape9)
         for mat_id in results.keys():
             pwd = self.pwd(state, "origen{}".format(mat_id))
             mat = self.libs[mat_id]["material"][-1]
             if not os.path.isdir(pwd):
                 os.makedirs(pwd)
             with indir(pwd):
-                self._make_origen_input(transmute_time, phi_tot, mat)
+                if not os.path.isfile("TAPE6.OUT"):
+                    self._make_origen_input(transmute_time, phi_tot, mat)
         origen_results = []
         if self.rc.threads == 1:
             for mat_id in results.keys():
@@ -356,7 +358,6 @@ class OpenMCOrigen(object):
                                  pwd,
                                  self.origen_call)
                                  # self._make_origen_input)
-                print("calling origen in " + pwd)
                 origen_results.append(_origen(origen_params))
         else:
             origen_params_ls = [(state.burn_times,
@@ -367,7 +368,6 @@ class OpenMCOrigen(object):
                                  self.pwd(state, "origen{}".format(mat_id)),
                                  self.origen_call)
                                 for mat_id in results]
-            print([param[-2] for param in origen_params_ls])
             pool = Pool(self.rc.threads)
             origen_results = pool.map(_origen, origen_params_ls)
         for result in origen_results:
@@ -394,7 +394,6 @@ class OpenMCOrigen(object):
             A list of tuples of the format (nuc, rx, xs).
         """
         # make inputs
-        print("trying to openmc")
         pwd = self.pwd(state, "omc")
         if not os.path.isdir(pwd):
             os.makedirs(pwd)
@@ -652,7 +651,6 @@ def _origen(origen_params):
     mat.mass = 1000
     mat.attrs = {"units": "g"}
 
-    print("_origen being called")
     with indir(pwd):
         if not os.path.isfile("TAPE6.OUT"):
             # make_inputs(transmute_time, phi_tot, mat)

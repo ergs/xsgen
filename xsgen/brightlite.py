@@ -1,6 +1,6 @@
 from __future__ import print_function
 import os
-import ipdb
+import shutil
 from pyne import nucname
 import numpy as np
 
@@ -32,7 +32,7 @@ class BrightliteWriter(object):
             f.write("PNL {}\n".format(self.rc.pnl))
             f.write("BURNUP {}\n".format(sum(libs["fuel"]["BUd"])))
             f.write("FLUX {:.0E}\n".format(np.mean(libs["fuel"]["phi_tot"][1:])))
-        with open(os.path.join("structural.txt"), "w") as f:
+        with open(os.path.join(dirname, "structural.txt"), "w") as f:
             coolrows = ("{} {:.8f}".format(nucname.zzaaam(n), f)
                         for n, f in self.rc.cool_material.comp.items())
             cladrows = ("{} {:.8f}".format(nucname.zzaaam(n), f)
@@ -40,3 +40,5 @@ class BrightliteWriter(object):
             f.write("\n".join(coolrows))
             f.write("\n")
             f.write("\n".join(cladrows))
+        shutil.copyfile("TAPE9.INP", os.path.join(dirname, "TAPE9.INP"))
+
