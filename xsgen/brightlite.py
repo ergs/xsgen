@@ -15,17 +15,22 @@ class BrightliteWriter(object):
             os.makedirs(dirname)
         rownames = ["TIME", "NEUT_PROD", "NEUT_DEST", "BUd"]
         for mat, matlib in libs.items():
+            if isinstance(mat, int):
+                fname = str(nucname.zzaaam(mat))
+            else:
+                fname = mat
             lines = [row + "   " + "   ".join(map(str, matlib[row]))
                      for row in rownames]
             nucs = matlib["tracked_nucs"]
             lines.extend(sorted([n + "   " + "   ".
                                  join(["{:.4g}".format(f) for f in nucs[n]])
                                  for n in nucs]))
-            with open(os.path.join(dirname, str(mat)+".txt"), "w") as f:
+            with open(os.path.join(dirname, fname + ".txt"), "w") as f:
                 f.write("\n".join(lines))
         track_actinides = [n for n in nucs if nucname.znum(n) in nucname.act]
         with open(os.path.join(dirname, "manifest.txt"), "w") as f:
-            f.write("\n".join([nucname.zzaaam(act) for act in track_actinides]))
+            f.write("\n".join([str(nucname.zzaaam(act)) for act in track_actinides]))
+            f.write("\n")
         with open(os.path.join(dirname, "params.txt"), "w") as f:
             f.write("ENRICHMENT {}\n".format(self.rc.enrichment))
             f.write("BATCHES {}\n".format(self.rc.batches))
@@ -40,5 +45,5 @@ class BrightliteWriter(object):
             f.write("\n".join(coolrows))
             f.write("\n")
             f.write("\n".join(cladrows))
+            f.write("\n")
         shutil.copyfile("TAPE9.INP", os.path.join(dirname, "TAPE9.INP"))
-
