@@ -25,7 +25,7 @@ class BrightliteWriter(object):
                 f.write("\n".join(lines))
         track_actinides = [n for n in nucs if nucname.znum(n) in nucname.act]
         with open(os.path.join(dirname, "manifest.txt"), "w") as f:
-            f.write("\n".join(track_actinides))
+            f.write("\n".join([nucname.zzaaam(act) for act in track_actinides]))
         with open(os.path.join(dirname, "params.txt"), "w") as f:
             f.write("ENRICHMENT {}\n".format(self.rc.enrichment))
             f.write("BATCHES {}\n".format(self.rc.batches))
