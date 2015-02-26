@@ -20,6 +20,7 @@ from pyne.bins import stair_step
 from matplotlib import pyplot as plt
 
 from xsgen.utils import indir, NotSpecified
+from xsgen.tape9 import brightlitetape9
 
 # templates are from openmc/examples/lattice/simple
 
@@ -328,7 +329,9 @@ class OpenMCOrigen(object):
 
     def run_all_the_origens(self, state, transmute_time, phi_tot, results):
         print("making tape9")
-        self.tape9 = origen22.make_tape9(self.rc.track_nucs, self.xscache)
+        self.tape9 = origen22.make_tape9(self.rc.track_nucs, self.xscache, nlb=(219, 220, 221))
+        self.tape9 = origen22.merge_tape9((self.tape9,
+                                          origen22.loads_tape9(brightlitetape9)))
         origen22.write_tape9(self.tape9)
         for mat_id in results.keys():
             pwd = self.pwd(state, "origen{}".format(mat_id))
@@ -572,7 +575,7 @@ class OpenMCOrigen(object):
         origen22.write_tape5_irradiation("IRF",
                                          transmute_time,
                                          phi_tot,
-                                         xsfpy_nlb=(201, 202, 203),
+                                         xsfpy_nlb=(219, 220, 221),
                                          cut_off=1e-300)
         origen22.write_tape9(self.tape9)
 
