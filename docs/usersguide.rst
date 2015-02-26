@@ -21,7 +21,37 @@ xsgen User's Guide
      cd xslibs
      xsgen --rc lwr1g.py
 
-   To learn more about the run control file, see the `RunControl page <runcontrol.html>`_.
+   Let's look at what's inside ::
+
+     reactor = "lwr1g"
+
+   This is what you want to call the reactor. Here we call it
+   ``lwr1g``. The output files will all go into a ``build-lwr1g``
+   directory unless you specify otherwise with the ``--outdirs`` flag.
+
+   ``xsgen`` uses a plugin-based system to run various chunks of
+   code. Next we see a list of the plugins we are using::
+
+     plugins = ['xsgen.pre', 'xsgen.buk']
+
+   ``xsgen.pre`` validates the run control file and adds in sane
+   defaults for anything we are missing. ``xsgen.buk`` takes care of
+   the burnup and criticality calculations. Additional plugins can be
+   specified with the ``--plugins`` command-line flag . There are a
+   few more parameters specifying different aspects of the burnup and
+   criticality calculations::
+
+     solver = 'openmc+origen'
+     formats = ('brightlite,')
+     burn_regions = 1     # Number of burnup annular regions.
+     burn_time = 365*10  # Number of days to burn the material [days]
+     time_step = 100      # Time step by which to increment the burn [days]
+     batches = 3
+
+   Here, ``solver`` refers to the engine we use for the transmutation
+   and transport. We currently only have one where we use OpenMC for
+   neutron transport and Origen 2.2 for transmutation, named "openmc+origen."
+
    For more information on command-line arguments, see the `plugins page <plugins.html>`_.
 
    ``xsgen`` will build everything by default in the ``build-lwr1g``
