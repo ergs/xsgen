@@ -52,7 +52,7 @@ class XSGenPlugin(Plugin):
         -------
         None
         """
-        parser.add_argument('--threads', dest='threads', help=self.rcdocs['threads'],
+        parser.add_argument('--threads', '-j', dest='threads', help=self.rcdocs['threads'],
                             type=int)
         parser.add_argument('--solver', dest='solver', help=self.rcdocs['solver'])
         parser.add_argument('--origen', dest='origen_call', help=self.rcdocs['origen'])
