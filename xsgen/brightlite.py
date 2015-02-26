@@ -2,6 +2,7 @@ from __future__ import print_function
 import os
 import shutil
 from pyne import nucname
+from math import pi
 import numpy as np
 
 
@@ -38,12 +39,13 @@ class BrightliteWriter(object):
             f.write("BURNUP {}\n".format(sum(libs["fuel"]["BUd"])))
             f.write("FLUX {:.0E}\n".format(np.mean(libs["fuel"]["phi_tot"][1:])))
         with open(os.path.join(dirname, "structural.txt"), "w") as f:
-            coolrows = ("{} {:.8f}".format(nucname.zzaaam(n), f)
-                        for n, f in self.rc.cool_material.comp.items())
-            cladrows = ("{} {:.8f}".format(nucname.zzaaam(n), f)
-                        for n, f in self.rc.clad_material.comp.items())
-            f.write("\n".join(coolrows))
-            f.write("\n")
+            clad_linear_density = pi * self.rc.clad_density * \
+                (self.rc.clad_cell_radius ** 2 - self.rc.void_cell_radius ** 2)
+            fuel_linear_density = pi * self.rc.fuel_density * \
+                self.rc.fuel_cell_radius ** 2
+            clad_frac = float(clad_linear_density / fuel_linear_density)
+            cladrows = ["{} {:.8f}".format(nucname.zzaaam(n), f*clad_frac)
+                        for n, f in self.rc.clad_material.comp.items()]
             f.write("\n".join(cladrows))
             f.write("\n")
         shutil.copyfile("TAPE9.INP", os.path.join(dirname, "TAPE9.INP"))
