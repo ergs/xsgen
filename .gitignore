@@ -8,3 +8,5 @@ xsgen.egg-info/
 debug.txt
 *.INP
 *.OUT
+example*
+.ipynb_checkpoints/
