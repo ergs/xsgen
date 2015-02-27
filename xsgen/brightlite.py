@@ -4,6 +4,7 @@ import shutil
 from pyne import nucname
 from math import pi
 import numpy as np
+from xsgen.utils import NotSpecified
 
 
 class BrightliteWriter(object):
@@ -33,9 +34,16 @@ class BrightliteWriter(object):
             f.write("\n".join([str(nucname.zzaaam(act)) for act in track_actinides]))
             f.write("\n")
         with open(os.path.join(dirname, "params.txt"), "w") as f:
-            f.write("ENRICHMENT {}\n".format(self.rc.enrichment))
-            f.write("BATCHES {}\n".format(self.rc.batches))
-            f.write("PNL {}\n".format(self.rc.pnl))
+            if self.rc.enrichment is NotSpecified:
+                enrichment = self.rc.initial_heavy_metal.get(922350)
+            else:
+                enrichment = self.rc.enrichment
+            if enrichment is not None:
+                f.write("ENRICHMENT {}\n".format(enrichment))
+            if self.rc.batches is not NotSpecified:
+                f.write("BATCHES {}\n".format(self.rc.batches))
+            if self.rc.pnl is not NotSpecified:
+                f.write("PNL {}\n".format(self.rc.pnl))
             f.write("BURNUP {}\n".format(sum(libs["fuel"]["BUd"])))
             f.write("FLUX {:.0E}\n".format(np.mean(libs["fuel"]["phi_tot"][1:])))
         with open(os.path.join(dirname, "structural.txt"), "w") as f:
