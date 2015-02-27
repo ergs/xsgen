@@ -1,4 +1,5 @@
-.. _xsgen_buk
+.. _xsgen_buk:
+
 Burnup-criticality -- :mod:`xsgen.buk`
 ===========================================
 

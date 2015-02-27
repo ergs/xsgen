@@ -8,7 +8,7 @@
     
     <title>Developer’s Guide &mdash; xsgen 0.1 documentation</title>
     
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -24,9 +24,16 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="xsgen 0.1 documentation" href="../index.html" />
-    <link rel="prev" title="OpenMC+Origen – xsgen.openmc_origen" href="../api/openmc_origen.html" /> 
+    <link rel="prev" title="OpenMC+Origen – xsgen.openmc_origen" href="../api/openmc_origen.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
   </head>
   <body>
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -41,51 +48,7 @@
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Developer&#8217;s Guide</a><ul>
-<li><a class="reference internal" href="#overview-of-program-flow">Overview of program flow</a></li>
-<li><a class="reference internal" href="#writing-to-another-output-format">Writing To Another Output Format</a></li>
-<li><a class="reference internal" href="#plugins">Plugins</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-xsgen.plugins">xsgen Plugin System &#8211; <tt class="docutils literal"><span class="pre">xsgen.plugins</span></tt></a><ul>
-<li><a class="reference internal" href="#writing-plugins">Writing Plugins</a><ul>
-<li><a class="reference internal" href="#interface">Interface</a></li>
-<li><a class="reference internal" href="#example">Example</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#plugins-api">Plugins API</a></li>
-</ul>
-</li>
-</ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../api/openmc_origen.html"
-                        title="previous chapter">OpenMC+Origen &#8211; <tt class="docutils literal"><span class="pre">xsgen.openmc_origen</span></tt></a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/devguide/index.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -343,7 +306,14 @@ parameters and the values are the associated default values.</p>
 <dt id="xsgen.plugins.Plugin.execute">
 <tt class="descname">execute</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugin.execute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs the actual work of the plugin, which may require a run controller.</p>
-<p>rc : xsgen.utils.RunControl</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rc</strong> : xsgen.utils.RunControl</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
@@ -375,12 +345,22 @@ behaviour is to simply override the old value with the new one.</p>
 <tt class="descname">report_debug</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugin.report_debug" title="Permalink to this definition">¶</a></dt>
 <dd><p>A message to report in the event that execute() fails and additional
 debugging information is requested.</p>
-<p>rc : xsgen.utils.RunControl</p>
-<dl class="docutils">
-<dt>message <span class="classifier-delimiter">:</span> <span class="classifier">str or None</span></dt>
-<dd>A debugging message to report.  If None is returned, this plugin is
-skipped in the debug output.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>rc</strong> : xsgen.utils.RunControl</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>message</strong> : str or None</p>
+<blockquote class="last">
+<div><p>A debugging message to report.  If None is returned, this plugin is
+skipped in the debug output.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
@@ -396,14 +376,28 @@ lists the module names of other plugins that this plugin requires.</p>
 <dd><p>Performs all setup tasks needed for this plugin.  This may include
 validation and munging of the run control object as well as creating
 the portions of the OS environment.</p>
-<p>rc : xsgen.utils.RunControl</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rc</strong> : xsgen.utils.RunControl</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="xsgen.plugins.Plugin.teardown">
 <tt class="descname">teardown</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugin.teardown" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs any cleanup tasks needed by the plugin.</p>
-<p>rc : xsgen.utils.RunControl</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rc</strong> : xsgen.utils.RunControl</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -412,15 +406,23 @@ the portions of the OS environment.</p>
 <dd><p>This method takes an argparse.ArgumentParser() instance and modifies
 it in-place.  This allows for run control parameters to be modified from
 as command line arguments.</p>
-<dl class="docutils">
-<dt>parser <span class="classifier-delimiter">:</span> <span class="classifier">argparse.ArgumentParser</span></dt>
-<dd>The parser to be updated.  Arguments defaults should not be given, or
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>parser</strong> : argparse.ArgumentParser</p>
+<blockquote class="last">
+<div><p>The parser to be updated.  Arguments defaults should not be given, or
 if given should only be <tt class="docutils literal"><span class="pre">xsgen.utils.Not</span> <span class="pre">Specified</span></tt>.  This is to
 prevent collisions with the run controller.  Default values should
 instead be given in this class&#8217;s <tt class="docutils literal"><span class="pre">defaultrc</span></tt> attribute or method.
 Argument names or the <tt class="docutils literal"><span class="pre">dest</span></tt> keyword argument should match the keys
-in <tt class="docutils literal"><span class="pre">defaultrc</span></tt>.</dd>
-</dl>
+in <tt class="docutils literal"><span class="pre">defaultrc</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -441,7 +443,14 @@ in <tt class="docutils literal"><span class="pre">defaultrc</span></tt>.</dd>
 <dt id="xsgen.plugins.Plugins.build_cli">
 <tt class="descname">build_cli</tt><big>(</big><big>)</big><a class="headerlink" href="#xsgen.plugins.Plugins.build_cli" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds and returns a command line interface based on the plugins.</p>
-<p>parser : argparse.ArgumentParser</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>parser</strong> : argparse.ArgumentParser</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -490,6 +499,45 @@ summarizes the docstrings for all run control parameters.</p>
 
 
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Developer&#8217;s Guide</a><ul>
+<li><a class="reference internal" href="#overview-of-program-flow">Overview of program flow</a></li>
+<li><a class="reference internal" href="#writing-to-another-output-format">Writing To Another Output Format</a></li>
+<li><a class="reference internal" href="#plugins">Plugins</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-xsgen.plugins">xsgen Plugin System &#8211; <tt class="docutils literal"><span class="pre">xsgen.plugins</span></tt></a><ul>
+<li><a class="reference internal" href="#writing-plugins">Writing Plugins</a><ul>
+<li><a class="reference internal" href="#interface">Interface</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#plugins-api">Plugins API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../api/openmc_origen.html"
+                        title="previous chapter">OpenMC+Origen &#8211; <tt class="docutils literal"><span class="pre">xsgen.openmc_origen</span></tt></a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>

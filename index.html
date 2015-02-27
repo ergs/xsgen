@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xsgens have awesome rates &mdash; xsgen 0.1 documentation</title>
+    <title>XSGen: Cross Section Generator for Bright-lite Reactors &mdash; xsgen 0.1 documentation</title>
     
-    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -24,9 +24,16 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="xsgen 0.1 documentation" href="#" />
-    <link rel="next" title="Overview" href="overview.html" /> 
+    <link rel="next" title="Overview" href="overview.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
   </head>
   <body>
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -41,48 +48,15 @@
              accesskey="N">next</a> |</li>
         <li><a href="#">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">xsgens have awesome rates</a><ul>
-<li><a class="reference internal" href="#contents">Contents:</a></li>
-</ul>
-</li>
-</ul>
-
-  <h4>Next topic</h4>
-  <p class="topless"><a href="overview.html"
-                        title="next chapter">Overview</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/index.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="xsgens-have-awesome-rates">
-<h1>xsgens have awesome rates<a class="headerlink" href="#xsgens-have-awesome-rates" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="xsgen-cross-section-generator-for-bright-lite-reactors">
+<h1>XSGen: Cross Section Generator for Bright-lite Reactors<a class="headerlink" href="#xsgen-cross-section-generator-for-bright-lite-reactors" title="Permalink to this headline">¶</a></h1>
 <p>xsgen is a tool for computing multi-group neutron cross-section, burnup, and
 multiplication factor (k<sub>inf</sub>) as a function of reactor state, which
 includes time/fluence, material properties, and reactor geometry.</p>
@@ -99,13 +73,30 @@ python setup.py install --user
 <div class="highlight-python"><div class="highlight"><pre><span class="n">xsgen</span>
 </pre></div>
 </div>
+<div class="section" id="release-notes">
+<h2>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>0.1: 2/27/2015</strong></dt>
+<dd><ul class="first simple">
+<li>We can now run OpenMC and Origen together to generate Bright-lite
+input files!</li>
+</ul>
+<p>Developers:</p>
+<ul class="last simple">
+<li>Anthony Scopatz</li>
+<li>John Xia</li>
+</ul>
+</dd>
+</dl>
+</div>
 <div class="section" id="contents">
 <h2>Contents:<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <p><strong>Usage:</strong></p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#acknowledgements">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install XSGen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usersguide.html">xsgen User&#8217;s Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="runcontrol.html">Run Control files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins.html">xsgen Core Plugins: base, pre, buk, and post</a></li>
@@ -123,6 +114,35 @@ python setup.py install --user
 
 
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">XSGen: Cross Section Generator for Bright-lite Reactors</a><ul>
+<li><a class="reference internal" href="#release-notes">Release Notes</a></li>
+<li><a class="reference internal" href="#contents">Contents:</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="overview.html"
+                        title="next chapter">Overview</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>

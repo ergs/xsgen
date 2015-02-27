@@ -8,7 +8,7 @@
     
     <title>xsgen User’s Guide &mdash; xsgen 0.1 documentation</title>
     
-    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -24,10 +24,17 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="xsgen 0.1 documentation" href="index.html" />
-    <link rel="next" title="xsgen Core Plugins: base, pre, buk, and post" href="plugins.html" />
-    <link rel="prev" title="Installation" href="install.html" /> 
+    <link rel="next" title="Run Control files" href="runcontrol.html" />
+    <link rel="prev" title="Install XSGen" href="install.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
   </head>
   <body>
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -38,52 +45,14 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="plugins.html" title="xsgen Core Plugins: base, pre, buk, and post"
+          <a href="runcontrol.html" title="Run Control files"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="install.html" title="Installation"
+          <a href="install.html" title="Install XSGen"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">xsgen User&#8217;s Guide</a><ul>
-<li><a class="reference internal" href="#installation">1. Installation</a></li>
-<li><a class="reference internal" href="#setting-up-the-run-control-file">2. Setting Up the Run Control File</a></li>
-<li><a class="reference internal" href="#using-the-libraries-with-bright-lite">3. Using the Libraries With Bright-lite</a></li>
-</ul>
-</li>
-</ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="install.html"
-                        title="previous chapter">Installation</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="plugins.html"
-                        title="next chapter">xsgen Core Plugins: base, pre, buk, and post</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/usersguide.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -94,14 +63,19 @@
 <h1>xsgen User&#8217;s Guide<a class="headerlink" href="#xsgen-user-s-guide" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="installation">
 <h2>1. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><p>xsgen depends on <a class="reference external" href="http://www.pyne.io">PyNE</a>. You can find installation
+<div class="section" id="install-xsgen">
+<h3>Install XSGen<a class="headerlink" href="#install-xsgen" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>xsgen depends on <a class="reference external" href="http://www.pyne.io">PyNE</a>. You can find installation
 instructions for PyNE <a class="reference external" href="http://pyne.io/install.html">here</a>.</p>
 <p>To install from source, simply download the source code from the
 official GitHub repo and run <tt class="docutils literal"><span class="pre">setup.py</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre>git clone git://github.com/bright-dev/xsgen.git
-cd xsgen/
-python setup.py install --user
+<div class="highlight-python"><div class="highlight"><pre>$ git clone git://github.com/bright-dev/xsgen.git
+$ cd xsgen/
+$ python setup.py install --user
 </pre></div>
 </div>
 <p>Currently, we require <a class="reference external" href="http://mit-crpg.github.io/openmc/">OpenMC</a>
@@ -110,17 +84,15 @@ burnup and criticality computations. Installation instructions, along
 with a wealth of documentation, for OpenMC can be found <a class="reference external" href="http://mit-crpg.github.io/openmc/quickinstall.html">here</a>. ORIGEN 2.2 is
 distributed by RSICC at the above link.</p>
 <p>For this example, we will be using the OpenMC/ORIGEN physics code.</p>
-</div></blockquote>
 </div>
 <div class="section" id="setting-up-the-run-control-file">
 <h2>2. Setting Up the Run Control File<a class="headerlink" href="#setting-up-the-run-control-file" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><p>For this example, we&#8217;ll use the <a class="reference external" href="https://github.com/bright-dev/xslibs">xslibs</a> project repository by
-Anthony Scopatz. This provides some useful run-control files for
-light water reactors.</p>
-<div class="highlight-python"><div class="highlight"><pre>git clone git@github.com:bright-dev/xslibs.git
-cd xslibs
-xsgen --rc lwr1g.py
+<p>For this example, we&#8217;ll use the <a class="reference external" href="https://github.com/bright-dev/xslibs">xslibs</a> project repository
+by Anthony Scopatz. This provides some useful run-control files for
+light water reactors:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git clone git@github.com:bright-dev/xslibs.git
+$ cd xslibs
+$ xsgen --rc lwr1g.py
 </pre></div>
 </div>
 <p>Let&#8217;s look at what&#8217;s inside</p>
@@ -156,8 +128,7 @@ and transport. We currently only have one where we use OpenMC for
 neutron transport and Origen 2.2 for transmutation, named
 &#8220;openmc+origen.&#8221; <tt class="docutils literal"><span class="pre">formats</span></tt> is an iterable with the various output
 formats you intend to generate libaries for. We currently only
-support <a href="#id2"><span class="problematic" id="id3">`Bright-lite
-&lt;https://github.com/FlanFlanagan/Bright-lite/tree/timestep/&gt;format`_</span></a>.
+support <a href="#id2"><span class="problematic" id="id3">`Bright-lite &lt;https://github.com/FlanFlanagan/Bright-lite/tree/timestep/&gt;format`_</span></a>.
 <tt class="docutils literal"><span class="pre">burn_regions</span></tt> is, as the comment says, the number of burnup
 annular regions.</p>
 <p>You can specify your burn times in two different ways. You can
@@ -247,12 +218,10 @@ run id.</p>
             |- Bright-lite output files go here
 </pre></div>
 </div>
-</div></blockquote>
 </div>
 <div class="section" id="using-the-libraries-with-bright-lite">
 <h2>3. Using the Libraries With Bright-lite<a class="headerlink" href="#using-the-libraries-with-bright-lite" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><p>First we must install Bright-lite. Clone the repository
+<p>First we must install Bright-lite. Clone the repository
 <a href="#id4"><span class="problematic" id="id5">`here&lt;https://github.com/FlanFlanagan/Bright-lite/tree/timestep/&gt;`_</span></a>,
 then run <tt class="docutils literal"><span class="pre">python</span> <span class="pre">install.py</span></tt>.</p>
 <p>To use the libraries with Bright-lite, we need to copy the folder
@@ -262,27 +231,64 @@ need to copy <tt class="docutils literal"><span class="pre">eg01-eg23.json</span
 that folder. We also need to copy <tt class="docutils literal"><span class="pre">input/FR_reprocess.xml</span></tt> into
 <tt class="docutils literal"><span class="pre">.../brightlite/brightlite0/hist</span></tt>. Now we have all the files in
 the right place and can run Cyclus:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ cyclus eg01-eg23.json
+<div class="highlight-python"><div class="highlight"><pre> $ cyclus eg01-eg23.json
 
 New brightlite0 reactor starting up - target burnup = 45
 /home/john/cyclus/install/share/brightlite/brightlite0/manifest.txt
 [...]
-CR: 191.444
-Cycle Months:  10
-Cycle Days: 10.9494
-BURNUP: 45.1533
+ CR: 191.444
+ Cycle Months:  10
+ Cycle Days: 10.9494
+ BURNUP: 45.1533
 
-Status: Cyclus run successful!
-Output location: cyclus.sqlite
-Simulation ID: de741da0-39d3-4933-a6c5-0f15e78813e5
+ Status: Cyclus run successful!
+ Output location: cyclus.sqlite
+ Simulation ID: de741da0-39d3-4933-a6c5-0f15e78813e5
 </pre></div>
 </div>
-</div></blockquote>
+<p>And that is all there is to it!</p>
 </div>
 </div>
 
 
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">xsgen User&#8217;s Guide</a><ul>
+<li><a class="reference internal" href="#installation">1. Installation</a><ul>
+<li><a class="reference internal" href="#install-xsgen">Install XSGen</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#setting-up-the-run-control-file">2. Setting Up the Run Control File</a></li>
+<li><a class="reference internal" href="#using-the-libraries-with-bright-lite">3. Using the Libraries With Bright-lite</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="previous chapter">Install XSGen</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="runcontrol.html"
+                        title="next chapter">Run Control files</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -297,10 +303,10 @@ Simulation ID: de741da0-39d3-4933-a6c5-0f15e78813e5
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="plugins.html" title="xsgen Core Plugins: base, pre, buk, and post"
+          <a href="runcontrol.html" title="Run Control files"
              >next</a> |</li>
         <li class="right" >
-          <a href="install.html" title="Installation"
+          <a href="install.html" title="Install XSGen"
              >previous</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>

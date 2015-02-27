@@ -8,7 +8,7 @@
     
     <title>Burnup-criticality – xsgen.buk &mdash; xsgen 0.1 documentation</title>
     
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -25,10 +25,17 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="xsgen 0.1 documentation" href="../index.html" />
     <link rel="up" title="API Reference" href="index.html" />
-    <link rel="next" title="OpenMC+Origen – xsgen.openmc_origen" href="openmc_origen.html" />
-    <link rel="prev" title="Pre-processing – xsgen.pre" href="pre.html" /> 
+    <link rel="next" title="Post-processing – xsgen.post" href="post.html" />
+    <link rel="prev" title="Pre-processing – xsgen.pre" href="pre.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
   </head>
   <body>
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -39,7 +46,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="openmc_origen.html" title="OpenMC+Origen – xsgen.openmc_origen"
+          <a href="post.html" title="Post-processing – xsgen.post"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="pre.html" title="Pre-processing – xsgen.pre"
@@ -47,43 +54,7 @@
         <li><a href="../index.html">xsgen 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">API Reference</a> &raquo;</li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Burnup-criticality &#8211; <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt></a><ul>
-<li><a class="reference internal" href="#burnup-criticality-plugin-api">Burnup-criticality plugin API</a></li>
-</ul>
-</li>
-</ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="pre.html"
-                        title="previous chapter">Pre-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt></a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="openmc_origen.html"
-                        title="next chapter">OpenMC+Origen &#8211; <tt class="docutils literal"><span class="pre">xsgen.openmc_origen</span></tt></a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/api/buk.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -91,7 +62,7 @@
           <div class="body">
             
   <div class="section" id="module-xsgen.buk">
-<span id="burnup-criticality-xsgen-buk"></span><h1>Burnup-criticality &#8211; <a class="reference internal" href="../plugins.html#module-xsgen.buk" title="xsgen.buk"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.buk</span></tt></a><a class="headerlink" href="#module-xsgen.buk" title="Permalink to this headline">¶</a></h1>
+<span id="burnup-criticality-xsgen-buk"></span><span id="xsgen-buk"></span><h1>Burnup-criticality &#8211; <a class="reference internal" href="../plugins.html#module-xsgen.buk" title="xsgen.buk"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.buk</span></tt></a><a class="headerlink" href="#module-xsgen.buk" title="Permalink to this headline">¶</a></h1>
 <p>Plugin that runs burnup-criticality calculation.</p>
 <dl class="docutils">
 <dt>Provides the following command-line arguments:</dt>
@@ -113,11 +84,21 @@
 <tt class="descname">execute</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.buk.XSGenPlugin.execute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sort states into runs by initial parameters, then generate libraries
 for each run and write them to an output file.</p>
-<dl class="docutils">
-<dt>rc <span class="classifier-delimiter">:</span> <span class="classifier">xsgen.utils.RunControl</span></dt>
-<dd>The RunControl controlling this instance of xsgen.</dd>
-</dl>
-<p>None</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>rc</strong> : xsgen.utils.RunControl</p>
+<blockquote>
+<div><p>The RunControl controlling this instance of xsgen.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
@@ -130,14 +111,24 @@ for each run and write them to an output file.</p>
 <dt id="xsgen.buk.XSGenPlugin.same_except_burnup_time">
 <tt class="descname">same_except_burnup_time</tt><big>(</big><em>state1</em>, <em>state2</em><big>)</big><a class="headerlink" href="#xsgen.buk.XSGenPlugin.same_except_burnup_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if two different states are equivalent except for their burnup time.</p>
-<dl class="docutils">
-<dt>state1, state2 <span class="classifier-delimiter">:</span> <span class="classifier">namedtuple (State)</span></dt>
-<dd>The states to compare.</dd>
-</dl>
-<dl class="docutils">
-<dt>bool</dt>
-<dd>True if the two state are the same except burnup time, else False.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>state1, state2</strong> : namedtuple (State)</p>
+<blockquote>
+<div><p>The states to compare.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">bool</p>
+<blockquote class="last">
+<div><p>True if the two state are the same except burnup time, else False.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -145,22 +136,42 @@ for each run and write them to an output file.</p>
 <tt class="descname">setup</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.buk.XSGenPlugin.setup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if we have OpenMC cross-section data in the RC and set the appropriate
 physics code in rc.engine.</p>
-<dl class="docutils">
-<dt>rc <span class="classifier-delimiter">:</span> <span class="classifier">xsgen.utils.RunControl</span></dt>
-<dd>The RunControl that controls this instance of xsgen.</dd>
-</dl>
-<p>None</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>rc</strong> : xsgen.utils.RunControl</p>
+<blockquote>
+<div><p>The RunControl that controls this instance of xsgen.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="xsgen.buk.XSGenPlugin.update_argparser">
 <tt class="descname">update_argparser</tt><big>(</big><em>parser</em><big>)</big><a class="headerlink" href="#xsgen.buk.XSGenPlugin.update_argparser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds plugin-specific command-line arguments.</p>
-<dl class="docutils">
-<dt>parser <span class="classifier-delimiter">:</span> <span class="classifier">argparse.ArgumentParser</span></dt>
-<dd>The parser that belongs to xsgen. We update this.</dd>
-</dl>
-<p>None</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>parser</strong> : argparse.ArgumentParser</p>
+<blockquote>
+<div><p>The parser that belongs to xsgen. We update this.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -170,6 +181,37 @@ physics code in rc.engine.</p>
 
 
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Burnup-criticality &#8211; <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt></a><ul>
+<li><a class="reference internal" href="#burnup-criticality-plugin-api">Burnup-criticality plugin API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pre.html"
+                        title="previous chapter">Pre-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="post.html"
+                        title="next chapter">Post-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.post</span></tt></a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -184,7 +226,7 @@ physics code in rc.engine.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="openmc_origen.html" title="OpenMC+Origen – xsgen.openmc_origen"
+          <a href="post.html" title="Post-processing – xsgen.post"
              >next</a> |</li>
         <li class="right" >
           <a href="pre.html" title="Pre-processing – xsgen.pre"
