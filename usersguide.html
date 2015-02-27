@@ -8,7 +8,7 @@
     
     <title>xsgen User’s Guide &mdash; xsgen 0.1 documentation</title>
     
-    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -24,10 +24,17 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="xsgen 0.1 documentation" href="index.html" />
-    <link rel="next" title="xsgen Core Plugins: base, pre, buk, and post" href="plugins.html" />
-    <link rel="prev" title="Installation" href="install.html" /> 
+    <link rel="next" title="Run Control files" href="runcontrol.html" />
+    <link rel="prev" title="Install XSGen" href="install.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
   </head>
   <body>
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -38,42 +45,14 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="plugins.html" title="xsgen Core Plugins: base, pre, buk, and post"
+          <a href="runcontrol.html" title="Run Control files"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="install.html" title="Installation"
+          <a href="install.html" title="Install XSGen"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="install.html"
-                        title="previous chapter">Installation</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="plugins.html"
-                        title="next chapter">xsgen Core Plugins: base, pre, buk, and post</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/usersguide.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -82,15 +61,21 @@
             
   <div class="section" id="xsgen-user-s-guide">
 <h1>xsgen User&#8217;s Guide<a class="headerlink" href="#xsgen-user-s-guide" title="Permalink to this headline">¶</a></h1>
-<ol class="arabic">
-<li><p class="first">Installation</p>
+<div class="section" id="installation">
+<h2>1. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-xsgen">
+<h3>Install XSGen<a class="headerlink" href="#install-xsgen" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
 <p>xsgen depends on <a class="reference external" href="http://www.pyne.io">PyNE</a>. You can find installation
 instructions for PyNE <a class="reference external" href="http://pyne.io/install.html">here</a>.</p>
 <p>To install from source, simply download the source code from the
 official GitHub repo and run <tt class="docutils literal"><span class="pre">setup.py</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre>git clone git://github.com/bright-dev/xsgen.git
-cd xsgen/
-python setup.py install --user
+<div class="highlight-python"><div class="highlight"><pre>$ git clone git://github.com/bright-dev/xsgen.git
+$ cd xsgen/
+$ python setup.py install --user
 </pre></div>
 </div>
 <p>Currently, we require <a class="reference external" href="http://mit-crpg.github.io/openmc/">OpenMC</a>
@@ -99,14 +84,15 @@ burnup and criticality computations. Installation instructions, along
 with a wealth of documentation, for OpenMC can be found <a class="reference external" href="http://mit-crpg.github.io/openmc/quickinstall.html">here</a>. ORIGEN 2.2 is
 distributed by RSICC at the above link.</p>
 <p>For this example, we will be using the OpenMC/ORIGEN physics code.</p>
-</li>
-<li><p class="first">Usage</p>
-<p>For this example, we&#8217;ll use the <a class="reference external" href="https://github.com/bright-dev/xslibs">xslibs</a> project repository by
-Anthony Scopatz. This provides some useful run-control files for
-light water reactors.</p>
-<div class="highlight-python"><div class="highlight"><pre>git clone git@github.com:bright-dev/xslibs.git
-cd xslibs
-xsgen --rc lwr1g.py
+</div>
+<div class="section" id="setting-up-the-run-control-file">
+<h2>2. Setting Up the Run Control File<a class="headerlink" href="#setting-up-the-run-control-file" title="Permalink to this headline">¶</a></h2>
+<p>For this example, we&#8217;ll use the <a class="reference external" href="https://github.com/bright-dev/xslibs">xslibs</a> project repository
+by Anthony Scopatz. This provides some useful run-control files for
+light water reactors:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git clone git@github.com:bright-dev/xslibs.git
+$ cd xslibs
+$ xsgen --rc lwr1g.py
 </pre></div>
 </div>
 <p>Let&#8217;s look at what&#8217;s inside</p>
@@ -135,7 +121,6 @@ criticality calculations:</p>
 <span class="n">time_step</span> <span class="o">=</span> <span class="mi">100</span>      <span class="c"># Time step by which to increment the burn [days]</span>
 <span class="n">burn_times</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
 <span class="n">burn_times</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4001</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>  <span class="c"># we now have [0, 3, 100, 200 .. 4000]</span>
-<span class="n">batches</span> <span class="o">=</span> <span class="mi">3</span>
 </pre></div>
 </div>
 <p>Here, <tt class="docutils literal"><span class="pre">solver</span></tt> refers to the engine we use for the transmutation
@@ -143,20 +128,22 @@ and transport. We currently only have one where we use OpenMC for
 neutron transport and Origen 2.2 for transmutation, named
 &#8220;openmc+origen.&#8221; <tt class="docutils literal"><span class="pre">formats</span></tt> is an iterable with the various output
 formats you intend to generate libaries for. We currently only
-support <a href="#id2"><span class="problematic" id="id3">`Bright-lite
-&lt;https://github.com/FlanFlanagan/Bright-lite/tree/timestep/&gt;format`_</span></a>.
+support <a href="#id2"><span class="problematic" id="id3">`Bright-lite &lt;https://github.com/FlanFlanagan/Bright-lite/tree/timestep/&gt;format`_</span></a>.
 <tt class="docutils literal"><span class="pre">burn_regions</span></tt> is, as the comment says, the number of burnup
 annular regions.</p>
 <p>You can specify your burn times in two different ways. You can
 either specify a <tt class="docutils literal"><span class="pre">burn_time</span></tt> and a <tt class="docutils literal"><span class="pre">time_step</span></tt>, which will make
 the burn times start at zero and go to <tt class="docutils literal"><span class="pre">burn_time</span></tt> in increments
 of <tt class="docutils literal"><span class="pre">time_step</span></tt>. Or you can set <tt class="docutils literal"><span class="pre">burn_times</span></tt> to a list of times.
-The burn times are in units of <strong>days</strong>. <tt class="docutils literal"><span class="pre">burn_times</span></tt> will take
+The burn times are in units of [days]. <tt class="docutils literal"><span class="pre">burn_times</span></tt> will take
 precedence over <tt class="docutils literal"><span class="pre">burn_time</span></tt> and <tt class="docutils literal"><span class="pre">time_step</span></tt>. Additionally, if
 no burn times are specified, we default to <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">100,</span> <span class="pre">...</span> <span class="pre">,</span> <span class="pre">900]</span></tt>.</p>
-<p><tt class="docutils literal"><span class="pre">batches</span></tt> specifies how many batches you want to input to
-Bright-lite.</p>
-<p>Next we have a bunch of settings for the geometry and fuel:</p>
+<p>Note: if you intend to use these libraries for Bright-lite, you
+should have a burn time at 3 days. This gets us a non-zero but
+small fluence, which helps with interpolation. You should also go
+out to at least 7000 days, otherwise you will not get enough
+fluence.</p>
+<p>Next we have settings for the geometry and fuel:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">fuel_cell_radius</span> <span class="o">=</span> <span class="mf">0.410</span>
 <span class="n">void_cell_radius</span> <span class="o">=</span> <span class="mf">0.4185</span>
 <span class="n">clad_cell_radius</span> <span class="o">=</span> <span class="mf">0.475</span>
@@ -170,17 +157,13 @@ Bright-lite.</p>
 <span class="n">fuel_specific_power</span> <span class="o">=</span> <span class="mf">40.0</span> <span class="o">/</span> <span class="mf">1000.0</span>   <span class="c"># Power garnered from fuel [W / g]</span>
 </pre></div>
 </div>
-<p>The distance measurements here are all in <strong>cm</strong>.  The densities are in
-<strong>g/cm^3</strong>.  The fuel-specific power is in <strong>W/g</strong>.</p>
+<p>The distance measurements here are all in [cm].  The densities are in
+[g/cm^3].  The fuel-specific power is in [W/g].</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># LEU</span>
 <span class="n">initial_heavy_metal</span> <span class="o">=</span> <span class="p">{</span>     <span class="c"># Initial heavy metal mass fraction distribution</span>
 <span class="mi">922350</span><span class="p">:</span> <span class="mf">0.04</span><span class="p">,</span>
 <span class="mi">922380</span><span class="p">:</span> <span class="mf">0.96</span><span class="p">,</span>
 <span class="p">}</span>
-
-<span class="n">enrichment</span> <span class="o">=</span> <span class="mf">0.04</span>
-
-<span class="n">pnl</span> <span class="o">=</span> <span class="mf">0.96</span>
 
 <span class="c"># UOX</span>
 <span class="n">fuel_chemical_form</span> <span class="o">=</span> <span class="p">{</span>                 <span class="c"># Dictionary of initial fuel loading.</span>
@@ -189,11 +172,10 @@ Bright-lite.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Here we tell <tt class="docutils literal"><span class="pre">xsgen</span></tt> that our initial heavy metal is 4% U235 and 96%
-U238. <tt class="docutils literal"><span class="pre">enrichment</span></tt> and <tt class="docutils literal"><span class="pre">pnl</span></tt> are for Brightlite input files,
-which expect these parameters. <tt class="docutils literal"><span class="pre">fuel_chemical_form</span></tt> sets the
-initial fuel - here we see that we have one atom of IHM to every
-two atoms of oxygen, or UO_2.</p>
+<p>Here we tell <tt class="docutils literal"><span class="pre">xsgen</span></tt> that our initial heavy metal is 4% U235 and
+96% U238.  <tt class="docutils literal"><span class="pre">fuel_chemical_form</span></tt> sets the initial fuel - here we
+see that we have one atom of IHM to every two atoms of oxygen, or
+UO_2.</p>
 <p>Next we set a few OpenMC parameters:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">k_particles</span>   <span class="o">=</span> <span class="mi">500</span>       <span class="c"># Number of particles to run per kcode cycle</span>
 <span class="n">k_cycles</span>      <span class="o">=</span> <span class="mi">130</span>       <span class="c"># Number of kcode cycles to run</span>
@@ -232,14 +214,81 @@ run id.</p>
                  |- ORIGEN input files for full fuel go here
        |- -4743197135546938812
        |- ...
+       |- brightlite0
+            |- Bright-lite output files go here
 </pre></div>
 </div>
-</li>
-</ol>
+</div>
+<div class="section" id="using-the-libraries-with-bright-lite">
+<h2>3. Using the Libraries With Bright-lite<a class="headerlink" href="#using-the-libraries-with-bright-lite" title="Permalink to this headline">¶</a></h2>
+<p>First we must install Bright-lite. Clone the repository
+<a href="#id4"><span class="problematic" id="id5">`here&lt;https://github.com/FlanFlanagan/Bright-lite/tree/timestep/&gt;`_</span></a>,
+then run <tt class="docutils literal"><span class="pre">python</span> <span class="pre">install.py</span></tt>.</p>
+<p>To use the libraries with Bright-lite, we need to copy the folder
+<tt class="docutils literal"><span class="pre">brightlite0</span></tt> to
+<tt class="docutils literal"><span class="pre">${CYCLUS_INSTALL_DIR}/share/brightlite/brightlite0</span></tt>.  Then we
+need to copy <tt class="docutils literal"><span class="pre">eg01-eg23.json</span></tt> from the <tt class="docutils literal"><span class="pre">xslibs</span></tt> repository into
+that folder. We also need to copy <tt class="docutils literal"><span class="pre">input/FR_reprocess.xml</span></tt> into
+<tt class="docutils literal"><span class="pre">.../brightlite/brightlite0/hist</span></tt>. Now we have all the files in
+the right place and can run Cyclus:</p>
+<div class="highlight-python"><div class="highlight"><pre> $ cyclus eg01-eg23.json
+
+New brightlite0 reactor starting up - target burnup = 45
+/home/john/cyclus/install/share/brightlite/brightlite0/manifest.txt
+[...]
+ CR: 191.444
+ Cycle Months:  10
+ Cycle Days: 10.9494
+ BURNUP: 45.1533
+
+ Status: Cyclus run successful!
+ Output location: cyclus.sqlite
+ Simulation ID: de741da0-39d3-4933-a6c5-0f15e78813e5
+</pre></div>
+</div>
+<p>And that is all there is to it!</p>
+</div>
 </div>
 
 
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">xsgen User&#8217;s Guide</a><ul>
+<li><a class="reference internal" href="#installation">1. Installation</a><ul>
+<li><a class="reference internal" href="#install-xsgen">Install XSGen</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#setting-up-the-run-control-file">2. Setting Up the Run Control File</a></li>
+<li><a class="reference internal" href="#using-the-libraries-with-bright-lite">3. Using the Libraries With Bright-lite</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="previous chapter">Install XSGen</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="runcontrol.html"
+                        title="next chapter">Run Control files</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -254,10 +303,10 @@ run id.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="plugins.html" title="xsgen Core Plugins: base, pre, buk, and post"
+          <a href="runcontrol.html" title="Run Control files"
              >next</a> |</li>
         <li class="right" >
-          <a href="install.html" title="Installation"
+          <a href="install.html" title="Install XSGen"
              >previous</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xsgen Base plugin – xsgen.base &mdash; xsgen 0.1 documentation</title>
+    <title>xsgen tape9 module – xsgen.tape9 &mdash; xsgen 0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="xsgen 0.1 documentation" href="../index.html" />
     <link rel="up" title="API Reference" href="index.html" />
-    <link rel="next" title="Pre-processing – xsgen.pre" href="pre.html" />
-    <link rel="prev" title="API Reference" href="index.html" />
+    <link rel="next" title="OpenMC+Origen – xsgen.openmc_origen" href="openmc_origen.html" />
+    <link rel="prev" title="Post-processing – xsgen.post" href="post.html" />
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
 <!--[if lte IE 6]>
@@ -46,10 +46,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="pre.html" title="Pre-processing – xsgen.pre"
+          <a href="openmc_origen.html" title="OpenMC+Origen – xsgen.openmc_origen"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="API Reference"
+          <a href="post.html" title="Post-processing – xsgen.post"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">xsgen 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">API Reference</a> &raquo;</li> 
@@ -61,41 +61,11 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-xsgen.base">
-<span id="xsgen-base-plugin-xsgen-base"></span><span id="xsgen-base"></span><h1>xsgen Base plugin &#8211; <a class="reference internal" href="../plugins.html#module-xsgen.base" title="xsgen.base"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.base</span></tt></a><a class="headerlink" href="#module-xsgen.base" title="Permalink to this headline">¶</a></h1>
-<dl class="docutils">
-<dt>The base plugin for xsgen. Provides the following command-line arguments:</dt>
-<dd><ul class="first last simple">
-<li><tt class="docutils literal"><span class="pre">--rc</span></tt>: Path to run control file</li>
-<li><tt class="docutils literal"><span class="pre">--plugins</span></tt>: Plugins to include</li>
-<li><tt class="docutils literal"><span class="pre">--debug</span></tt>: Build in debugging mode</li>
-<li><tt class="docutils literal"><span class="pre">--verbose</span></tt>: Print more output.</li>
-<li><tt class="docutils literal"><span class="pre">--version</span></tt>: Print version information.</li>
-<li><tt class="docutils literal"><span class="pre">--bash_completion</span></tt>: Flag for enabling/disabling BASH completion when using argcomplete.</li>
-</ul>
-</dd>
-</dl>
-<div class="section" id="base-plugin-api">
-<h2>Base Plugin API<a class="headerlink" href="#base-plugin-api" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="xsgen.base.XSGenPlugin">
-<em class="property">class </em><tt class="descclassname">xsgen.base.</tt><tt class="descname">XSGenPlugin</tt><a class="headerlink" href="#xsgen.base.XSGenPlugin" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class provides base functionality for xsgen itself.</p>
-<dl class="method">
-<dt id="xsgen.base.XSGenPlugin.setup">
-<tt class="descname">setup</tt><big>(</big><em>rc</em><big>)</big><a class="headerlink" href="#xsgen.base.XSGenPlugin.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Report version if requested.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xsgen.base.XSGenPlugin.update_argparser">
-<tt class="descname">update_argparser</tt><big>(</big><em>parser</em><big>)</big><a class="headerlink" href="#xsgen.base.XSGenPlugin.update_argparser" title="Permalink to this definition">¶</a></dt>
-<dd><p>This updates the argument parser with the base options.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
+  <div class="section" id="xsgen-tape9-module-xsgen-tape9">
+<span id="xsgen-tape9"></span><h1>xsgen tape9 module &#8211; <tt class="xref py py-mod docutils literal"><span class="pre">xsgen.tape9</span></tt><a class="headerlink" href="#xsgen-tape9-module-xsgen-tape9" title="Permalink to this headline">¶</a></h1>
+<p>This module provides <tt class="docutils literal"><span class="pre">brightlitetape9</span></tt>, A TAPE9 from Bright-lite
+that we can merge into other TAPE9s with PyNE. You may find this
+useful if you are writing a solver plugin that runs ORIGEN.</p>
 </div>
 
 
@@ -104,20 +74,12 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">xsgen Base plugin &#8211; <tt class="docutils literal"><span class="pre">xsgen.base</span></tt></a><ul>
-<li><a class="reference internal" href="#base-plugin-api">Base Plugin API</a></li>
-</ul>
-</li>
-</ul>
-
   <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">API Reference</a></p>
+  <p class="topless"><a href="post.html"
+                        title="previous chapter">Post-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.post</span></tt></a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="pre.html"
-                        title="next chapter">Pre-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt></a></p>
+  <p class="topless"><a href="openmc_origen.html"
+                        title="next chapter">OpenMC+Origen &#8211; <tt class="docutils literal"><span class="pre">xsgen.openmc_origen</span></tt></a></p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -145,10 +107,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="pre.html" title="Pre-processing – xsgen.pre"
+          <a href="openmc_origen.html" title="OpenMC+Origen – xsgen.openmc_origen"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="API Reference"
+          <a href="post.html" title="Post-processing – xsgen.post"
              >previous</a> |</li>
         <li><a href="../index.html">xsgen 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >API Reference</a> &raquo;</li> 

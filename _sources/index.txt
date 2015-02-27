@@ -3,9 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-xsgens have awesome rates
-==========================
-
+XSGen: Cross Section Generator for Bright-lite Reactors
+=======================================================
 xsgen is a tool for computing multi-group neutron cross-section, burnup, and
 multiplication factor (k\ :sub:`inf`\ ) as a function of reactor state, which
 includes time/fluence, material properties, and reactor geometry.
@@ -25,6 +24,15 @@ Now you should be able to run it simply with::
 
     xsgen
 
+Release Notes
+---------------
+**0.1: 2/27/2015**
+  * We can now run OpenMC and Origen together to generate Bright-lite
+    input files!
+  Developers:
+
+  * Anthony Scopatz
+  * John Xia
 
 Contents:
 ---------
@@ -37,9 +45,11 @@ Contents:
    overview
    install
    usersguide
+   runcontrol
    plugins
    plugins-module
    api/index
+   devguide/index
 
 ..
    Indices and tables

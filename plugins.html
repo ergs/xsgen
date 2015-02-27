@@ -8,7 +8,7 @@
     
     <title>xsgen Core Plugins: base, pre, buk, and post &mdash; xsgen 0.1 documentation</title>
     
-    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -25,9 +25,16 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="xsgen 0.1 documentation" href="index.html" />
     <link rel="next" title="xsgen Plugin System – xsgen.plugins" href="plugins-module.html" />
-    <link rel="prev" title="xsgen User’s Guide" href="usersguide.html" /> 
+    <link rel="prev" title="Run Control files" href="runcontrol.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
   </head>
   <body>
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -41,56 +48,11 @@
           <a href="plugins-module.html" title="xsgen Plugin System – xsgen.plugins"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="usersguide.html" title="xsgen User’s Guide"
+          <a href="runcontrol.html" title="Run Control files"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">xsgen Core Plugins: base, pre, buk, and post</a><ul>
-<li><a class="reference internal" href="#module-xsgen.base">Base &#8211; <tt class="docutils literal"><span class="pre">xsgen.base</span></tt></a><ul>
-<li><a class="reference internal" href="#base-plugin-api">Base Plugin API</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-xsgen.pre">Pre-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt></a></li>
-<li><a class="reference internal" href="#module-xsgen.buk">Burnup-criticality &#8211; <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt></a><ul>
-<li><a class="reference internal" href="#burnup-criticality-plugin-api">Burnup-criticality plugin API</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-xsgen.post">Post-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.post</span></tt></a></li>
-</ul>
-</li>
-</ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="usersguide.html"
-                        title="previous chapter">xsgen User&#8217;s Guide</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="plugins-module.html"
-                        title="next chapter">xsgen Plugin System &#8211; <tt class="docutils literal"><span class="pre">xsgen.plugins</span></tt></a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/plugins.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -123,7 +85,6 @@
 <dl class="docutils">
 <dt>Provides the following command-line arguments:</dt>
 <dd><ul class="first last simple">
-<li><tt class="docutils literal"><span class="pre">--ui</span></tt>: Launches the xsgen ui</li>
 <li><tt class="docutils literal"><span class="pre">-c</span></tt>, <tt class="docutils literal"><span class="pre">--clean</span></tt>: Cleans reactor directory of current files.</li>
 <li><tt class="docutils literal"><span class="pre">--formats</span></tt>: The output formats to write out.</li>
 <li><tt class="docutils literal"><span class="pre">--is-thermal</span></tt>: Whether the reactor is a thermal system (True) or a fast one (False)</li>
@@ -160,6 +121,46 @@ Post-processing Plugin API
           </div>
         </div>
       </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">xsgen Core Plugins: base, pre, buk, and post</a><ul>
+<li><a class="reference internal" href="#module-xsgen.base">Base &#8211; <tt class="docutils literal"><span class="pre">xsgen.base</span></tt></a><ul>
+<li><a class="reference internal" href="#base-plugin-api">Base Plugin API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-xsgen.pre">Pre-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt></a></li>
+<li><a class="reference internal" href="#module-xsgen.buk">Burnup-criticality &#8211; <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt></a><ul>
+<li><a class="reference internal" href="#burnup-criticality-plugin-api">Burnup-criticality plugin API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-xsgen.post">Post-processing &#8211; <tt class="docutils literal"><span class="pre">xsgen.post</span></tt></a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="runcontrol.html"
+                        title="previous chapter">Run Control files</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="plugins-module.html"
+                        title="next chapter">xsgen Plugin System &#8211; <tt class="docutils literal"><span class="pre">xsgen.plugins</span></tt></a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
       <div class="clearer"></div>
     </div>
     <div class="related">
@@ -175,7 +176,7 @@ Post-processing Plugin API
           <a href="plugins-module.html" title="xsgen Plugin System – xsgen.plugins"
              >next</a> |</li>
         <li class="right" >
-          <a href="usersguide.html" title="xsgen User’s Guide"
+          <a href="runcontrol.html" title="Run Control files"
              >previous</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>

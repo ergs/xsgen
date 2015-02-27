@@ -8,7 +8,7 @@
     
     <title>Run Control files &mdash; xsgen 0.1 documentation</title>
     
-    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,9 +23,18 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="xsgen 0.1 documentation" href="index.html" /> 
+    <link rel="top" title="xsgen 0.1 documentation" href="index.html" />
+    <link rel="next" title="xsgen Core Plugins: base, pre, buk, and post" href="plugins.html" />
+    <link rel="prev" title="xsgen User’s Guide" href="usersguide.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
   </head>
   <body>
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -35,31 +44,15 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="plugins.html" title="xsgen Core Plugins: base, pre, buk, and post"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="usersguide.html" title="xsgen User’s Guide"
+             accesskey="P">previous</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/runcontrol.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -69,25 +62,24 @@
   <div class="section" id="run-control-files">
 <h1>Run Control files<a class="headerlink" href="#run-control-files" title="Permalink to this headline">¶</a></h1>
 <p>Much of the customization of an <tt class="docutils literal"><span class="pre">xsgen</span></tt> run is controlled through
-the run control file. This is a Python file that consists of variable
-assignments. For example, to set the <tt class="docutils literal"><span class="pre">reactor</span></tt> property of the run
+the run control file.  This is a Python file that consists of variable
+assignments.  For example, to set the <tt class="docutils literal"><span class="pre">reactor</span></tt> property of the run
 control to <tt class="docutils literal"><span class="pre">&quot;lwr1g&quot;</span></tt>, you would include this in the run control file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">reactor</span> <span class="o">=</span> <span class="s">&quot;lwr1g&quot;</span>
 </pre></div>
 </div>
 <p>As a Python file, you can easily add your own comments and even set
 parameters to Python expressions or objects from other imported
-modules. A sample run control file can be found <a class="reference external" href="https://github.com/bright-dev/xslibs/blob/master/lwr1g.py">here</a>.</p>
+modules.  A sample run control file can be found <a class="reference external" href="https://github.com/bright-dev/xslibs/blob/master/lwr1g.py">here</a>.</p>
 <p>All plugins are able to update the command-line flags which set
-options in the run control. You can see the individual <a class="reference external" href="plugins.html">plugin pages</a> for details.</p>
+options in the run control.  You can see the individual <a class="reference external" href="plugins.html">plugin pages</a> for details.</p>
 <p>However, there are many options that are not set by command line -
 these are reactor parameters that are loaded from the run control
-file and validated by <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt>. To specify the run control file,
+file and validated by <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt>.  To specify the run control file,
 just add the flag <tt class="docutils literal"><span class="pre">--rc</span> <span class="pre">/path/to/file</span></tt> to your <tt class="docutils literal"><span class="pre">xsgen</span></tt> call.</p>
 <p>If any parameters are missing, <tt class="docutils literal"><span class="pre">xsgen.pre</span></tt> will provide the following
 defaults:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">defaultrc</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;formats&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;brightlite&#39;</span><span class="p">,),</span>
-             <span class="s">&#39;ui&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
              <span class="s">&#39;is_thermal&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
              <span class="s">&#39;burn_times&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span>
              <span class="s">&#39;group_structure&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span> <span class="o">**</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)],</span>
@@ -113,11 +105,104 @@ defaults:</p>
 </pre></div>
 </div>
 <p>There is no guarantee that these are particularly physical, but they
-will certainly allow you to run xsgen.</p>
+will certainly allow you to run xsgen. Here is what they all mean:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">formats</span></tt> is a tuple containing the desired output
+formats. Currently, only <tt class="docutils literal"><span class="pre">brightlite</span></tt> is available.</li>
+<li><tt class="docutils literal"><span class="pre">is_thermal</span></tt> is used to determine whether we can use EAF data, and
+which ORIGEN call to make. When <tt class="docutils literal"><span class="pre">True</span></tt>, our reactor is
+thermal. When <tt class="docutils literal"><span class="pre">False</span></tt>, it&#8217;s fast.</li>
+<li><tt class="docutils literal"><span class="pre">burn_times</span></tt> is an array of the burn times that we want to get
+data for. The units are days.</li>
+<li><tt class="docutils literal"><span class="pre">group_structure</span></tt> is an array of the energy bins you want to use,
+in MeV.</li>
+<li><tt class="docutils literal"><span class="pre">track_nucs</span></tt> is an array of the nuclides you would like to
+generate libraries for. Usually it will be something like
+[922350000, 922380000].</li>
+<li><tt class="docutils literal"><span class="pre">energy_grid</span></tt> can be either &#8220;nuclide&#8221; or &#8220;unionized&#8221;, which gets
+written to OpenMC&#8217;s settings. Beware - unionized energy grid can
+cause OpenMC to run out of memory. If OpenMC is crashing with exit
+code -9, you might want to make sure <tt class="docutils literal"><span class="pre">energy_grid</span></tt> is &#8220;nuclide&#8221;.</li>
+<li><tt class="docutils literal"><span class="pre">fuel_density</span></tt>, <tt class="docutils literal"><span class="pre">clad_density</span></tt>, and <tt class="docutils literal"><span class="pre">cool_density</span></tt> have units
+of [g/cm^3].</li>
+<li><tt class="docutils literal"><span class="pre">fuel_cell_radius</span></tt>, <tt class="docutils literal"><span class="pre">void_cell_radius</span></tt>, <tt class="docutils literal"><span class="pre">clad_cell_radius</span></tt>,
+<tt class="docutils literal"><span class="pre">unit_cell_pitch</span></tt>, and <tt class="docutils literal"><span class="pre">unit_cell_height</span></tt> have units of [cm].</li>
+<li><tt class="docutils literal"><span class="pre">burn_regions</span></tt> is the number of annular burn regions.</li>
+<li><tt class="docutils literal"><span class="pre">fuel_specific_power</span></tt> has units of [W/g].</li>
+<li><tt class="docutils literal"><span class="pre">fuel_material</span></tt> is a dictionary with the mass composition of the
+fuel material.</li>
+<li><tt class="docutils literal"><span class="pre">solver</span></tt> is the transport and transmutation engine - we only
+support &#8220;openmc+origen&#8221; right now.</li>
+<li><tt class="docutils literal"><span class="pre">reactor</span></tt> is the name of the reactor. It&#8217;s used for the default
+output directory.</li>
+<li><tt class="docutils literal"><span class="pre">k_cycles</span></tt> is the number of cycles to run the transport for.</li>
+<li><tt class="docutils literal"><span class="pre">k_cycles_skip</span></tt> is the number of cycles to skip initially.</li>
+<li><tt class="docutils literal"><span class="pre">k_particles</span></tt> is the number of particles to run in each cycle.</li>
+</ul>
+<p>Additional parameters with no defaults include the following. To
+specify them you can put them in the run control file.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">plugins</span></tt> is a list of plugins you want to run.</li>
+<li><tt class="docutils literal"><span class="pre">burn_time</span></tt> is the maximum burn time you want to calculate
+libraries for. You can set this, together with <tt class="docutils literal"><span class="pre">time_step</span></tt>,
+instead of specifying each burn time individually in <tt class="docutils literal"><span class="pre">burn_times</span></tt>.
+However <tt class="docutils literal"><span class="pre">burn_times</span></tt> will overrride this. This has units of [days].</li>
+<li><tt class="docutils literal"><span class="pre">time_step</span></tt> is the time step, in units of [days], if using
+<tt class="docutils literal"><span class="pre">burn_time</span></tt>. The burn times will end up counting up from 0 to
+<tt class="docutils literal"><span class="pre">burn_time</span></tt> in steps of <tt class="docutils literal"><span class="pre">time_step</span></tt> days.</li>
+<li><tt class="docutils literal"><span class="pre">initial_heavy_metal</span></tt> is the mass fraction distribution of the initial heavy metal.</li>
+<li><tt class="docutils literal"><span class="pre">fuel_chemical_form</span></tt> is the atomic fraction distribution of the
+initial fuel loading. One of the keys should be &#8220;IHM&#8221; for the
+initial heavy metal.</li>
+<li><tt class="docutils literal"><span class="pre">temperature</span></tt> has units of [K] and is the cross-section
+temperature we use. It should be a multiple of 300K.</li>
+</ul>
+<p>The next few are for the Bright-lite input files.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">enrichment</span></tt> is the enrichment for the <tt class="docutils literal"><span class="pre">params.txt</span></tt> Bright-lite
+input file.  If it&#8217;s not specified, we try to find the proportion of
+922350 in the initial heavy metal.  If that&#8217;s not there, then we
+don&#8217;t write out enrichment at all.</li>
+<li><tt class="docutils literal"><span class="pre">batches</span></tt> is the number of batches to put in the <tt class="docutils literal"><span class="pre">params.txt</span></tt>
+Bright-lite input file.  If not specified, then we won&#8217;t write
+anything about batches to <tt class="docutils literal"><span class="pre">params.txt</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">pnl</span></tt> The PNL to put in the <tt class="docutils literal"><span class="pre">params.txt</span></tt> Bright-lite input file.
+If not specified, then we won&#8217;t write anything about PNL to
+<tt class="docutils literal"><span class="pre">params.txt</span></tt>.</li>
+</ul>
+<p>And this last one is for configuring OpenMC.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">openmc_cross_sections</span></tt> is the path to your OpenMC cross-sections.
+If not specified, we attempt to read the $CROSS_SECTIONS environment
+variable.</li>
+</ul>
 </div>
 
 
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="usersguide.html"
+                        title="previous chapter">xsgen User&#8217;s Guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="plugins.html"
+                        title="next chapter">xsgen Core Plugins: base, pre, buk, and post</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -131,6 +216,12 @@ will certainly allow you to run xsgen.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="plugins.html" title="xsgen Core Plugins: base, pre, buk, and post"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="usersguide.html" title="xsgen User’s Guide"
+             >previous</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>

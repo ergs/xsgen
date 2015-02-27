@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installation &mdash; xsgen 0.1 documentation</title>
+    <title>Install XSGen &mdash; xsgen 0.1 documentation</title>
     
-    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -25,9 +25,16 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="xsgen 0.1 documentation" href="index.html" />
     <link rel="next" title="xsgen User’s Guide" href="usersguide.html" />
-    <link rel="prev" title="Overview" href="overview.html" /> 
+    <link rel="prev" title="Overview" href="overview.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
   </head>
   <body>
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -45,12 +52,43 @@
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
-    </div>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="install-xsgen">
+<h1>Install XSGen<a class="headerlink" href="#install-xsgen" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>xsgen depends on <a class="reference external" href="http://www.pyne.io">PyNE</a>. You can find installation
+instructions for PyNE <a class="reference external" href="http://pyne.io/install.html">here</a>.</p>
+<p>To install from source, simply download the source code from the
+official GitHub repo and run <tt class="docutils literal"><span class="pre">setup.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git clone git://github.com/bright-dev/xsgen.git
+$ cd xsgen/
+$ python setup.py install --user
+</pre></div>
+</div>
+<p>Currently, we require <a class="reference external" href="http://mit-crpg.github.io/openmc/">OpenMC</a>
+and <a class="reference external" href="https://rsicc.ornl.gov/CustomerService.aspx">ORIGEN 2.2</a> for
+burnup and criticality computations. Installation instructions, along
+with a wealth of documentation, for OpenMC can be found <a class="reference external" href="http://mit-crpg.github.io/openmc/quickinstall.html">here</a>. ORIGEN 2.2 is
+distributed by RSICC at the above link.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#">Install XSGen</a><ul>
 <li><a class="reference internal" href="#dependencies">Dependencies</a></li>
 </ul>
 </li>
@@ -62,11 +100,6 @@
   <h4>Next topic</h4>
   <p class="topless"><a href="usersguide.html"
                         title="next chapter">xsgen User&#8217;s Guide</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/install.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -80,37 +113,6 @@
     </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<p>xsgen depends on <a class="reference external" href="http://www.pyne.io">PyNE</a>. You can find installation
-instructions for PyNE <a class="reference external" href="http://pyne.io/install.html">here</a>.</p>
-<p>To install from source, simply download the source code from the
-official GitHub repo and run <tt class="docutils literal"><span class="pre">setup.py</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre>git clone git://github.com/bright-dev/xsgen.git
-cd xsgen/
-python setup.py install --user
-</pre></div>
-</div>
-<p>Currently, we require <a class="reference external" href="http://mit-crpg.github.io/openmc/">OpenMC</a>
-and <a class="reference external" href="https://rsicc.ornl.gov/CustomerService.aspx">ORIGEN 2.2</a> for
-burnup and criticality computations. Installation instructions, along
-with a wealth of documentation, for OpenMC can be found <a class="reference external" href="http://mit-crpg.github.io/openmc/quickinstall.html">here</a>. ORIGEN 2.2 is
-distributed by RSICC at the above link.</p>
-</div>
-</div>
-
-
-          </div>
         </div>
       </div>
       <div class="clearer"></div>

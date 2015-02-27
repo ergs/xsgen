@@ -6,30 +6,29 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xsgen Plugin System – xsgen.plugins &mdash; xsgen 0.1 documentation</title>
+    <title>Developer’s Guide &mdash; xsgen 0.1 documentation</title>
     
-    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
+        URL_ROOT:    '../',
         VERSION:     '0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="xsgen 0.1 documentation" href="index.html" />
-    <link rel="next" title="API Reference" href="api/index.html" />
-    <link rel="prev" title="xsgen Core Plugins: base, pre, buk, and post" href="plugins.html" />
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="xsgen 0.1 documentation" href="../index.html" />
+    <link rel="prev" title="OpenMC+Origen – xsgen.openmc_origen" href="../api/openmc_origen.html" />
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
 <!--[if lte IE 6]>
-<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
 <![endif]-->
 
   </head>
@@ -39,18 +38,15 @@
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
+          <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api/index.html" title="API Reference"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="plugins.html" title="xsgen Core Plugins: base, pre, buk, and post"
+          <a href="../api/openmc_origen.html" title="OpenMC+Origen – xsgen.openmc_origen"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -59,8 +55,72 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-xsgen.plugins">
-<span id="xsgen-plugin-system-xsgen-plugins"></span><h1>xsgen Plugin System &#8211; <a class="reference internal" href="#module-xsgen.plugins" title="xsgen.plugins"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.plugins</span></tt></a><a class="headerlink" href="#module-xsgen.plugins" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="developer-s-guide">
+<h1>Developer&#8217;s Guide<a class="headerlink" href="#developer-s-guide" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview-of-program-flow">
+<h2>Overview of program flow<a class="headerlink" href="#overview-of-program-flow" title="Permalink to this headline">¶</a></h2>
+<p>First, <tt class="docutils literal"><span class="pre">xsgen</span></tt> reads in the initial conditions and other parameters
+from the run control file, generating all possible states of the
+permutation parameters.</p>
+<p>Then, in <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt> these states are sorted into runs, which share
+all parameters except for burnup time. <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt> then calls the
+<tt class="docutils literal"><span class="pre">generate_run</span></tt> method of the chosen solver for each run.</p>
+<p><tt class="docutils literal"><span class="pre">generate_run</span></tt> returns a dictionary with the data we want to write
+out to libraries. Depending on the solver its implementation may
+differ, but this is how <tt class="docutils literal"><span class="pre">xsgen.openmc_origen</span></tt> works:</p>
+<ol class="arabic simple">
+<li><tt class="docutils literal"><span class="pre">generate_run</span></tt> calls <tt class="docutils literal"><span class="pre">generate</span></tt> for each state in the run.</li>
+<li><tt class="docutils literal"><span class="pre">generate</span></tt> calls OpenMC for that reactor state, then reads the
+output to find the total neutron flux.</li>
+<li>Using the neutron flux <tt class="docutils literal"><span class="pre">generate</span></tt> then calls
+<tt class="docutils literal"><span class="pre">run_all_the_origens</span></tt>, running ORIGEN2.2 on the fuel
+material. This also runs ORIGEN once for each tracked nuclide - it
+starts with a material of 1000g of each nuclide. We then read the
+output to find the transmutation, burnup, and neutron
+production/destruction rates during this timestep.</li>
+<li><tt class="docutils literal"><span class="pre">generate</span></tt> then returns all this information for its timestep,
+and that gets merged into the previous timesteps by
+<tt class="docutils literal"><span class="pre">generate_run</span></tt>.</li>
+<li>Once all the timesteps are complete, <tt class="docutils literal"><span class="pre">generate_run</span></tt> returns the
+library data.</li>
+</ol>
+<p>The library data is called <tt class="docutils literal"><span class="pre">libs</span></tt> in <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt>. It has significant nesting:</p>
+<div class="highlight-python"><div class="highlight"><pre>libs
+    |- &quot;fuel&quot;
+        |- &quot;material&quot; : a list of pyne.material.Material&#39;s per timestep
+        |- &quot;tracked_nucs&quot;
+            |- &lt;nuclide&gt;: a list of &lt;nuclide&gt;&#39;s mass fractions per timestep
+            |- &lt;nuclide&gt;: a list of &lt;nuclide&gt;&#39;s mass fractions per timestep
+            |- ...
+        |- &quot;TIME&quot;: a list of timesteps, e.g [0, 3, 100, 200, ...]
+        |- &quot;NEUT_DEST&quot;: a list of neutron destruction rates per timestep
+        |- &quot;NEUT_PROD&quot;: a list of neutron production rates per timestep
+        |- &quot;BUd&quot;: a list of burnup per timestep
+        |- &quot;phi_tot&quot;: a list of neutron flux per timestep
+    |- 1001
+    |- 1003
+    |- ... each nuclide we track has its own dictionary with the above structure
+</pre></div>
+</div>
+</div>
+<div class="section" id="writing-to-another-output-format">
+<h2>Writing To Another Output Format<a class="headerlink" href="#writing-to-another-output-format" title="Permalink to this headline">¶</a></h2>
+<p>One of the things you may want to do is output to other formats.</p>
+<p>To do this, you need to make <tt class="docutils literal"><span class="pre">some_format.py</span></tt>, which will contain a
+class with a <tt class="docutils literal"><span class="pre">write</span></tt> method. The <tt class="docutils literal"><span class="pre">write</span></tt> method will take <tt class="docutils literal"><span class="pre">libs</span></tt>
+and <tt class="docutils literal"><span class="pre">dirname</span></tt> as additional parameters.</p>
+<p>The <tt class="docutils literal"><span class="pre">libs</span></tt> described above will be passed in, so you just need to
+turn that dictionary into whatever output format you would like. If
+your desired format needs information not in <tt class="docutils literal"><span class="pre">libs</span></tt> you will need to
+do some additional work to make the solver put the right data in
+<tt class="docutils literal"><span class="pre">libs</span></tt>.</p>
+</div>
+<div class="section" id="plugins">
+<h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+<div class="section" id="module-xsgen.plugins">
+<span id="xsgen-plugin-system-xsgen-plugins"></span><h1>xsgen Plugin System &#8211; <a class="reference internal" href="../plugins-module.html#module-xsgen.plugins" title="xsgen.plugins"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.plugins</span></tt></a><a class="headerlink" href="#module-xsgen.plugins" title="Permalink to this headline">¶</a></h1>
 <p>This module provides the architecture for creating and handling xsgen plugins.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -443,9 +503,15 @@ summarizes the docstrings for all run control parameters.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">xsgen Plugin System &#8211; <tt class="docutils literal"><span class="pre">xsgen.plugins</span></tt></a><ul>
+<li><a class="reference internal" href="#">Developer&#8217;s Guide</a><ul>
+<li><a class="reference internal" href="#overview-of-program-flow">Overview of program flow</a></li>
+<li><a class="reference internal" href="#writing-to-another-output-format">Writing To Another Output Format</a></li>
+<li><a class="reference internal" href="#plugins">Plugins</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-xsgen.plugins">xsgen Plugin System &#8211; <tt class="docutils literal"><span class="pre">xsgen.plugins</span></tt></a><ul>
 <li><a class="reference internal" href="#writing-plugins">Writing Plugins</a><ul>
 <li><a class="reference internal" href="#interface">Interface</a></li>
 <li><a class="reference internal" href="#example">Example</a></li>
@@ -457,14 +523,11 @@ summarizes the docstrings for all run control parameters.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="plugins.html"
-                        title="previous chapter">xsgen Core Plugins: base, pre, buk, and post</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="api/index.html"
-                        title="next chapter">API Reference</a></p>
+  <p class="topless"><a href="../api/openmc_origen.html"
+                        title="previous chapter">OpenMC+Origen &#8211; <tt class="docutils literal"><span class="pre">xsgen.openmc_origen</span></tt></a></p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
+    <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
@@ -483,18 +546,15 @@ summarizes the docstrings for all run control parameters.</p>
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
+          <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api/index.html" title="API Reference"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="plugins.html" title="xsgen Core Plugins: base, pre, buk, and post"
+          <a href="../api/openmc_origen.html" title="OpenMC+Origen – xsgen.openmc_origen"
              >previous</a> |</li>
-        <li><a href="index.html">xsgen 0.1 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">xsgen 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
