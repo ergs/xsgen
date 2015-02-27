@@ -161,28 +161,6 @@ burnup times.</dd>
 </dd></dl>
 
 <dl class="method">
-<dt id="xsgen.openmc_origen.OpenMCOrigen.origen">
-<tt class="descname">origen</tt><big>(</big><em>state</em>, <em>transmute_time</em>, <em>phi_g</em>, <em>mat</em><big>)</big><a class="headerlink" href="#xsgen.openmc_origen.OpenMCOrigen.origen" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run ORIGEN on a state.</p>
-<dl class="docutils">
-<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">namedtuple (State)</span></dt>
-<dd>A namedtuple containing the state parameters.</dd>
-<dt>transmute_time <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>Length of transmutation timestep.</dd>
-<dt>phi_g <span class="classifier-delimiter">:</span> <span class="classifier">list of floats</span></dt>
-<dd>Group flux.</dd>
-<dt>mat <span class="classifier-delimiter">:</span> <span class="classifier">str or int</span></dt>
-<dd>The material to start transmuting. Either &#8220;fuel&#8221; or a nuclide in ID
-form.</dd>
-</dl>
-<dl class="docutils">
-<dt>results <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
-<dd>Dictionary with neutron production and destruction rates, burnup, and
-transmutation results.</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="xsgen.openmc_origen.OpenMCOrigen.pwd">
 <tt class="descname">pwd</tt><big>(</big><em>state</em>, <em>directory</em><big>)</big><a class="headerlink" href="#xsgen.openmc_origen.OpenMCOrigen.pwd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to directory we will be running specific physics codes in.</p>
