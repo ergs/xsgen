@@ -15,6 +15,10 @@
 
 import sys
 import os
+import warnings
+
+from pyne.utils import QAWarning
+warnings.simplefilter("ignore", QAWarning)
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -32,6 +36,7 @@ import os
 extensions = [
     'sphinx.ext.autodoc',
     'numpydoc',
+    'sphinx.ext.autosummary',
     ]
 
 # Add any paths that contain templates here, relative to this directory.
