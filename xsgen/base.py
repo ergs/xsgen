@@ -37,7 +37,7 @@ class XSGenPlugin(Plugin):
     rcdocs = {
         'rc': "Path to run control file",
         'plugins': "Plugins to include",
-        'debug': 'Build in debugging mode',
+        'debug': 'Run in debugging mode',
         'verbose': "Print more output.",
         'version': "Print version information.",
         'bash_completion': ("Flag for enabling / disabling BASH completion. "

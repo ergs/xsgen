@@ -30,14 +30,15 @@ xsgen User's Guide
    directory unless you specify otherwise with the ``--outdirs`` flag.
 
    ``xsgen`` uses a plugin-based system to run various chunks of
-   code. Next we see a list of the plugins we are using::
+   code. ``xsgen.base`` is always included.  Next we see a list of the
+   plugins we are using::
 
      plugins = ['xsgen.pre', 'xsgen.buk']
 
    ``xsgen.pre`` validates the run control file and adds in sane
-   defaults for anything we are missing. ``xsgen.buk`` takes care of
-   the burnup and criticality calculations. Additional plugins can be
-   specified with the ``--plugins`` command-line flag . There are a
+   defaults for anything we are missing.  ``xsgen.buk`` takes care of
+   the burnup and criticality calculations.  Additional plugins can be
+   specified with the ``--plugins`` command-line flag.  There are a
    few more parameters specifying different aspects of the burnup and
    criticality calculations::
 
@@ -85,8 +86,8 @@ xsgen User's Guide
 
      fuel_specific_power = 40.0 / 1000.0   # Power garnered from fuel [W / g]
 
-   The distance measurements here are all in cm.  The densities are in
-   g/cm^3.  The fuel-specific power is in W/g. ::
+   The distance measurements here are all in **cm**.  The densities are in
+   **g/cm^3**.  The fuel-specific power is in **W/g**. ::
 
      # LEU
      initial_heavy_metal = {     # Initial heavy metal mass fraction distribution
@@ -104,7 +105,7 @@ xsgen User's Guide
      "IHM": 1.0,
      }
 
-   We tell ``xsgen`` that our initial heavy metal is 4% U235 and 96%
+   Here we tell ``xsgen`` that our initial heavy metal is 4% U235 and 96%
    U238. ``enrichment`` and ``pnl`` are for Brightlite input files,
    which expect these parameters. ``fuel_chemical_form`` sets the
    initial fuel - here we see that we have one atom of IHM to every
@@ -116,16 +117,26 @@ xsgen User's Guide
      k_cycles      = 130       # Number of kcode cycles to run
      k_cycles_skip = 30        # Number of kcode cycles to run but not tally at the begining.
 
-   These set the various parameters relating to the kcode.
+   These set the various parameters relating to the transport - how
+   many particles in each cycle, how many cyclues to run, and how many
+   initial cycles to skip.
 
-   For more information on command-line arguments, see the `plugins
-   page <plugins.html>`_.
+   For more information on the command-line arguments that various
+   plugins supply, see the `plugins page <plugins.html>`_.
+
+   Now ``xsgen`` will look at your run control, figure out how many
+   different sets of initial conditions it needs to take into account,
+   and calculate a separate run with OpenMC and Origen for each set of
+   initial conditions. Each run will be output to a different
+   directory.
 
    ``xsgen`` will build everything by default in the ``build-lwr1g``
    directory. In this directory will be separate directories which are
    named by hashes of each state. Inside these, there are ``omc``
    directories and ``origen<nuclide id>`` directories, which hold the
-   input and output files for OpenMC and ORIGEN runs.
+   input and output files for OpenMC and ORIGEN runs. The Bright-lite
+   output files will be in ``brightliteN`` directories, where N is the
+   run id.
 
    This is what the directory structure should look like::
 
