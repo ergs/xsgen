@@ -373,6 +373,7 @@ class OpenMCOrigen(object):
                                 for mat_id in results]
             pool = Pool(self.rc.threads)
             origen_results = pool.map(_origen, origen_params_ls)
+            pool.close()
         for result in origen_results:
             result[1]["material"] = Material(dict(result[1]["material"]),
                                              1000,
