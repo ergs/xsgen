@@ -3,9 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-xsgens have awesome rates
-==========================
-
+XSGen: Cross Section Generator for Bright-lite Reactors
+=======================================================
 xsgen is a tool for computing multi-group neutron cross-section, burnup, and
 multiplication factor (k\ :sub:`inf`\ ) as a function of reactor state, which
 includes time/fluence, material properties, and reactor geometry.
@@ -37,9 +36,11 @@ Contents:
    overview
    install
    usersguide
+   runcontrol
    plugins
    plugins-module
    api/index
+   devguide/index
 
 ..
    Indices and tables
