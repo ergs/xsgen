@@ -176,6 +176,27 @@ burnup times.</dd>
 </dl>
 </dd></dl>
 
+<dl class="method">
+<dt id="xsgen.openmc_origen.OpenMCOrigen.run_all_the_origens">
+<tt class="descname">run_all_the_origens</tt><big>(</big><em>state</em>, <em>transmute_time</em>, <em>phi_tot</em>, <em>results</em><big>)</big><a class="headerlink" href="#xsgen.openmc_origen.OpenMCOrigen.run_all_the_origens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call ORIGEN as much as necessary and unite the results.</p>
+<dl class="docutils">
+<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">namedtuple (State)</span></dt>
+<dd>A namedtuple containing the state parameters.</dd>
+<dt>transmute_time <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>The length of the transmutation timestep. Has units of [days].</dd>
+<dt>phi_tot <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>The total neutron flux.</dd>
+<dt>results <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd>A dict with material identifiers as keys, and dictionaries as
+values. The basic data structure to fill.</dd>
+</dl>
+<dl class="docutils">
+<dt>dict</dt>
+<dd>A dict of all the ORIGEN results.</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
