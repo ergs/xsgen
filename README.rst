@@ -25,6 +25,13 @@ as the transmutation of the material itself. Once we have done this for all
 timesteps, we write this out to libraries, theoretically of a variety of
 formats.
 
+Acknowledgements
+--------------------
+Support for this research has included funding received from:
+
+.. image:: /neup_logo_large.png
+   :width: 300 px
+
 .. overview-end
 
 .. install-start
@@ -33,7 +40,7 @@ Install XSGen
 ===============
 
 Dependencies
-------------
+----------------
 
 xsgen depends on `PyNE <http://www.pyne.io>`_. You can find installation
 instructions for PyNE `here <http://pyne.io/install.html>`_.
