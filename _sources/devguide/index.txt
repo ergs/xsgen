@@ -34,20 +34,20 @@ differ, but this is how ``xsgen.openmc_origen`` works:
 The library data is called ``libs`` in ``xsgen.buk``. It has significant nesting::
 
   libs
-    |- "fuel"
-      |- "material" : a list of pyne.material.Material's per timestep
-      |- "tracked_nucs"
-        |- <nuclide>: a list of <nuclide>'s mass fractions per timestep
-        |- <nuclide>: a list of <nuclide>'s mass fractions per timestep
-        |- ...
-      |- "TIME": a list of timesteps, e.g [0, 3, 100, 200, ...]
-      |- "NEUT_DEST": a list of neutron destruction rates per timestep
-      |- "NEUT_PROD": a list of neutron production rates per timestep
-      |- "BUd": a list of burnup per timestep
-      |- "phi_tot": a list of neutron flux per timestep
-    |- 1001
-    |- 1003
-    |- ... each nuclide we track has its own dictionary with the above structure
+      |- "fuel"
+          |- "material" : a list of pyne.material.Material's per timestep
+          |- "tracked_nucs"
+              |- <nuclide>: a list of <nuclide>'s mass fractions per timestep
+              |- <nuclide>: a list of <nuclide>'s mass fractions per timestep
+              |- ...
+          |- "TIME": a list of timesteps, e.g [0, 3, 100, 200, ...]
+          |- "NEUT_DEST": a list of neutron destruction rates per timestep
+          |- "NEUT_PROD": a list of neutron production rates per timestep
+          |- "BUd": a list of burnup per timestep
+          |- "phi_tot": a list of neutron flux per timestep
+      |- 1001
+      |- 1003
+      |- ... each nuclide we track has its own dictionary with the above structure
 
 
 Writing To Another Output Format

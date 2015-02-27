@@ -52,7 +52,7 @@
 <li><a class="reference internal" href="#plugins">Plugins</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#xsgen-plugin-system-xsgen-plugins">xsgen Plugin System &#8211; <tt class="docutils literal"><span class="pre">xsgen.plugins</span></tt></a><ul>
+<li><a class="reference internal" href="#module-xsgen.plugins">xsgen Plugin System &#8211; <tt class="docutils literal"><span class="pre">xsgen.plugins</span></tt></a><ul>
 <li><a class="reference internal" href="#writing-plugins">Writing Plugins</a><ul>
 <li><a class="reference internal" href="#interface">Interface</a></li>
 <li><a class="reference internal" href="#example">Example</a></li>
@@ -123,20 +123,20 @@ library data.</li>
 </ol>
 <p>The library data is called <tt class="docutils literal"><span class="pre">libs</span></tt> in <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt>. It has significant nesting:</p>
 <div class="highlight-python"><div class="highlight"><pre>libs
-  |- &quot;fuel&quot;
-    |- &quot;material&quot; : a list of pyne.material.Material&#39;s per timestep
-    |- &quot;tracked_nucs&quot;
-      |- &lt;nuclide&gt;: a list of &lt;nuclide&gt;&#39;s mass fractions per timestep
-      |- &lt;nuclide&gt;: a list of &lt;nuclide&gt;&#39;s mass fractions per timestep
-      |- ...
-    |- &quot;TIME&quot;: a list of timesteps, e.g [0, 3, 100, 200, ...]
-    |- &quot;NEUT_DEST&quot;: a list of neutron destruction rates per timestep
-    |- &quot;NEUT_PROD&quot;: a list of neutron production rates per timestep
-    |- &quot;BUd&quot;: a list of burnup per timestep
-    |- &quot;phi_tot&quot;: a list of neutron flux per timestep
-  |- 1001
-  |- 1003
-  |- ... each nuclide we track has its own dictionary with the above structure
+    |- &quot;fuel&quot;
+        |- &quot;material&quot; : a list of pyne.material.Material&#39;s per timestep
+        |- &quot;tracked_nucs&quot;
+            |- &lt;nuclide&gt;: a list of &lt;nuclide&gt;&#39;s mass fractions per timestep
+            |- &lt;nuclide&gt;: a list of &lt;nuclide&gt;&#39;s mass fractions per timestep
+            |- ...
+        |- &quot;TIME&quot;: a list of timesteps, e.g [0, 3, 100, 200, ...]
+        |- &quot;NEUT_DEST&quot;: a list of neutron destruction rates per timestep
+        |- &quot;NEUT_PROD&quot;: a list of neutron production rates per timestep
+        |- &quot;BUd&quot;: a list of burnup per timestep
+        |- &quot;phi_tot&quot;: a list of neutron flux per timestep
+    |- 1001
+    |- 1003
+    |- ... each nuclide we track has its own dictionary with the above structure
 </pre></div>
 </div>
 </div>
@@ -156,9 +156,9 @@ do some additional work to make the solver put the right data in
 <h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
-<div class="section" id="xsgen-plugin-system-xsgen-plugins">
-<h1>xsgen Plugin System &#8211; <a class="reference internal" href="#module-xsgen.plugins" title="xsgen.plugins"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.plugins</span></tt></a><a class="headerlink" href="#xsgen-plugin-system-xsgen-plugins" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-xsgen.plugins"></span><p>This module provides the architecture for creating and handling xsgen plugins.</p>
+<div class="section" id="module-xsgen.plugins">
+<span id="xsgen-plugin-system-xsgen-plugins"></span><h1>xsgen Plugin System &#8211; <a class="reference internal" href="../plugins-module.html#module-xsgen.plugins" title="xsgen.plugins"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.plugins</span></tt></a><a class="headerlink" href="#module-xsgen.plugins" title="Permalink to this headline">¶</a></h1>
+<p>This module provides the architecture for creating and handling xsgen plugins.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
