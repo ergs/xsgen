@@ -2,6 +2,6 @@
 OpenMC+Origen -- :mod:`xsgen.openmc_origen`
 ===========================================
 
-.. autoclass:: xsgen.openmc_origen.OpenMCOrigen
+.. automod:: xsgen.openmc_origen.OpenMCOrigen
    :members:
 
