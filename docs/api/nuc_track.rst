@@ -1,4 +1,5 @@
-.. _xsgen_nuc_track
+.. _xsgen_nuc_track:
+
 xsgen nuc_track module -- :mod:`xsgen.nuc_track`
 =======================================
 

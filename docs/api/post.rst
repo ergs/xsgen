@@ -1,4 +1,5 @@
-.. _xsgen_post
+.. _xsgen_post:
+
 Post-processing -- :mod:`xsgen.post`
 ===========================================
 
