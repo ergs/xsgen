@@ -99,27 +99,20 @@ TALLIES_TEMPLATE = """<?xml version="1.0"?>
     <nuclides>total</nuclides>
   </tally>
   <tally id="2">
-    <label>cinderflux</label>
-    <filter type="energy" bins="{_cds_egrid}" />
-    <filter type="material" bins="1" />
-    <scores>flux</scores>
-    <nuclides>total</nuclides>
-  </tally>
-  <tally id="3">
     <label>eafflux</label>
     <filter type="energy" bins="{_eafds_egrid}" />
     <filter type="material" bins="1" />
     <scores>flux</scores>
     <nuclides>total</nuclides>
   </tally>
-  <tally id="4">
+  <tally id="3">
     <label>omcflux</label>
     <filter type="energy" bins="{_omcds_egrid}" />
     <filter type="material" bins="1" />
     <scores>flux</scores>
     <nuclides>total</nuclides>
   </tally>
-  <tally id="5">
+  <tally id="4">
     <label>s_gh</label>
     <filter type="energy" bins="{_egrid}" />
     <filter type="energyout" bins="{_egrid}" />
@@ -155,7 +148,6 @@ class OpenMCOrigen(object):
         self.builddir = 'build-' + rc.reactor
         if not os.path.isdir(self.builddir):
             os.makedirs(self.builddir)
-        self.cinderds = data_source.CinderDataSource()
         self.eafds = data_source.EAFDataSource()
         self.omcds = data_source.OpenMCDataSource(
                         cross_sections=rc.openmc_cross_sections,
@@ -163,7 +155,7 @@ class OpenMCOrigen(object):
         data_sources = [self.omcds]
         if not rc.is_thermal:
             data_sources.append(self.eafds)
-        data_sources += [self.cinderds, data_source.SimpleDataSource(),
+        data_sources += [data_source.SimpleDataSource(),
                          data_source.NullDataSource()]
         for ds in data_sources[1:]:
             ds.load()
@@ -496,7 +488,6 @@ class OpenMCOrigen(object):
             f.write(geometry)
         # tallies
         ctx['_egrid'] = " ".join(map(str, sorted(ctx['group_structure'])))
-        ctx['_cds_egrid'] = " ".join(map(str, sorted(self.cinderds.src_group_struct)))
         ctx['_eafds_egrid'] = " ".join(map(str, sorted(self.eafds.src_group_struct)))
         ctx['_omcds_egrid'] = " ".join(map(str, sorted(self.omcds.src_group_struct)))
         # nucs = core_nucs & valid_nucs
@@ -543,7 +534,7 @@ class OpenMCOrigen(object):
         sp = StatePoint(statepoint)
         sp.read_results()
         # compute group fluxes for data sources
-        for tally, ds in zip(sp.tallies[1:4], (self.cinderds, self.eafds, self.omcds)):
+        for tally, ds in zip(sp.tallies[1:3], (self.eafds, self.omcds)):
             ds.src_phi_g = tally.results[::-1, :, 0].flatten()
             ds.src_phi_g /= ds.src_phi_g.sum()
         # compute return values

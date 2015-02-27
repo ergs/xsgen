@@ -1,4 +1,5 @@
-.. _xsgen_base
+.. _xsgen_base:
+
 xsgen Base plugin -- :mod:`xsgen.base`
 =======================================
 

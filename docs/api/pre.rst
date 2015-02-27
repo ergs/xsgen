@@ -1,4 +1,5 @@
-.. _xsgen_pre
+.. _xsgen_pre:
+
 Pre-processing -- :mod:`xsgen.pre`
 ===========================================
 
