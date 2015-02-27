@@ -109,13 +109,114 @@ cd xslibs
 xsgen --rc lwr1g.py
 </pre></div>
 </div>
-<p>To learn more about the run control file, see the <a class="reference external" href="runcontrol.html">RunControl page</a>.
-For more information on command-line arguments, see the <a class="reference external" href="plugins.html">plugins page</a>.</p>
+<p>Let&#8217;s look at what&#8217;s inside</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">reactor</span> <span class="o">=</span> <span class="s">&quot;lwr1g&quot;</span>
+</pre></div>
+</div>
+<p>This is what you want to call the reactor. Here we call it
+<tt class="docutils literal"><span class="pre">lwr1g</span></tt>. The output files will all go into a <tt class="docutils literal"><span class="pre">build-lwr1g</span></tt>
+directory unless you specify otherwise with the <tt class="docutils literal"><span class="pre">--outdirs</span></tt> flag.</p>
+<p><tt class="docutils literal"><span class="pre">xsgen</span></tt> uses a plugin-based system to run various chunks of
+code. <tt class="docutils literal"><span class="pre">xsgen.base</span></tt> is always included.  Next we see a list of the
+plugins we are using:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">plugins</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;xsgen.pre&#39;</span><span class="p">,</span> <span class="s">&#39;xsgen.buk&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">xsgen.pre</span></tt> validates the run control file and adds in sane
+defaults for anything we are missing.  <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt> takes care of
+the burnup and criticality calculations.  Additional plugins can be
+specified with the <tt class="docutils literal"><span class="pre">--plugins</span></tt> command-line flag.  There are a
+few more parameters specifying different aspects of the burnup and
+criticality calculations:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">solver</span> <span class="o">=</span> <span class="s">&#39;openmc+origen&#39;</span>
+<span class="n">formats</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;brightlite,&#39;</span><span class="p">)</span>
+<span class="n">burn_regions</span> <span class="o">=</span> <span class="mi">1</span>     <span class="c"># Number of burnup annular regions.</span>
+<span class="n">burn_time</span> <span class="o">=</span> <span class="mi">365</span><span class="o">*</span><span class="mi">10</span>  <span class="c"># Number of days to burn the material [days]</span>
+<span class="n">time_step</span> <span class="o">=</span> <span class="mi">100</span>      <span class="c"># Time step by which to increment the burn [days]</span>
+<span class="n">burn_times</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">burn_times</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4001</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>  <span class="c"># we now have [0, 3, 100, 200 .. 4000]</span>
+<span class="n">batches</span> <span class="o">=</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<p>Here, <tt class="docutils literal"><span class="pre">solver</span></tt> refers to the engine we use for the transmutation
+and transport. We currently only have one where we use OpenMC for
+neutron transport and Origen 2.2 for transmutation, named
+&#8220;openmc+origen.&#8221; <tt class="docutils literal"><span class="pre">formats</span></tt> is an iterable with the various output
+formats you intend to generate libaries for. We currently only
+support <a href="#id2"><span class="problematic" id="id3">`Bright-lite
+&lt;https://github.com/FlanFlanagan/Bright-lite/tree/timestep/&gt;format`_</span></a>.
+<tt class="docutils literal"><span class="pre">burn_regions</span></tt> is, as the comment says, the number of burnup
+annular regions.</p>
+<p>You can specify your burn times in two different ways. You can
+either specify a <tt class="docutils literal"><span class="pre">burn_time</span></tt> and a <tt class="docutils literal"><span class="pre">time_step</span></tt>, which will make
+the burn times start at zero and go to <tt class="docutils literal"><span class="pre">burn_time</span></tt> in increments
+of <tt class="docutils literal"><span class="pre">time_step</span></tt>. Or you can set <tt class="docutils literal"><span class="pre">burn_times</span></tt> to a list of times.
+The burn times are in units of <strong>days</strong>. <tt class="docutils literal"><span class="pre">burn_times</span></tt> will take
+precedence over <tt class="docutils literal"><span class="pre">burn_time</span></tt> and <tt class="docutils literal"><span class="pre">time_step</span></tt>. Additionally, if
+no burn times are specified, we default to <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">100,</span> <span class="pre">...</span> <span class="pre">,</span> <span class="pre">900]</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">batches</span></tt> specifies how many batches you want to input to
+Bright-lite.</p>
+<p>Next we have a bunch of settings for the geometry and fuel:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fuel_cell_radius</span> <span class="o">=</span> <span class="mf">0.410</span>
+<span class="n">void_cell_radius</span> <span class="o">=</span> <span class="mf">0.4185</span>
+<span class="n">clad_cell_radius</span> <span class="o">=</span> <span class="mf">0.475</span>
+<span class="n">unit_cell_pitch</span>  <span class="o">=</span> <span class="mf">0.65635</span> <span class="o">*</span> <span class="mf">2.0</span>
+<span class="n">unit_cell_height</span> <span class="o">=</span> <span class="mf">10.0</span>
+
+<span class="n">fuel_density</span> <span class="o">=</span> <span class="mf">10.7</span>
+<span class="n">clad_density</span> <span class="o">=</span> <span class="mf">5.87</span>                         <span class="c"># Cladding Density</span>
+<span class="n">cool_density</span> <span class="o">=</span> <span class="mf">0.73</span>                         <span class="c"># Coolant Density</span>
+
+<span class="n">fuel_specific_power</span> <span class="o">=</span> <span class="mf">40.0</span> <span class="o">/</span> <span class="mf">1000.0</span>   <span class="c"># Power garnered from fuel [W / g]</span>
+</pre></div>
+</div>
+<p>The distance measurements here are all in <strong>cm</strong>.  The densities are in
+<strong>g/cm^3</strong>.  The fuel-specific power is in <strong>W/g</strong>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># LEU</span>
+<span class="n">initial_heavy_metal</span> <span class="o">=</span> <span class="p">{</span>     <span class="c"># Initial heavy metal mass fraction distribution</span>
+<span class="mi">922350</span><span class="p">:</span> <span class="mf">0.04</span><span class="p">,</span>
+<span class="mi">922380</span><span class="p">:</span> <span class="mf">0.96</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">enrichment</span> <span class="o">=</span> <span class="mf">0.04</span>
+
+<span class="n">pnl</span> <span class="o">=</span> <span class="mf">0.96</span>
+
+<span class="c"># UOX</span>
+<span class="n">fuel_chemical_form</span> <span class="o">=</span> <span class="p">{</span>                 <span class="c"># Dictionary of initial fuel loading.</span>
+<span class="mi">80160</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+<span class="s">&quot;IHM&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here we tell <tt class="docutils literal"><span class="pre">xsgen</span></tt> that our initial heavy metal is 4% U235 and 96%
+U238. <tt class="docutils literal"><span class="pre">enrichment</span></tt> and <tt class="docutils literal"><span class="pre">pnl</span></tt> are for Brightlite input files,
+which expect these parameters. <tt class="docutils literal"><span class="pre">fuel_chemical_form</span></tt> sets the
+initial fuel - here we see that we have one atom of IHM to every
+two atoms of oxygen, or UO_2.</p>
+<p>Next we set a few OpenMC parameters:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">k_particles</span>   <span class="o">=</span> <span class="mi">500</span>       <span class="c"># Number of particles to run per kcode cycle</span>
+<span class="n">k_cycles</span>      <span class="o">=</span> <span class="mi">130</span>       <span class="c"># Number of kcode cycles to run</span>
+<span class="n">k_cycles_skip</span> <span class="o">=</span> <span class="mi">30</span>        <span class="c"># Number of kcode cycles to run but not tally at the begining.</span>
+</pre></div>
+</div>
+<p>These set the various parameters relating to the transport - how
+many particles in each cycle, how many cyclues to run, and how many
+initial cycles to skip.</p>
+<p>For more information on the command-line arguments that various
+plugins supply, see the <a class="reference external" href="plugins.html">plugins page</a>.</p>
+<p>Now <tt class="docutils literal"><span class="pre">xsgen</span></tt> will look at your run control, figure out how many
+different sets of initial conditions it needs to take into account,
+and calculate a separate run with OpenMC and Origen for each set of
+initial conditions. Each run will be output to a different
+directory.</p>
 <p><tt class="docutils literal"><span class="pre">xsgen</span></tt> will build everything by default in the <tt class="docutils literal"><span class="pre">build-lwr1g</span></tt>
 directory. In this directory will be separate directories which are
 named by hashes of each state. Inside these, there are <tt class="docutils literal"><span class="pre">omc</span></tt>
 directories and <tt class="docutils literal"><span class="pre">origen&lt;nuclide</span> <span class="pre">id&gt;</span></tt> directories, which hold the
-input and output files for OpenMC and ORIGEN runs.</p>
+input and output files for OpenMC and ORIGEN runs. The Bright-lite
+output files will be in <tt class="docutils literal"><span class="pre">brightliteN</span></tt> directories, where N is the
+run id.</p>
 <p>This is what the directory structure should look like:</p>
 <div class="highlight-python"><div class="highlight"><pre>xslibs/
   |- build-lwr1g
