@@ -13,6 +13,14 @@ API Reference
    buk
    post
 
+**Static Resources:**
+
+.. toctree::
+   :maxdepth: 1
+
+   tape9
+
+
 **Physics Engines:**
 
 .. toctree::

@@ -36,9 +36,11 @@ Contents:
    overview
    install
    usersguide
+   runcontrol
    plugins
    plugins-module
    api/index
+   devguide/index
 
 ..
    Indices and tables
