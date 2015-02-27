@@ -3,7 +3,7 @@
 OpenMC+Origen -- :mod:`xsgen.openmc_origen`
 ===========================================
 
-.. automod:: xsgen.openmc_origen.OpenMCOrigen
+.. automodule:: xsgen.openmc_origen
    :members:
    :private-members:
 
