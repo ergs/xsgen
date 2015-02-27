@@ -24,6 +24,15 @@ Now you should be able to run it simply with::
 
     xsgen
 
+Release Notes
+---------------
+**0.1: 2/27/2015**
+  * We can now run OpenMC and Origen together to generate Bright-lite
+    input files!
+  Developers:
+
+  * Anthony Scopatz
+  * John Xia
 
 Contents:
 ---------
