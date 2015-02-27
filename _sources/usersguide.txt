@@ -2,7 +2,7 @@ xsgen User's Guide
 ==================
 
 1. Installation
-===
+===============
 
    .. include:: ../README.rst
       :start-after: .. install-start
@@ -12,7 +12,7 @@ xsgen User's Guide
 
 
 2. Setting Up the Run Control File
-===
+==================================
 
    For this example, we'll use the `xslibs
    <https://github.com/bright-dev/xslibs>`_ project repository by
@@ -158,7 +158,7 @@ xsgen User's Guide
 
 
 3. Using the Libraries With Bright-lite
-===
+=======================================
 
    First we must install Bright-lite. Clone the repository
    `here<https://github.com/FlanFlanagan/Bright-lite/tree/timestep/>`_,
