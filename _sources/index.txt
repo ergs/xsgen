@@ -46,6 +46,7 @@ Contents:
    install
    usersguide
    runcontrol
+   plugins
    api/index
    devguide/index
 
