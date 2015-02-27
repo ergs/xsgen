@@ -46,10 +46,12 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Developer&#8217;s Guide</a></li>
+<li><a class="reference internal" href="#">Developer&#8217;s Guide</a><ul>
 <li><a class="reference internal" href="#overview-of-program-flow">Overview of program flow</a></li>
-<li><a class="reference internal" href="#writing-another-output-format">Writing Another Output Format</a></li>
+<li><a class="reference internal" href="#writing-to-another-output-format">Writing To Another Output Format</a></li>
 <li><a class="reference internal" href="#plugins">Plugins</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#xsgen-plugin-system-xsgen-plugins">xsgen Plugin System &#8211; <tt class="docutils literal"><span class="pre">xsgen.plugins</span></tt></a><ul>
 <li><a class="reference internal" href="#writing-plugins">Writing Plugins</a><ul>
 <li><a class="reference internal" href="#interface">Interface</a></li>
@@ -92,9 +94,8 @@
             
   <div class="section" id="developer-s-guide">
 <h1>Developer&#8217;s Guide<a class="headerlink" href="#developer-s-guide" title="Permalink to this headline">¶</a></h1>
-</div>
 <div class="section" id="overview-of-program-flow">
-<h1>Overview of program flow<a class="headerlink" href="#overview-of-program-flow" title="Permalink to this headline">¶</a></h1>
+<h2>Overview of program flow<a class="headerlink" href="#overview-of-program-flow" title="Permalink to this headline">¶</a></h2>
 <p>First, <tt class="docutils literal"><span class="pre">xsgen</span></tt> reads in the initial conditions and other parameters
 from the run control file, generating all possible states of the
 permutation parameters.</p>
@@ -120,43 +121,43 @@ and that gets merged into the previous timesteps by
 <li>Once all the timesteps are complete, <tt class="docutils literal"><span class="pre">generate_run</span></tt> returns the
 library data.</li>
 </ol>
-<dl class="docutils">
-<dt>The library data is called <tt class="docutils literal"><span class="pre">libs</span></tt> in <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt>. It has significant nesting::</dt>
-<dd><dl class="first last docutils">
-<dt>libs</dt>
-<dd><dl class="first docutils">
-<dt><a href="#id1"><span class="problematic" id="id2">|</span></a>- &#8220;fuel&#8221;</dt>
-<dd><p class="first"><a href="#id3"><span class="problematic" id="id4">|</span></a>- &#8220;material&#8221; : a list of pyne.material.Material&#8217;s per timestep
-<a href="#id5"><span class="problematic" id="id6">|</span></a>- &#8220;tracked_nucs&#8221;</p>
-<blockquote>
-<div><a href="#id7"><span class="problematic" id="id8">|</span></a>- &lt;nuclide&gt;: a list of &lt;nuclide&gt;&#8217;s mass fractions per timestep
-<a href="#id9"><span class="problematic" id="id10">|</span></a>- &lt;nuclide&gt;: a list of &lt;nuclide&gt;&#8217;s mass fractions per timestep
-<a href="#id11"><span class="problematic" id="id12">|</span></a>- ...</div></blockquote>
-<p class="last"><a href="#id13"><span class="problematic" id="id14">|</span></a>- &#8220;TIME&#8221;: a list of timesteps, e.g [0, 3, 100, 200, ...]
-<a href="#id15"><span class="problematic" id="id16">|</span></a>- &#8220;NEUT_DEST&#8221;: a list of neutron destruction rates per timestep
-<a href="#id17"><span class="problematic" id="id18">|</span></a>- &#8220;NEUT_PROD&#8221;: a list of neutron production rates per timestep
-<a href="#id19"><span class="problematic" id="id20">|</span></a>- &#8220;BUd&#8221;: a list of burnup per timestep
-<a href="#id21"><span class="problematic" id="id22">|</span></a>- &#8220;phi_tot&#8221;: a list of neutron flux per timestep</p>
-</dd>
-</dl>
-<p class="last"><a href="#id23"><span class="problematic" id="id24">|</span></a>- 1001
-<a href="#id25"><span class="problematic" id="id26">|</span></a>- 1003
-<a href="#id27"><span class="problematic" id="id28">|</span></a>- ... each nuclide we track has its own dictionary with the above structure</p>
-</dd>
-</dl>
-</dd>
-</dl>
+<p>The library data is called <tt class="docutils literal"><span class="pre">libs</span></tt> in <tt class="docutils literal"><span class="pre">xsgen.buk</span></tt>. It has significant nesting:</p>
+<div class="highlight-python"><div class="highlight"><pre>libs
+  |- &quot;fuel&quot;
+    |- &quot;material&quot; : a list of pyne.material.Material&#39;s per timestep
+    |- &quot;tracked_nucs&quot;
+      |- &lt;nuclide&gt;: a list of &lt;nuclide&gt;&#39;s mass fractions per timestep
+      |- &lt;nuclide&gt;: a list of &lt;nuclide&gt;&#39;s mass fractions per timestep
+      |- ...
+    |- &quot;TIME&quot;: a list of timesteps, e.g [0, 3, 100, 200, ...]
+    |- &quot;NEUT_DEST&quot;: a list of neutron destruction rates per timestep
+    |- &quot;NEUT_PROD&quot;: a list of neutron production rates per timestep
+    |- &quot;BUd&quot;: a list of burnup per timestep
+    |- &quot;phi_tot&quot;: a list of neutron flux per timestep
+  |- 1001
+  |- 1003
+  |- ... each nuclide we track has its own dictionary with the above structure
+</pre></div>
 </div>
-<div class="section" id="writing-another-output-format">
-<h1>Writing Another Output Format<a class="headerlink" href="#writing-another-output-format" title="Permalink to this headline">¶</a></h1>
-<p>If everything you want is in libs, then just make a write() function
-Otherwise you need to fix your solver to put more things in the libs.</p>
+</div>
+<div class="section" id="writing-to-another-output-format">
+<h2>Writing To Another Output Format<a class="headerlink" href="#writing-to-another-output-format" title="Permalink to this headline">¶</a></h2>
+<p>One of the things you may want to do is output to other formats.</p>
+<p>To do this, you need to make <tt class="docutils literal"><span class="pre">some_format.py</span></tt>, which will contain a
+class with a <tt class="docutils literal"><span class="pre">write</span></tt> method. The <tt class="docutils literal"><span class="pre">write</span></tt> method will take <tt class="docutils literal"><span class="pre">libs</span></tt>
+and <tt class="docutils literal"><span class="pre">dirname</span></tt> as additional parameters.</p>
+<p>The <tt class="docutils literal"><span class="pre">libs</span></tt> described above will be passed in, so you just need to
+turn that dictionary into whatever output format you would like. If
+your desired format needs information not in <tt class="docutils literal"><span class="pre">libs</span></tt> you will need to
+do some additional work to make the solver put the right data in
+<tt class="docutils literal"><span class="pre">libs</span></tt>.</p>
 </div>
 <div class="section" id="plugins">
-<h1>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h1>
+<h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h2>
+</div>
 </div>
 <div class="section" id="xsgen-plugin-system-xsgen-plugins">
-<h1>xsgen Plugin System &#8211; <a class="reference internal" href="../plugins-module.html#module-xsgen.plugins" title="xsgen.plugins"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.plugins</span></tt></a><a class="headerlink" href="#xsgen-plugin-system-xsgen-plugins" title="Permalink to this headline">¶</a></h1>
+<h1>xsgen Plugin System &#8211; <a class="reference internal" href="#module-xsgen.plugins" title="xsgen.plugins"><tt class="xref py py-mod docutils literal"><span class="pre">xsgen.plugins</span></tt></a><a class="headerlink" href="#xsgen-plugin-system-xsgen-plugins" title="Permalink to this headline">¶</a></h1>
 <span class="target" id="module-xsgen.plugins"></span><p>This module provides the architecture for creating and handling xsgen plugins.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

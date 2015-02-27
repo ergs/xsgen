@@ -2,7 +2,7 @@ Developer's Guide
 =================
 
 Overview of program flow
-========================
+------------------------
 
 First, ``xsgen`` reads in the initial conditions and other parameters
 from the run control file, generating all possible states of the
@@ -32,6 +32,7 @@ differ, but this is how ``xsgen.openmc_origen`` works:
    library data.
 
 The library data is called ``libs`` in ``xsgen.buk``. It has significant nesting::
+
   libs
     |- "fuel"
       |- "material" : a list of pyne.material.Material's per timestep
@@ -49,13 +50,22 @@ The library data is called ``libs`` in ``xsgen.buk``. It has significant nesting
     |- ... each nuclide we track has its own dictionary with the above structure
 
 
-Writing Another Output Format
-=============================
+Writing To Another Output Format
+--------------------------------
 
-If everything you want is in libs, then just make a write() function
-Otherwise you need to fix your solver to put more things in the libs.
+One of the things you may want to do is output to other formats.
+
+To do this, you need to make ``some_format.py``, which will contain a
+class with a ``write`` method. The ``write`` method will take ``libs``
+and ``dirname`` as additional parameters.
+
+The ``libs`` described above will be passed in, so you just need to
+turn that dictionary into whatever output format you would like. If
+your desired format needs information not in ``libs`` you will need to
+do some additional work to make the solver put the right data in
+``libs``.
 
 Plugins
-=======
+-------
 
 .. include:: ../plugins-module.rst
