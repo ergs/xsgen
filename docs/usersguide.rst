@@ -66,7 +66,7 @@ xsgen User's Guide
    either specify a ``burn_time`` and a ``time_step``, which will make
    the burn times start at zero and go to ``burn_time`` in increments
    of ``time_step``. Or you can set ``burn_times`` to a list of times.
-   The burn times are in units of **days**. ``burn_times`` will take
+   The burn times are in units of [days]. ``burn_times`` will take
    precedence over ``burn_time`` and ``time_step``. Additionally, if
    no burn times are specified, we default to ``[0, 100, ... , 900]``.
 
@@ -90,8 +90,8 @@ xsgen User's Guide
 
      fuel_specific_power = 40.0 / 1000.0   # Power garnered from fuel [W / g]
 
-   The distance measurements here are all in **cm**.  The densities are in
-   **g/cm^3**.  The fuel-specific power is in **W/g**. ::
+   The distance measurements here are all in [cm].  The densities are in
+   [g/cm^3].  The fuel-specific power is in [W/g]. ::
 
      # LEU
      initial_heavy_metal = {     # Initial heavy metal mass fraction distribution
