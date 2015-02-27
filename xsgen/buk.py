@@ -133,7 +133,7 @@ class XSGenPlugin(Plugin):
         for run_num, run in enumerate(rc.runs):
             libs = rc.engine.generate_run(run)
             for i, writer in enumerate(rc.writers):
-                basepath = os.path.join(rc.engine.builddir, rc.outfiles[i])
+                basepath = os.path.join(rc.engine.builddir, rc.outdirs[i])
                 fname = basepath + str(run_num)
                 writer.write(libs, fname)
 

@@ -5,7 +5,7 @@ Provides the following command-line arguments:
   - ``-c``, ``--clean``: Cleans reactor directory of current files.
   - ``--formats``: The output formats to write out.
   - ``--is-thermal``: Whether the reactor is a thermal system (True) or a fast one (False)
-  - ``--outfiles``: Names of output files to write out. Must correspond with formats.
+  - ``--outdirs``: Names of output files to write out. Must correspond with formats.
 """
 
 from __future__ import print_function
@@ -85,6 +85,7 @@ class XSGenPlugin(Plugin):
                  'k_cycles': 20,
                  'k_cycles_skip': 10,
                  'k_particles': 1000,
+                 'threads': 1
                  }
     "A default run control for all the parameters one may desire."
 
@@ -93,7 +94,7 @@ class XSGenPlugin(Plugin):
         'formats': 'The output formats to write out.',
         'is_thermal': ('Whether the reactor is a thermal system (True) or a '
                        'fast one (False)'),
-        'outfiles': 'Names of output files to write out. Must correspond with formats.',
+        'outdirs': 'Names of output files to write out. Must correspond with formats.',
         }
 
     def update_argparser(self, parser):
@@ -103,7 +104,7 @@ class XSGenPlugin(Plugin):
             help="Cleans the reactor directory of current files.")
         parser.add_argument('--formats', dest='formats', help=self.rcdocs['formats'],
                             nargs='+')
-        parser.add_argument('--outfiles', dest='outfiles', type=list, help=self.rcdocs['outfiles'],
+        parser.add_argument('--outdirs', dest='outdirs', type=list, help=self.rcdocs['outdirs'],
                             nargs='+')
         parser.add_argument('--is-thermal', dest='is_thermal', type=bool,
                             help=self.rcdocs['is_thermal'])
@@ -151,7 +152,7 @@ class XSGenPlugin(Plugin):
         self._ensure_pp(rc)
         self._ensure_mats(rc)
         self._ensure_lattice(rc)
-        self._ensure_outfiles(rc)
+        self._ensure_outdirs(rc)
 
     def _ensure_bt(self, rc):
         "Get or make the burn times in the run control."
@@ -354,16 +355,16 @@ class XSGenPlugin(Plugin):
         if 'lattice_shape' not in rc:
             rc.lattice_shape = (17, 17)
 
-    def _ensure_outfiles(self, rc):
-        "Ensure we have outfiles to write to."
+    def _ensure_outdirs(self, rc):
+        "Ensure we have outdirs to write to."
 
-        if rc.outfiles is NotSpecified:
-            print("No outfiles specified, defaulting to format names...")
-            rc.outfiles = rc.formats
-        elif len(rc.outfiles) > len(rc.formats):
-            raise ValueError("More outfiles defined than formats!")
-        elif len(rc.outfiles) < len(rc.formats):
-            raise ValueError("More formats defined than outfiles!")
+        if rc.outdirs is NotSpecified:
+            print("No outdirs specified, defaulting to format names...")
+            rc.outdirs = rc.formats
+        elif len(rc.outdirs) > len(rc.formats):
+            raise ValueError("More outdirs defined than formats!")
+        elif len(rc.outdirs) < len(rc.formats):
+            raise ValueError("More formats defined than outdirs!")
         return
 
     def make_states(self, rc):

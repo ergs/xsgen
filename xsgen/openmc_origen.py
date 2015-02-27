@@ -11,7 +11,6 @@ from statepoint import StatePoint
 from pyne import rxname
 from pyne import nucname
 from pyne import origen22
-from pyne.data import atomic_mass
 from pyne.material import Material
 from pyne.xs import data_source
 from pyne.xs.cache import XSCache
@@ -134,6 +133,7 @@ PLOTS_TEMPLATE = """<?xml version="1.0"?>
 </plots>
 """
 
+
 class OpenMCOrigen(object):
     """An that combines OpenMC for k-code calculations and ORIGEN for
     transmutation.
@@ -151,7 +151,6 @@ class OpenMCOrigen(object):
         self.eafds = data_source.EAFDataSource()
         self.omcds = data_source.OpenMCDataSource(
                         cross_sections=rc.openmc_cross_sections,
-                        #src_group_struct=self.eafds.src_group_struct)
                         src_group_struct=np.logspace(1, -9, 1001))
         data_sources = [self.omcds]
         if not rc.is_thermal:
@@ -249,7 +248,7 @@ class OpenMCOrigen(object):
 
         print([state.burn_times for state in run])
         for i, state in enumerate(run):
-            if i > 0 :
+            if i > 0:
                 transmute_time = state.burn_times - run[i-1].burn_times
                 results = self.generate(state, transmute_time)
                 self.libs = self._update_libs_with_results(self.libs, results)
@@ -313,7 +312,8 @@ class OpenMCOrigen(object):
         fuel_material.atoms_per_molecule = sum([self.rc.fuel_chemical_form[m]
                                                 for m in self.rc.fuel_chemical_form])
         fuel_atom_frac = fuel_material.to_atom_frac()
-        fuel_number_density = 6.022e23 * self.rc.fuel_density / (fuel_material.molecular_mass() * fuel_material.atoms_per_molecule)
+        fuel_number_density = 6.022e23 * self.rc.fuel_density / \
+            (fuel_material.molecular_mass() * fuel_material.atoms_per_molecule)
         number_densities = {nuc: fuel_atom_frac[nuc] * fuel_number_density
                             for nuc in fuel_material.comp}
         sum_N_i_sig_fi = sum([number_densities[nuc] * fission_xs.get(nuc, 0)
@@ -352,7 +352,6 @@ class OpenMCOrigen(object):
                                  self.libs[mat_id]["material"][-1],
                                  pwd,
                                  self.origen_call)
-                                 # self._make_origen_input)
                 origen_results.append(_origen(origen_params))
         else:
             origen_params_ls = [(state.burn_times,
@@ -365,6 +364,8 @@ class OpenMCOrigen(object):
                                 for mat_id in results]
             pool = Pool(self.rc.threads)
             origen_results = pool.map(_origen, origen_params_ls)
+            pool.close()
+            pool.join()
         for result in origen_results:
             result[1]["material"] = Material(dict(result[1]["material"]),
                                              1000,
@@ -625,21 +626,32 @@ def _origen(origen_params):
 
     Parameters
     ----------
-    state : namedtuple (State)
-        A namedtuple containing the state parameters.
+    origen_params : dict
+        A dictionary containing the following parameters.
+
+    abs_time : float
+        The absolute time (relative to 0 days) that the transmutation occurs at.
     transmute_time : float
-        Length of transmutation timestep.
+        Length of transmutation timestep - time relative to absolute time of
+        last timestep.
     phi_tot : float
         Total neutron flux.
     mat_id : str or int
-        The material to start transmuting. Either "fuel" or a nuclide in ID
-        form.
+        The identifier of a material to start transmuting. Either "fuel" or a
+        nuclide in ID form.
+    mat : pyne.material.Material
+        The material to be transmuted.
+    pwd : str
+        The directory to run ORIGEN in.
+    origen_call : str
+        The shell command for running ORIGEN.
 
     Returns
     -------
     results : dict
         Dictionary with neutron production and destruction rates, burnup, and
         transmutation results.
+
     """
     abs_time, transmute_time, phi_tot, mat_id, mat, pwd, origen_call = origen_params
     mat.mass = 1000
@@ -647,7 +659,6 @@ def _origen(origen_params):
 
     with indir(pwd):
         if not os.path.isfile("TAPE6.OUT"):
-            # make_inputs(transmute_time, phi_tot, mat)
             times_called = 0
             while times_called < 3:
                 times_called += 1

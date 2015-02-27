@@ -182,7 +182,6 @@ pseudoxml:
 
 github: html
 	ghp-import -m $(COMMITMSG) -p $(BUILDDIR)/html -n
-	git push $(UPSTREAM) gh-pages
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html and have"
-        @echo "been pushed to origin/gh-pages and up/gh-pages."
+        @echo "been pushed to origin/gh-pages."
