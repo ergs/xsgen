@@ -2,6 +2,7 @@ xsgen User's Guide
 ==================
 
 1. Installation
+===============
 
    .. include:: ../README.rst
       :start-after: .. install-start
@@ -10,7 +11,8 @@ xsgen User's Guide
    For this example, we will be using the OpenMC/ORIGEN physics code.
 
 
-2. Usage
+2. Setting Up the Run Control File
+==================================
 
    For this example, we'll use the `xslibs
    <https://github.com/bright-dev/xslibs>`_ project repository by
@@ -49,7 +51,6 @@ xsgen User's Guide
      time_step = 100      # Time step by which to increment the burn [days]
      burn_times = [0, 3]
      burn_times.extend(range(100, 4001, 100))  # we now have [0, 3, 100, 200 .. 4000]
-     batches = 3
 
    Here, ``solver`` refers to the engine we use for the transmutation
    and transport. We currently only have one where we use OpenMC for
@@ -65,14 +66,17 @@ xsgen User's Guide
    either specify a ``burn_time`` and a ``time_step``, which will make
    the burn times start at zero and go to ``burn_time`` in increments
    of ``time_step``. Or you can set ``burn_times`` to a list of times.
-   The burn times are in units of **days**. ``burn_times`` will take
+   The burn times are in units of [days]. ``burn_times`` will take
    precedence over ``burn_time`` and ``time_step``. Additionally, if
    no burn times are specified, we default to ``[0, 100, ... , 900]``.
 
-   ``batches`` specifies how many batches you want to input to
-   Bright-lite.
+   Note: if you intend to use these libraries for Bright-lite, you
+   should have a burn time at 3 days. This gets us a non-zero but
+   small fluence, which helps with interpolation. You should also go
+   out to at least 7000 days, otherwise you will not get enough
+   fluence.
 
-   Next we have a bunch of settings for the geometry and fuel::
+   Next we have settings for the geometry and fuel::
 
      fuel_cell_radius = 0.410
      void_cell_radius = 0.4185
@@ -86,8 +90,8 @@ xsgen User's Guide
 
      fuel_specific_power = 40.0 / 1000.0   # Power garnered from fuel [W / g]
 
-   The distance measurements here are all in **cm**.  The densities are in
-   **g/cm^3**.  The fuel-specific power is in **W/g**. ::
+   The distance measurements here are all in [cm].  The densities are in
+   [g/cm^3].  The fuel-specific power is in [W/g]. ::
 
      # LEU
      initial_heavy_metal = {     # Initial heavy metal mass fraction distribution
@@ -95,21 +99,16 @@ xsgen User's Guide
      922380: 0.96,
      }
 
-     enrichment = 0.04
-
-     pnl = 0.96
-
      # UOX
      fuel_chemical_form = {                 # Dictionary of initial fuel loading.
      80160: 2.0,
      "IHM": 1.0,
      }
 
-   Here we tell ``xsgen`` that our initial heavy metal is 4% U235 and 96%
-   U238. ``enrichment`` and ``pnl`` are for Brightlite input files,
-   which expect these parameters. ``fuel_chemical_form`` sets the
-   initial fuel - here we see that we have one atom of IHM to every
-   two atoms of oxygen, or UO_2.
+   Here we tell ``xsgen`` that our initial heavy metal is 4% U235 and
+   96% U238.  ``fuel_chemical_form`` sets the initial fuel - here we
+   see that we have one atom of IHM to every two atoms of oxygen, or
+   UO_2.
 
    Next we set a few OpenMC parameters::
 
@@ -154,3 +153,35 @@ xsgen User's Guide
                       |- ORIGEN input files for full fuel go here
             |- -4743197135546938812
             |- ...
+            |- brightlite0
+                 |- Bright-lite output files go here
+
+
+3. Using the Libraries With Bright-lite
+=======================================
+
+   First we must install Bright-lite. Clone the repository
+   `here<https://github.com/FlanFlanagan/Bright-lite/tree/timestep/>`_,
+   then run ``python install.py``.
+
+   To use the libraries with Bright-lite, we need to copy the folder
+   ``brightlite0`` to
+   ``${CYCLUS_INSTALL_DIR}/share/brightlite/brightlite0``.  Then we
+   need to copy ``eg01-eg23.json`` from the ``xslibs`` repository into
+   that folder. We also need to copy ``input/FR_reprocess.xml`` into
+   ``.../brightlite/brightlite0/hist``. Now we have all the files in
+   the right place and can run Cyclus::
+
+     $ cyclus eg01-eg23.json
+
+     New brightlite0 reactor starting up - target burnup = 45
+     /home/john/cyclus/install/share/brightlite/brightlite0/manifest.txt
+     [...]
+     CR: 191.444
+     Cycle Months:  10
+     Cycle Days: 10.9494
+     BURNUP: 45.1533
+
+     Status: Cyclus run successful!
+     Output location: cyclus.sqlite
+     Simulation ID: de741da0-39d3-4933-a6c5-0f15e78813e5

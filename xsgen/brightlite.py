@@ -12,6 +12,15 @@ class BrightliteWriter(object):
         self.rc = rc
 
     def write(self, libs, dirname):
+        """Write out libraries to a directory.
+
+        Parameters
+        ----------
+        libs : dict
+            The reactor libraries gleaned from buk.
+        dirname : str
+            The output directory.
+        """
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
         rownames = ["TIME", "NEUT_PROD", "NEUT_DEST", "BUd"]
@@ -33,9 +42,16 @@ class BrightliteWriter(object):
             f.write("\n".join([str(nucname.zzaaam(act)) for act in track_actinides]))
             f.write("\n")
         with open(os.path.join(dirname, "params.txt"), "w") as f:
-            f.write("ENRICHMENT {}\n".format(self.rc.enrichment))
-            f.write("BATCHES {}\n".format(self.rc.batches))
-            f.write("PNL {}\n".format(self.rc.pnl))
+            if self.rc.get("enrichment") is None:
+                enrichment = self.rc.initial_heavy_metal.get(922350)
+            else:
+                enrichment = self.rc.enrichment
+            if enrichment is not None:
+                f.write("ENRICHMENT {}\n".format(enrichment))
+            if self.rc.get("batches") is not None:
+                f.write("BATCHES {}\n".format(self.rc.batches))
+            if self.rc.get("pnl") is not None:
+                f.write("PNL {}\n".format(self.rc.pnl))
             f.write("BURNUP {}\n".format(sum(libs["fuel"]["BUd"])))
             f.write("FLUX {:.0E}\n".format(np.mean(libs["fuel"]["phi_tot"][1:])))
         with open(os.path.join(dirname, "structural.txt"), "w") as f:

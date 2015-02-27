@@ -1,7 +1,6 @@
 """Pre-processing plugin. Validates input and does sundry pre-calculation tasks.
 
 Provides the following command-line arguments:
-  - ``--ui``: Launches the xsgen ui
   - ``-c``, ``--clean``: Cleans reactor directory of current files.
   - ``--formats``: The output formats to write out.
   - ``--is-thermal``: Whether the reactor is a thermal system (True) or a fast one (False)
@@ -10,10 +9,7 @@ Provides the following command-line arguments:
 
 from __future__ import print_function
 import re
-import os
 import sys
-import shutil
-import subprocess
 from itertools import product
 from collections import namedtuple
 
@@ -26,7 +22,6 @@ from pyne.utils import failure
 from xsgen.utils import NotSpecified
 from xsgen.nuc_track import transmute
 from xsgen.plugins import Plugin
-from xsgen.tally_types import restricted_tallies
 from xsgen.brightlite import BrightliteWriter
 
 if sys.version_info[0] > 2:
@@ -40,21 +35,6 @@ FORMAT_WRITERS = {
 
 ensure_mat = lambda m: m if isinstance(m, Material) else Material(m)
 
-def run_ui():
-    """Runs the cross section user interface."""
-    # Test to see if ui library is installed
-    try:
-        from xsgen.ui import app
-    except ImportError:
-        sys.exit(failure("Please install the Enthought Tool Suite (ETS) for XSGen UI."))
-    # Open UI
-    application = app.Application()
-    application.configure_traits()
-    # Clean-up UI
-    if application.rx_h5 is not None:
-        application.rx_h5.close()
-    sys.exit()
-
 
 class XSGenPlugin(Plugin):
     "The plugin itself."
@@ -62,7 +42,6 @@ class XSGenPlugin(Plugin):
     requires = ('xsgen.base',)
 
     defaultrc = {'formats': ('brightlite',),
-                 'ui': False,
                  'is_thermal': True,
                  'group_structure': [10 ** x for x in range(1, -3, -1)],
                  'track_nucs': transmute,
@@ -89,7 +68,6 @@ class XSGenPlugin(Plugin):
                  }
     "A default run control for all the parameters one may desire."
 
-
     rcdocs = {
         'formats': 'The output formats to write out.',
         'is_thermal': ('Whether the reactor is a thermal system (True) or a '
@@ -98,10 +76,8 @@ class XSGenPlugin(Plugin):
         }
 
     def update_argparser(self, parser):
-        parser.add_argument("--ui", action="store_true", dest="ui",
-            help="Launches the xsgen ui.")
         parser.add_argument("-c", "--clean", action="store_true", dest="clean", default=False,
-            help="Cleans the reactor directory of current files.")
+                            help="Cleans the reactor directory of current files.")
         parser.add_argument('--formats', dest='formats', help=self.rcdocs['formats'],
                             nargs='+')
         parser.add_argument('--outdirs', dest='outdirs', type=list, help=self.rcdocs['outdirs'],
@@ -110,7 +86,7 @@ class XSGenPlugin(Plugin):
                             help=self.rcdocs['is_thermal'])
 
     def setup(self, rc):
-        """Run UI if requested; validate input; generate reactor states.
+        """Validate input; generate reactor states.
 
         Parameters
         ----------
@@ -121,9 +97,6 @@ class XSGenPlugin(Plugin):
         -------
         None
         """
-        if rc.ui:
-            run_ui()
-
         self.ensure_rc(rc)
         if rc.debug:
             print("making states...")
@@ -257,8 +230,9 @@ class XSGenPlugin(Plugin):
         "Set up tuple of perturbation parameters to perform a burnup step for."
 
         rc.perturbation_params = ['fuel_density', 'clad_density', 'cool_density',
-            'fuel_cell_radius', 'void_cell_radius', 'clad_cell_radius',
-            'unit_cell_pitch', 'burn_regions', 'fuel_specific_power',]
+                                  'fuel_cell_radius', 'void_cell_radius',
+                                  'clad_cell_radius', 'unit_cell_pitch',
+                                  'burn_regions', 'fuel_specific_power']
 
         rc.perturbation_params.extend(rc.initial_nuc_keys)
         # burn_times needs to be the last element
@@ -271,7 +245,7 @@ class XSGenPlugin(Plugin):
             rc.fuel_material = ensure_mat(rc.fuel_material)
         elif 'fuel_chemical_form' in rc and 'initial_heavy_metal' in rc:
             ihm_mat = Material(rc.initial_heavy_metal)
-            atom_frac = {nucname.id(k): v for k, v in \
+            atom_frac = {nucname.id(k): v for k, v in
                          rc.fuel_chemical_form.items() if k != "IHM"}
             atom_frac[ihm_mat] = rc.fuel_chemical_form.get("IHM", 0.0)
             rc.fuel_material = from_atom_frac(atom_frac)

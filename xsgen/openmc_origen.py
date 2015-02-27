@@ -328,7 +328,27 @@ class OpenMCOrigen(object):
         return results
 
     def run_all_the_origens(self, state, transmute_time, phi_tot, results):
-        print("making tape9")
+        """Call ORIGEN as much as necessary and unite the results.
+
+        Parameters
+        ----------
+        state : namedtuple (State)
+            A namedtuple containing the state parameters.
+        transmute_time : float
+            The length of the transmutation timestep. Has units of [days].
+        phi_tot : float
+            The total neutron flux.
+        results : dict
+            A dict with material identifiers as keys, and dictionaries as
+            values. The basic data structure to fill.
+
+        Returns
+        -------
+        dict
+           A dict of all the ORIGEN results.
+        """
+        if self.rc.verbose:
+            print("making tape9")
         self.tape9 = origen22.make_tape9(self.rc.track_nucs, self.xscache, nlb=(219, 220, 221))
         self.tape9 = origen22.merge_tape9((self.tape9,
                                           origen22.loads_tape9(brightlitetape9)))
@@ -408,6 +428,15 @@ class OpenMCOrigen(object):
         return k, phi_g, xstab
 
     def _plot_group_flux(self, e_g, phi_g):
+        """Plot the group flux output by OpenMC and save plot to file.
+
+        Parameters
+        ----------
+        e_g : array
+            Energy bins
+        phi_g : array
+            Flux values
+        """
         fig = plt.figure(figsize=(12, 8))
         plt.loglog(*stair_step(e_g, phi_g), figure=fig)
         plt.title("Flux vs Energy in")
@@ -558,8 +587,6 @@ class OpenMCOrigen(object):
 
         Parameters
         ----------
-        state : namedtuple (State)
-            A namedtuple containing the state parameters.
         transmute_time : float
             The time, in days, to run the transmutation for.
         phi_tot: float
@@ -627,24 +654,24 @@ def _origen(origen_params):
     Parameters
     ----------
     origen_params : dict
-        A dictionary containing the following parameters.
+        A dictionary containing the following parameters:
 
-    abs_time : float
-        The absolute time (relative to 0 days) that the transmutation occurs at.
-    transmute_time : float
-        Length of transmutation timestep - time relative to absolute time of
-        last timestep.
-    phi_tot : float
-        Total neutron flux.
-    mat_id : str or int
-        The identifier of a material to start transmuting. Either "fuel" or a
-        nuclide in ID form.
-    mat : pyne.material.Material
-        The material to be transmuted.
-    pwd : str
-        The directory to run ORIGEN in.
-    origen_call : str
-        The shell command for running ORIGEN.
+        abs_time : float
+            The absolute time (relative to 0 days) that the transmutation occurs at.
+        transmute_time : float
+            Length of transmutation timestep - time relative to absolute time of
+            last timestep.
+        phi_tot : float
+            Total neutron flux.
+        mat_id : str or int
+            The identifier of a material to start transmuting. Either "fuel" or a
+            nuclide in ID form.
+        mat : pyne.material.Material
+            The material to be transmuted.
+        pwd : str
+            The directory to run ORIGEN in.
+        origen_call : str
+            The shell command for running ORIGEN.
 
     Returns
     -------
