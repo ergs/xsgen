@@ -47,7 +47,6 @@ Contents:
    usersguide
    runcontrol
    plugins
-   plugins-module
    api/index
    devguide/index
 
