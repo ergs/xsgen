@@ -40,6 +40,7 @@ Contents:
    plugins
    plugins-module
    api/index
+   devguide/index
 
 ..
    Indices and tables
