@@ -36,7 +36,7 @@ warnings.simplefilter("ignore", QAWarning)
 extensions = [
     'sphinx.ext.autodoc',
     'numpydoc',
-    #'sphinx.ext.autosummary',
+    'sphinx.ext.autosummary',
     ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -265,3 +265,10 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+
+
+# Prevent numpy from making silly tables
+autosummary_generate = []
+numpydoc_show_class_members = False
+

@@ -1,9 +1,10 @@
 xsgen
-=====
-.. overview-start
-Overview
---------
+=============
 
+.. overview-start
+
+Overview
+------------------
 xsgen is a tool for computing multi-group neutron cross-section, burnup, and
 multiplication factor (k\ :sub:`inf`\ ) as a function of reactor state, which
 includes time/fluence, material properties, and reactor geometry.
@@ -25,7 +26,7 @@ timesteps, we write this out to libraries, theoretically of a variety of
 formats.
 
 Acknowledgements
-----------------
+--------------------
 Support for this research has included funding received from:
 
 .. image:: /neup_logo_large.png
@@ -35,11 +36,11 @@ Support for this research has included funding received from:
 
 .. install-start
 
-Installation
-============
+Install XSGen
+===============
 
 Dependencies
-------------
+----------------
 
 xsgen depends on `PyNE <http://www.pyne.io>`_. You can find installation
 instructions for PyNE `here <http://pyne.io/install.html>`_.
@@ -47,9 +48,9 @@ instructions for PyNE `here <http://pyne.io/install.html>`_.
 To install from source, simply download the source code from the
 official GitHub repo and run ``setup.py``::
 
-    git clone git://github.com/bright-dev/xsgen.git
-    cd xsgen/
-    python setup.py install --user
+    $ git clone git://github.com/bright-dev/xsgen.git
+    $ cd xsgen/
+    $ python setup.py install --user
 
 Currently, we require `OpenMC <http://mit-crpg.github.io/openmc/>`_
 and `ORIGEN 2.2 <https://rsicc.ornl.gov/CustomerService.aspx>`_ for

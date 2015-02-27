@@ -1,7 +1,3 @@
-"""This module includes ``brightlitetape9``, A TAPE9 from Bright-lite
-that we can merge into other TAPE9s with PyNE.
-"""
-
 brightlitetape9="""   1      DECAY LIBRARY: ACTIVATION PRODUCTS                                    
    1   10010  6     0.0       0.0       0.0       0.0       0.0       0.0       
    1                0.0       0.0       0.0       9.998E+01 1.000E+00 1.000E+00 
