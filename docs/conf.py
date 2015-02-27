@@ -36,7 +36,7 @@ warnings.simplefilter("ignore", QAWarning)
 extensions = [
     'sphinx.ext.autodoc',
     'numpydoc',
-    'sphinx.ext.autosummary',
+    #'sphinx.ext.autosummary',
     ]
 
 # Add any paths that contain templates here, relative to this directory.
