@@ -56,7 +56,7 @@ and transport. We currently only have one where we use OpenMC for
 neutron transport and Origen 2.2 for transmutation, named
 "openmc+origen." ``formats`` is an iterable with the various output
 formats you intend to generate libaries for. We currently only
-support `Bright-lite <https://github.com/FlanFlanagan/Bright-lite/tree/timestep/>format`_.
+support `Bright-lite format <https://github.com/FlanFlanagan/Bright-lite/tree/timestep/>`_.
 ``burn_regions`` is, as the comment says, the number of burnup
 annular regions.
 
@@ -158,7 +158,7 @@ This is what the directory structure should look like::
 3. Using the Libraries With Bright-lite
 ---------------------------------------
 First we must install Bright-lite. Clone the repository
-`here<https://github.com/FlanFlanagan/Bright-lite/tree/timestep/>`_,
+`here <https://github.com/FlanFlanagan/Bright-lite/tree/timestep/>`_,
 then run ``python install.py``.
 
 To use the libraries with Bright-lite, we need to copy the folder
