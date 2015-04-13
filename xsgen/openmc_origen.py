@@ -348,7 +348,7 @@ class OpenMCOrigen(object):
            A dict of all the ORIGEN results.
         """
         if self.rc.verbose:
-            print("making tape9")
+            print("making tape9 for {0} with phi={1}".format(state, phi_tot))
         self.tape9 = origen22.make_tape9(self.rc.track_nucs, self.xscache, nlb=(219, 220, 221))
         self.tape9 = origen22.merge_tape9((self.tape9,
                                           origen22.loads_tape9(brightlitetape9)))
