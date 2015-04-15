@@ -306,8 +306,15 @@ class OpenMCOrigen(object):
         if state in self.statelibs:
             return self.statelibs[state]
         k, phi_g, xstab = self.openmc(state)
-        fission_xs = {xs[0]: xs[2] * 1e-24 for xs in xstab  # xs is in barns not cm2
-                      if xs[1] == rxname.id("fission")}
+        G = len(phi_g)
+        fission_id = rxname.id("fission")
+        if G == 1:
+            fission_xs = {xs[0]: xs[2] * 1e-24 for xs in xstab  # xs is in barns not cm2
+                          if xs[1] == fission_id}
+        else:
+            fission_xs = {xs[0]: np.sum(xs[2]) * 1e-24 / len(xs[2]) 
+                          for xs in xstab  # xs is in barns not cm2
+                          if xs[1] == fission_id}
         fuel_material = self.libs["fuel"]["material"][-1]
         fuel_material.atoms_per_molecule = sum([self.rc.fuel_chemical_form[m]
                                                 for m in self.rc.fuel_chemical_form])
