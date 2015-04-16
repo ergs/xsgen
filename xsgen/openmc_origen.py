@@ -1,10 +1,11 @@
 from __future__ import print_function
 import os
+import json
 import subprocess
+from pprint import pformat
 from multiprocessing import Pool
 
 import numpy as np
-import json
 
 from statepoint import StatePoint
 
@@ -306,30 +307,35 @@ class OpenMCOrigen(object):
         if state in self.statelibs:
             return self.statelibs[state]
         k, phi_g, xstab = self.openmc(state)
-        G = len(phi_g)
-        fission_id = rxname.id("fission")
-        if G == 1:
-            fission_xs = {xs[0]: xs[2] * 1e-24 for xs in xstab  # xs is in barns not cm2
-                          if xs[1] == fission_id}
-        else:
-            fission_xs = {xs[0]: np.sum(xs[2]) * 1e-24 / len(xs[2]) 
-                          for xs in xstab  # xs is in barns not cm2
-                          if xs[1] == fission_id}
-        fuel_material = self.libs["fuel"]["material"][-1]
-        fuel_material.atoms_per_molecule = sum([self.rc.fuel_chemical_form[m]
-                                                for m in self.rc.fuel_chemical_form])
-        fuel_atom_frac = fuel_material.to_atom_frac()
-        fuel_number_density = 6.022e23 * self.rc.fuel_density / \
-            (fuel_material.molecular_mass() * fuel_material.atoms_per_molecule)
-        number_densities = {nuc: fuel_atom_frac[nuc] * fuel_number_density
-                            for nuc in fuel_material.comp}
-        sum_N_i_sig_fi = sum([number_densities[nuc] * fission_xs.get(nuc, 0)
-                              for nuc in fuel_material.comp])
-        sum_N_i_sig_fi = sum_N_i_sig_fi[sum_N_i_sig_fi != 0]
-        fuel_specific_power_mwcc = self.rc.fuel_density * 1e-6 * self.rc.fuel_specific_power
-        # see http://iriaxp.iri.tudelft.nl/~leege/SCALE44/origens.PDF for formula
-        # (search for "the specific power due to fission", on p. 22 of the PDF)
-        phi_tot = sum(3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi)
+        rc = self.rc
+        if 'flux' in rc:
+            phi_tot = state.flux
+        elif 'fuel_specific_power' in rc:
+            raise RuntimeError('needs refactor for state')
+            G = len(phi_g)
+            fission_id = rxname.id("fission")
+            if G == 1:
+                fission_xs = {xs[0]: xs[2] * 1e-24 for xs in xstab  # xs is in barns not cm2
+                              if xs[1] == fission_id}
+            else:
+                fission_xs = {xs[0]: np.sum(xs[2]) * 1e-24 / len(xs[2]) 
+                              for xs in xstab  # xs is in barns not cm2
+                              if xs[1] == fission_id}
+            fuel_material = self.libs["fuel"]["material"][-1]
+            fuel_material.atoms_per_molecule = sum([self.rc.fuel_chemical_form[m]
+                                                    for m in self.rc.fuel_chemical_form])
+            fuel_atom_frac = fuel_material.to_atom_frac()
+            fuel_number_density = 6.022e23 * self.rc.fuel_density / \
+                (fuel_material.molecular_mass() * fuel_material.atoms_per_molecule)
+            number_densities = {nuc: fuel_atom_frac[nuc] * fuel_number_density
+                                for nuc in fuel_material.comp}
+            sum_N_i_sig_fi = sum([number_densities[nuc] * fission_xs.get(nuc, 0)
+                                  for nuc in fuel_material.comp])
+            sum_N_i_sig_fi = sum_N_i_sig_fi[sum_N_i_sig_fi != 0]
+            fuel_specific_power_mwcc = self.rc.fuel_density * 1e-6 * state.fuel_specific_power
+            # see http://iriaxp.iri.tudelft.nl/~leege/SCALE44/origens.PDF for formula
+            # (search for "the specific power due to fission", on p. 22 of the PDF)
+            phi_tot = sum(3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi)
         results = self.run_all_the_origens(state, transmute_time, phi_tot, results)
         self.statelibs[state] = results
         return results
@@ -722,4 +728,8 @@ def _origen(origen_params):
         "material": list(out_mat.comp.items()),
         "phi_tot": phi_tot
         })
+    #if burnup < 0.0:
+    #    msg = 'Negative burnup found for {0}:\n{1}'
+    #    msg = msg.format(mat_id, pformat(results[1]))
+    #    raise ValueError(msg)
     return results
