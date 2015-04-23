@@ -223,7 +223,7 @@ class OpenMCOrigen(object):
         libs : list of dicts
             Libraries to write out - one for the full fuel and one for each tracked nuclide.
         """
-        self.libs = {"fuel": {
+        self.libs = {'xs': [], "fuel": {
             "TIME": [0],
             "NEUT_PROD": [0],
             "NEUT_DEST": [0],
@@ -232,7 +232,7 @@ class OpenMCOrigen(object):
             "tracked_nucs": {nucname.name(n): [self.rc.fuel_material.comp.get(n, 0) * 1000]
                              for n in self.rc.track_nucs},
             "phi_tot": [0]
-        }}
+            }}
 
         for nuc in self.rc.track_nucs:
             self.libs[nuc] = {
@@ -271,6 +271,9 @@ class OpenMCOrigen(object):
             The updated library.
         """
         for mat, newlib in newlibs.items():
+            if mat == 'xs':
+                matlibs['xs'].append(newlib)
+                continue
             oldlib = matlibs[mat]
             for nuc in self.rc.track_nucs:
                 name = nucname.name(nuc)
@@ -302,12 +305,12 @@ class OpenMCOrigen(object):
             for the full fuel results.
         """
         print("generating for a state with transmute_time {}".format(transmute_time))
-        results = {"fuel": {}}
-        results.update(dict(zip(self.rc.track_nucs, [{} for _ in self.rc.track_nucs])))
         if state in self.statelibs:
             return self.statelibs[state]
-        k, phi_g, xstab = self.openmc(state)
         rc = self.rc
+        k, phi_g, xstab = self.openmc(state)
+        results = {"fuel": {}}
+        results.update(dict(zip(rc.track_nucs, [{} for _ in rc.track_nucs])))
         if 'flux' in rc:
             phi_tot = state.flux
         elif 'fuel_specific_power' in rc:
@@ -337,6 +340,7 @@ class OpenMCOrigen(object):
             # (search for "the specific power due to fission", on p. 22 of the PDF)
             phi_tot = sum(3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi)
         results = self.run_all_the_origens(state, transmute_time, phi_tot, results)
+        results['xs'] = xstab
         self.statelibs[state] = results
         return results
 

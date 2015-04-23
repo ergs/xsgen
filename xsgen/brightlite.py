@@ -1,10 +1,13 @@
 from __future__ import print_function
 import os
+import json
 import shutil
-from pyne import nucname
 from math import pi
+
 import numpy as np
 
+from pyne import rxname
+from pyne import nucname
 
 class BrightliteWriter(object):
 
@@ -27,8 +30,10 @@ class BrightliteWriter(object):
         for mat, matlib in libs.items():
             if isinstance(mat, int):
                 fname = str(nucname.zzaaam(mat))
-            else:
+            elif mat == 'fuel':
                 fname = mat
+            else:
+                continue
             lines = [row + "   " + "   ".join(map(str, matlib[row]))
                      for row in rownames]
             nucs = matlib["tracked_nucs"]
@@ -65,3 +70,10 @@ class BrightliteWriter(object):
             f.write("\n".join(cladrows))
             f.write("\n")
         shutil.copyfile("TAPE9.INP", os.path.join(dirname, "TAPE9.INP"))
+        # write cross section json file
+        xsdata = [[[nucname.name(int(n)), rxname.name(int(r)), float(x)] 
+                  for n, r, x in lib] for lib in libs['xs']]
+        with open(os.path.join(dirname, 'xs.json'), 'w') as f:
+            json.dump(xsdata, f, sort_keys=True, indent=1, 
+                      separators=(', ', ': '))
+
