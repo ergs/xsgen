@@ -223,7 +223,7 @@ class OpenMCOrigen(object):
         libs : list of dicts
             Libraries to write out - one for the full fuel and one for each tracked nuclide.
         """
-        self.libs = {'xs': [], "fuel": {
+        self.libs = {'xs': [], 'phi_g': [], "fuel": {
             "TIME": [0],
             "NEUT_PROD": [0],
             "NEUT_DEST": [0],
@@ -244,7 +244,7 @@ class OpenMCOrigen(object):
                 "tracked_nucs": {nucname.name(n): [0]
                                  for n in self.rc.track_nucs},
                 "phi_tot": [0]
-            }
+                }
             self.libs[nuc]["tracked_nucs"][nucname.name(nuc)] = [1000]
 
         print([state.burn_times for state in run])
@@ -271,8 +271,8 @@ class OpenMCOrigen(object):
             The updated library.
         """
         for mat, newlib in newlibs.items():
-            if mat == 'xs':
-                matlibs['xs'].append(newlib)
+            if mat in ('xs', 'phi_g'):
+                matlibs[mat].append(newlib)
                 continue
             oldlib = matlibs[mat]
             for nuc in self.rc.track_nucs:
@@ -341,6 +341,8 @@ class OpenMCOrigen(object):
             phi_tot = sum(3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi)
         results = self.run_all_the_origens(state, transmute_time, phi_tot, results)
         results['xs'] = xstab
+        results['phi_g'] = {'EAF': self.eafds.src_phi_g.tolist(),
+                            'OpenMC': self.omcds.src_phi_g.tolist()}
         self.statelibs[state] = results
         return results
 
