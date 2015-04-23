@@ -223,7 +223,11 @@ class OpenMCOrigen(object):
         libs : list of dicts
             Libraries to write out - one for the full fuel and one for each tracked nuclide.
         """
-        self.libs = {'xs': [], 'phi_g': [], "fuel": {
+        self.libs = {'xs': [], 'phi_g': {
+            'E_g': {'EAF': self.eafds.src_group_struct.tolist(),
+                    'OpenMC': self.omcds.src_group_struct.tolist()},
+            'phi_g': []}, 
+          "fuel": {
             "TIME": [0],
             "NEUT_PROD": [0],
             "NEUT_DEST": [0],
@@ -271,8 +275,11 @@ class OpenMCOrigen(object):
             The updated library.
         """
         for mat, newlib in newlibs.items():
-            if mat in ('xs', 'phi_g'):
+            if mat == 'xs':
                 matlibs[mat].append(newlib)
+                continue
+            elif mat == 'phi_g':
+                matlibs[mat][mat].append(newlib)
                 continue
             oldlib = matlibs[mat]
             for nuc in self.rc.track_nucs:
