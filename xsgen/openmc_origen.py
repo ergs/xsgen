@@ -495,7 +495,9 @@ class OpenMCOrigen(object):
         # discard Cd-119m1 as a valid nuc
         valid_nucs.discard(481190001)
         # core_nucs = set(ctx['core_transmute'])
-        ctx['_fuel_nucs'] = _mat_to_nucs(rc.fuel_material[valid_nucs])
+        #ctx['_fuel_nucs'] = _mat_to_nucs(rc.fuel_material[valid_nucs])
+        curr_fuel = self.libs['fuel']['material'][-1][valid_nucs]
+        ctx['_fuel_nucs'] = _mat_to_nucs(curr_fuel[valid_nucs])        
         ctx['_clad_nucs'] = _mat_to_nucs(rc.clad_material[valid_nucs])
         ctx['_cool_nucs'] = _mat_to_nucs(rc.cool_material[valid_nucs])
         materials = MATERIALS_TEMPLATE.format(**ctx)
