@@ -12,6 +12,8 @@ from __future__ import print_function
 import os
 import shutil
 
+import numpy as np
+
 from xsgen.plugins import Plugin
 from xsgen.utils import RunControl, NotSpecified
 from xsgen.openmc_origen import OpenMCOrigen
@@ -28,10 +30,13 @@ class XSGenPlugin(Plugin):
     defaultrc = RunControl(
         solver=NotSpecified,
         openmc_cross_sections=NotSpecified,
+        openmc_group_struct=np.logspace(1, -9, 1001),
         )
 
     rcdocs = {
-        'openmc_cross_sections': 'Path to the cross_sections.xml file for OpenMC',
+        'openmc_cross_sections': ('Path to the cross_sections.xml file '
+                                  'for OpenMC'),
+        'openmc_group_struct': 'Group structure for OpenMC data source.',
         'origen': 'ORIGEN 2.2 command',
         'threads': 'Number of threads to use',
         'solver': ('The physics codes that are used to solve the '

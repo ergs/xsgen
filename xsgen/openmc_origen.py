@@ -152,7 +152,7 @@ class OpenMCOrigen(object):
         self.eafds = data_source.EAFDataSource()
         self.omcds = data_source.OpenMCDataSource(
                         cross_sections=rc.openmc_cross_sections,
-                        src_group_struct=np.logspace(1, -9, 1001))
+                        src_group_struct=rc.openmc_group_struct)
         data_sources = [self.omcds]
         if not rc.is_thermal:
             data_sources.append(self.eafds)
