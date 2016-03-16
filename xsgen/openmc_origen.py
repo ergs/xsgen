@@ -560,7 +560,7 @@ class OpenMCOrigen(object):
             Group structure.
         """
         sp = statepoint.StatePoint(statepoint_path)
-        print(sp.tallies)
+        print(sp.tallies[0])
         # compute group fluxes for data sources
         for tally, ds in zip(sp.tallies[1:3], (self.eafds, self.omcds)):
             ds.src_phi_g = tally.results[::-1, :, 0].flatten()
