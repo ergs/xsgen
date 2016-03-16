@@ -562,9 +562,9 @@ class OpenMCOrigen(object):
         sp = statepoint.StatePoint(statepoint_path)
         print(sp.tallies)
         # compute group fluxes for data sources
-        #for tally, ds in zip(sp.tallies[1:3], (self.eafds, self.omcds)):
-            #ds.src_phi_g = tally.results[::-1, :, 0].flatten()
-            #ds.src_phi_g /= ds.src_phi_g.sum()
+        for tally, ds in zip(sp.tallies[1:3], (self.eafds, self.omcds)):
+            ds.src_phi_g = tally.results[::-1, :, 0].flatten()
+            ds.src_phi_g /= ds.src_phi_g.sum()
         # compute return values
         k, kerr = sp.k_combined
         tally = sp.tallies[tally_id]
