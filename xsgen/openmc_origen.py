@@ -7,7 +7,7 @@ from multiprocessing import Pool
 
 import numpy as np
 
-from statepoint import StatePoint
+from openmc import statepoint
 
 from pyne import rxname
 from pyne import nucname
@@ -539,7 +539,7 @@ class OpenMCOrigen(object):
         return {n.nucid for n in self.omcds.cross_sections.ace_tables
                 if n.nucid is not None}
 
-    def _parse_statepoint(self, statepoint, tally_id=1):
+    def _parse_statepoint(self, statepoint_path, tally_id=1):
         """Parses a statepoint file and reads in the relevant fluxes, assigns them
         to the DataSources or the XSCache, and returns k, phi_g, and E_g.
 
@@ -559,19 +559,19 @@ class OpenMCOrigen(object):
         e_g : list of floats
             Group structure.
         """
-        sp = StatePoint(statepoint)
-        sp.read_results()
+        sp = statepoint.StatePoint(statepoint_path)
+        print(sp.tallies)
         # compute group fluxes for data sources
-        for tally, ds in zip(sp.tallies[1:3], (self.eafds, self.omcds)):
-            ds.src_phi_g = tally.results[::-1, :, 0].flatten()
-            ds.src_phi_g /= ds.src_phi_g.sum()
+        #for tally, ds in zip(sp.tallies[1:3], (self.eafds, self.omcds)):
+            #ds.src_phi_g = tally.results[::-1, :, 0].flatten()
+            #ds.src_phi_g /= ds.src_phi_g.sum()
         # compute return values
         k, kerr = sp.k_combined
-        tally = sp.tallies[tally_id - 1]
+        tally = sp.tallies[tally_id]
         phi_g = tally.results[::-1, :, 0].flatten()
         phi_g /= phi_g.sum()
         e_g = tally.filters["energyin"].bins
-
+        print("test " + k.to_string())
         return k, phi_g, e_g
 
     def _generate_xs(self, e_g, phi_g):
