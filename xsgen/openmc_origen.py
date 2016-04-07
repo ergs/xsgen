@@ -154,13 +154,14 @@ class OpenMCOrigen(object):
                         cross_sections=rc.openmc_cross_sections,
                         src_group_struct=rc.openmc_group_struct)
         data_sources = [self.omcds]
-        if not rc.is_thermal:
-            data_sources.append(self.eafds)
+        #if not rc.is_thermal:
+        #    data_sources.append(self.eafds)
         data_sources += [data_source.SimpleDataSource(),
                          data_source.NullDataSource()]
         for ds in data_sources[1:]:
             ds.load()
-        self.xscache = XSCache(data_sources=data_sources)
+        self.xscache = XSCache()
+        self.xscache.load(293.6)
         self.tape9 = None
 
         if self.rc.origen_call is NotSpecified:
@@ -351,6 +352,7 @@ class OpenMCOrigen(object):
         results['phi_g'] = {'EAF': self.eafds.src_phi_g.tolist(),
                             'OpenMC': self.omcds.src_phi_g.tolist()}
         self.statelibs[state] = results
+        print("YEAY!")
         return results
 
     def run_all_the_origens(self, state, transmute_time, phi_tot, results):
@@ -447,9 +449,10 @@ class OpenMCOrigen(object):
             statepoint = _find_statepoint(pwd)
         # parse & prepare results
         k, phi_g, e_g = self._parse_statepoint(statepoint)
-        if self.rc.plot_group_flux:
-            with indir(pwd):
-                self._plot_group_flux(e_g, phi_g)
+        ### TODO fix matplotlib here
+        #if self.rc.plot_group_flux:
+        #    with indir(pwd):
+        #        self._plot_group_flux(e_g, phi_g)
         xstab = self._generate_xs(e_g, phi_g)
         return k, phi_g, xstab
 
@@ -560,18 +563,19 @@ class OpenMCOrigen(object):
             Group structure.
         """
         sp = statepoint.StatePoint(statepoint_path)
-        print(sp.tallies[0])
+        temp_tally = []
+        temp_tally.append(sp.tallies[1].get_values(['flux']).flatten())
+        temp_tally.append(sp.tallies[2].get_values(['flux']).flatten())
         # compute group fluxes for data sources
-        for tally, ds in zip(sp.tallies[1:3], (self.eafds, self.omcds)):
-            ds.src_phi_g = tally.results[::-1, :, 0].flatten()
+        for tally, ds in zip(temp_tally[0:2], (self.eafds, self.omcds)):
+            ds.src_phi_g = tally
             ds.src_phi_g /= ds.src_phi_g.sum()
         # compute return values
         k, kerr = sp.k_combined
-        tally = sp.tallies[tally_id]
-        phi_g = tally.results[::-1, :, 0].flatten()
+        tally = sp.tallies[tally_id].get_values(['flux'])
+        phi_g = tally.flatten()
         phi_g /= phi_g.sum()
-        e_g = tally.filters["energyin"].bins
-        print("test " + k.to_string())
+        e_g = sp.tallies[tally_id].find_filter('energy').bins
         return k, phi_g, e_g
 
     def _generate_xs(self, e_g, phi_g):
@@ -592,9 +596,9 @@ class OpenMCOrigen(object):
         rc = self.rc
         verbose = rc.verbose
         xscache = self.xscache
-        xscache.clear()
-        xscache['E_g'] = e_g
-        xscache['phi_g'] = phi_g
+        xscache.clear()          
+        #xscache.__setitem__('E_g', e_g)
+        #xscache.__setitem__('phi_g', phi_g)   
         G = len(phi_g)
         temp = rc.temperature
         rxs = self.reactions
@@ -607,7 +611,12 @@ class OpenMCOrigen(object):
                 xs = xscache[nuc, rx, temp]
                 if verbose:
                     print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, temp)
-                data[i] = nuc, rx, xs
+                data[i]['nuc'] = nuc
+                data[i]['rx'] = rx
+                ### NOTE for some reason xs is now an array and not a integar.
+                if len(xs) < 1:
+                    xs = [0] 
+                data[i]['xs'] = xs[0]
                 i += 1
         return data
 
