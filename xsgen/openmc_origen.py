@@ -613,14 +613,10 @@ class OpenMCOrigen(object):
                 xs = xscache[nuc, rx, temp]
                 if verbose:
                     print("OpenMC XS:", nucname.name(nuc), xs, temp)
-                print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, temp)
+                #print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, temp)
                 data[i] = nuc, rx, xs
                 #data[i]['nuc'] = nuc
                 #data[i]['rx'] = rx
-                ### NOTE for some reason xs is now an array and not a integar.
-                #if len(xs) < 1:
-                #    xs = [0] 
-                #data[i]['xs'] = xs[0]
                 i += 1
         return data
 
