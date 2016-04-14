@@ -597,9 +597,10 @@ class OpenMCOrigen(object):
         rc = self.rc
         verbose = rc.verbose
         xscache = self.xscache
-        xscache.clear()  
-        #xscache['E_g'] = e_g
-        #xscache['phi_g'] = phi_g
+        #xscache.clear()  
+        print(e_g, phi_g)
+        xscache['E_g'] = e_g
+        xscache['phi_g'] = phi_g
         G = len(phi_g)
         temp = rc.temperature
         rxs = self.reactions
@@ -612,14 +613,14 @@ class OpenMCOrigen(object):
                 xs = xscache[nuc, rx, temp]
                 if verbose:
                     print("OpenMC XS:", nucname.name(nuc), xs, temp)
-                #data[i] = nuc, rx, xs
-                #print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, temp)
-                data[i]['nuc'] = nuc
-                data[i]['rx'] = rx
+                print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, temp)
+                data[i] = nuc, rx, xs
+                #data[i]['nuc'] = nuc
+                #data[i]['rx'] = rx
                 ### NOTE for some reason xs is now an array and not a integar.
-                if len(xs) < 1:
-                    xs = [0] 
-                data[i]['xs'] = xs[0]
+                #if len(xs) < 1:
+                #    xs = [0] 
+                #data[i]['xs'] = xs[0]
                 i += 1
         return data
 
