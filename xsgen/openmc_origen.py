@@ -597,7 +597,7 @@ class OpenMCOrigen(object):
         rc = self.rc
         verbose = rc.verbose
         xscache = self.xscache
-        #xscache.clear()  
+        #xscache.clear()
         print(e_g, phi_g)
         xscache['E_g'] = e_g
         xscache['phi_g'] = phi_g
