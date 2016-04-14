@@ -449,10 +449,9 @@ class OpenMCOrigen(object):
             statepoint = _find_statepoint(pwd)
         # parse & prepare results
         k, phi_g, e_g = self._parse_statepoint(statepoint)
-        ### TODO fix matplotlib here
-        #if self.rc.plot_group_flux:
-        #    with indir(pwd):
-        #        self._plot_group_flux(e_g, phi_g)
+        if self.rc.plot_group_flux:
+            with indir(pwd):
+                self._plot_group_flux(e_g, phi_g)
         xstab = self._generate_xs(e_g, phi_g)
         return k, phi_g, xstab
 
@@ -500,6 +499,9 @@ class OpenMCOrigen(object):
         # core_nucs = set(ctx['core_transmute'])
         #ctx['_fuel_nucs'] = _mat_to_nucs(rc.fuel_material[valid_nucs])
         curr_fuel = self.libs['fuel']['material'][-1][valid_nucs]
+        for nuc in curr_fuel.comp:
+            if curr_fuel.comp[nuc] < 1e-5:
+                del curr_fuel.comp[nuc]
         ctx['_fuel_nucs'] = _mat_to_nucs(curr_fuel[valid_nucs])        
         ctx['_clad_nucs'] = _mat_to_nucs(rc.clad_material[valid_nucs])
         ctx['_cool_nucs'] = _mat_to_nucs(rc.cool_material[valid_nucs])
@@ -542,7 +544,7 @@ class OpenMCOrigen(object):
         return {n.nucid for n in self.omcds.cross_sections.ace_tables
                 if n.nucid is not None}
 
-    def _parse_statepoint(self, statepoint_path, tally_id=1):
+    def _parse_statepoint(self, statepoint_path, tally_id=3):
         """Parses a statepoint file and reads in the relevant fluxes, assigns them
         to the DataSources or the XSCache, and returns k, phi_g, and E_g.
 
@@ -568,8 +570,7 @@ class OpenMCOrigen(object):
         temp_tally.append(sp.tallies[2].get_values(['flux']).flatten())
         # compute group fluxes for data sources
         for tally, ds in zip(temp_tally[0:2], (self.eafds, self.omcds)):
-            ds.src_phi_g = tally
-            ds.src_phi_g /= ds.src_phi_g.sum()
+            ds.src_phi_g /= tally.sum()
         # compute return values
         k, kerr = sp.k_combined
         tally = sp.tallies[tally_id].get_values(['flux'])
@@ -596,9 +597,9 @@ class OpenMCOrigen(object):
         rc = self.rc
         verbose = rc.verbose
         xscache = self.xscache
-        xscache.clear()          
-        #xscache.__setitem__('E_g', e_g)
-        #xscache.__setitem__('phi_g', phi_g)   
+        xscache.clear()  
+        #xscache['E_g'] = e_g
+        #xscache['phi_g'] = phi_g
         G = len(phi_g)
         temp = rc.temperature
         rxs = self.reactions
@@ -610,7 +611,9 @@ class OpenMCOrigen(object):
             for rx in rxs:
                 xs = xscache[nuc, rx, temp]
                 if verbose:
-                    print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, temp)
+                    print("OpenMC XS:", nucname.name(nuc), xs, temp)
+                #data[i] = nuc, rx, xs
+                #print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, temp)
                 data[i]['nuc'] = nuc
                 data[i]['rx'] = rx
                 ### NOTE for some reason xs is now an array and not a integar.
@@ -637,6 +640,9 @@ class OpenMCOrigen(object):
         """
         # may need to filter tape4 for Bad Nuclides
         # if sum(mat.comp.values()) > 1:
+        for nuc in mat.comp:
+            if mat.comp[nuc] < 1e-5:
+                del mat.comp[nuc]
         origen22.write_tape4(mat)
         origen22.write_tape5_irradiation("IRF",
                                          transmute_time,
@@ -735,7 +741,6 @@ def _origen(origen_params):
 
         print("Parsing " + pwd + "/TAPE6.OUT...")
         tape6 = origen22.parse_tape6("TAPE6.OUT")
-
     out_mat = tape6["materials"][-1]
     out_mat.mass = 1000
     out_mat.comp = {n: frac for n, frac in out_mat.comp.items() if frac != 0}
