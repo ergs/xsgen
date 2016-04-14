@@ -160,7 +160,7 @@ class OpenMCOrigen(object):
                          data_source.NullDataSource()]
         for ds in data_sources[1:]:
             ds.load()
-        self.xscache = XSCache()
+        self.xscache = XSCache(data_sources=data_sources)
         self.xscache.load(293.6)
         self.tape9 = None
 
@@ -597,10 +597,9 @@ class OpenMCOrigen(object):
         rc = self.rc
         verbose = rc.verbose
         xscache = self.xscache
-        #xscache.clear()
-        print(e_g, phi_g)
-        xscache['E_g'] = e_g
-        xscache['phi_g'] = phi_g
+        xscache.clear()
+        #xscache['E_g'] = e_g
+        #xscache['phi_g'] = phi_g
         G = len(phi_g)
         temp = rc.temperature
         rxs = self.reactions
