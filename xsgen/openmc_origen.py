@@ -611,15 +611,13 @@ class OpenMCOrigen(object):
         for nuc in nucs:
             for rx in rxs:
                 xs = xscache[nuc, rx, temp]
+                ## TODO figure out why some XS arrays are not the right size. 
                 if(len(xs) < 100):
                     continue
                 if verbose:
                     print("OpenMC XS:", nucname.name(nuc), xs, temp)
                 print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, temp)
                 data[i] = nuc, rx, xs
-                #data[i]['nuc'] = nuc
-                #data[i]['rx'] = rx
-                #data[i]['xs'] = [0]
                 i += 1
         return data
 
