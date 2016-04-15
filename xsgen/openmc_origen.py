@@ -258,6 +258,7 @@ class OpenMCOrigen(object):
                 transmute_time = state.burn_times - run[i-1].burn_times
                 results = self.generate(state, transmute_time)
                 self.libs = self._update_libs_with_results(self.libs, results)
+                print(os.getcwd())
         return self.libs
 
     def _update_libs_with_results(self, matlibs, newlibs):
@@ -610,12 +611,15 @@ class OpenMCOrigen(object):
         for nuc in nucs:
             for rx in rxs:
                 xs = xscache[nuc, rx, temp]
+                if(len(xs) < 100):
+                    continue
                 if verbose:
                     print("OpenMC XS:", nucname.name(nuc), xs, temp)
-                #print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, temp)
+                print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, temp)
                 data[i] = nuc, rx, xs
                 #data[i]['nuc'] = nuc
                 #data[i]['rx'] = rx
+                #data[i]['xs'] = [0]
                 i += 1
         return data
 
