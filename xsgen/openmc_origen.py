@@ -1,5 +1,6 @@
 from __future__ import print_function
 import os
+import shutil
 import json
 import subprocess
 from pprint import pformat
@@ -258,7 +259,6 @@ class OpenMCOrigen(object):
                 transmute_time = state.burn_times - run[i-1].burn_times
                 results = self.generate(state, transmute_time)
                 self.libs = self._update_libs_with_results(self.libs, results)
-                print(os.getcwd())
         return self.libs
 
     def _update_libs_with_results(self, matlibs, newlibs):
@@ -353,7 +353,11 @@ class OpenMCOrigen(object):
         results['phi_g'] = {'EAF': self.eafds.src_phi_g.tolist(),
                             'OpenMC': self.omcds.src_phi_g.tolist()}
         self.statelibs[state] = results
-        print("YEAY!")
+        statedir = os.path.join(self.builddir, str(hash(state)))
+        for dir in os.listdir(self.builddir):
+            print(os.path.join(self.builddir, dir), statedir)
+            if(os.path.join(self.builddir, dir) != statedir):
+                shutil.rmtree(os.path.join(self.builddir, dir))
         return results
 
     def run_all_the_origens(self, state, transmute_time, phi_tot, results):
