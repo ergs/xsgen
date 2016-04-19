@@ -153,13 +153,14 @@ class OpenMCOrigen(object):
         self.eafds = data_source.EAFDataSource()
         self.omcds = data_source.OpenMCDataSource(
                         cross_sections=rc.openmc_cross_sections,
-                        src_group_struct=rc.openmc_group_struct)
+                        src_group_struct=rc.openmc_group_struct,
+                        dst_group_struct=rc.openmc_group_struct)
         data_sources = [self.omcds]
         #if not rc.is_thermal:
         #    data_sources.append(self.eafds)
-        data_sources += [data_source.SimpleDataSource(),
-                         data_source.NullDataSource()]
-        for ds in data_sources[1:]:
+        #data_sources += [data_source.SimpleDataSource(),
+        #                 data_source.NullDataSource()]
+        for ds in data_sources[0:]:
             ds.load()
         self.xscache = XSCache(data_sources=data_sources)
         self.xscache.load(293.6)
@@ -355,7 +356,6 @@ class OpenMCOrigen(object):
         self.statelibs[state] = results
         statedir = os.path.join(self.builddir, str(hash(state)))
         for dir in os.listdir(self.builddir):
-            print(os.path.join(self.builddir, dir), statedir)
             if(os.path.join(self.builddir, dir) != statedir):
                 shutil.rmtree(os.path.join(self.builddir, dir))
         return results
@@ -603,8 +603,8 @@ class OpenMCOrigen(object):
         verbose = rc.verbose
         xscache = self.xscache
         xscache.clear()
-        #xscache['E_g'] = e_g
-        #xscache['phi_g'] = phi_g
+        xscache['E_g'] = e_g
+        xscache['phi_g'] = phi_g
         G = len(phi_g)
         temp = rc.temperature
         rxs = self.reactions
@@ -616,6 +616,8 @@ class OpenMCOrigen(object):
             for rx in rxs:
                 xs = xscache[nuc, rx, temp]
                 ## TODO figure out why some XS arrays are not the right size. 
+                if(xs == None):
+                    continue
                 if(len(xs) < G):
                     continue
                 if verbose:
