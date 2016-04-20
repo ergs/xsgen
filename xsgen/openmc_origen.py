@@ -324,7 +324,7 @@ class OpenMCOrigen(object):
         if 'flux' in rc:
             phi_tot = state.flux
         elif 'fuel_specific_power' in rc:
-            raise RuntimeError('needs refactor for state')
+            #raise RuntimeError('needs refactor for state')
             G = len(phi_g)
             fission_id = rxname.id("fission")
             if G == 1:
@@ -351,8 +351,8 @@ class OpenMCOrigen(object):
             phi_tot = sum(3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi)
         results = self.run_all_the_origens(state, transmute_time, phi_tot, results)
         results['xs'] = xstab
-        results['phi_g'] = {'EAF': self.eafds.src_phi_g.tolist(),
-                            'OpenMC': self.omcds.src_phi_g.tolist()}
+        results['phi_g'] = {'EAF': self.eafds.src_phi_g,
+                            'OpenMC': self.omcds.src_phi_g}
         self.statelibs[state] = results
         statedir = os.path.join(self.builddir, str(hash(state)))
         for dir in os.listdir(self.builddir):
@@ -502,7 +502,7 @@ class OpenMCOrigen(object):
         # discard Cd-119m1 as a valid nuc
         valid_nucs.discard(481190001)
         # core_nucs = set(ctx['core_transmute'])
-        #ctx['_fuel_nucs'] = _mat_to_nucs(rc.fuel_material[valid_nucs])
+        ctx['_fuel_nucs'] = _mat_to_nucs(rc.fuel_material[valid_nucs])
         curr_fuel = self.libs['fuel']['material'][-1][valid_nucs]
         for nuc in curr_fuel.comp:
             if curr_fuel.comp[nuc] < 1e-5:
@@ -529,7 +529,6 @@ class OpenMCOrigen(object):
         ctx['_eafds_egrid'] = " ".join(map(str, sorted(self.eafds.src_group_struct)))
         ctx['_omcds_egrid'] = " ".join(map(str, sorted(self.omcds.src_group_struct)))
         # nucs = core_nucs & valid_nucs
-        # ctx['_nucs'] = " ".join([nucname.serpent(nuc) for nuc in sorted(nucs)])
         tallies = TALLIES_TEMPLATE.format(**ctx)
         with open(os.path.join(pwd, 'tallies.xml'), 'w') as f:
             f.write(tallies)
@@ -616,8 +615,6 @@ class OpenMCOrigen(object):
             for rx in rxs:
                 xs = xscache[nuc, rx, temp]
                 ## TODO figure out why some XS arrays are not the right size. 
-                if(xs == None):
-                    continue
                 if(len(xs) < G):
                     continue
                 if verbose:
