@@ -156,8 +156,8 @@ class OpenMCOrigen(object):
                         src_group_struct=rc.openmc_group_struct,
                         dst_group_struct=rc.openmc_group_struct)
         data_sources = [self.omcds]
-        #if not rc.is_thermal:
-        #    data_sources.append(self.eafds)
+        if not rc.is_thermal:
+            data_sources.append(self.eafds)
         #data_sources += [data_source.SimpleDataSource(),
         #                 data_source.NullDataSource()]
         for ds in data_sources[0:]:
@@ -570,8 +570,8 @@ class OpenMCOrigen(object):
         """
         sp = statepoint.StatePoint(statepoint_path)
         temp_tally = []
-        temp_tally.append(sp.tallies[1].get_values(['flux']).flatten())
         temp_tally.append(sp.tallies[2].get_values(['flux']).flatten())
+        temp_tally.append(sp.tallies[3].get_values(['flux']).flatten())
         # compute group fluxes for data sources
         for tally, ds in zip(temp_tally[0:2], (self.eafds, self.omcds)):
             ds.src_phi_g /= tally.sum()
