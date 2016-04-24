@@ -30,16 +30,30 @@ class BrightliteWriter(object):
         for mat, matlib in libs.items():
             if isinstance(mat, int):
                 fname = str(nucname.zzaaam(mat))
-            elif mat == 'fuel':
-                fname = mat
+            #elif mat == 'fuel':
+            #    fname = mat
             else:
                 continue
             lines = [row + "   " + "   ".join(map(str, matlib[row]))
                      for row in rownames]
+            trans_matrix = {}
+            i = 0
+            while i < len(matlib['material']):
+                for temp_nuc in matlib['material'][i].comp:
+                    nuc_name = str(nucname.name(temp_nuc))
+                    try:
+                        trans_matrix[nuc_name].append(matlib['material'][i].comp[temp_nuc])
+                    except KeyError:
+                        if matlib['material'][i].comp[temp_nuc] > 1.E-4:
+                            zero_array = [0]*i
+                            trans_matrix[nuc_name] = zero_array
+                            trans_matrix[nuc_name].append(matlib['material'][i].comp[temp_nuc])
+                i+=1
             nucs = matlib["tracked_nucs"]
+            #print(trans_matrix)
             lines.extend(sorted([n + "   " + "   ".
-                                 join(["{:.4g}".format(f) for f in nucs[n]])
-                                 for n in nucs]))
+                                 join(["{:.4g}".format(f) for f in trans_matrix[n]])
+                                 for n in trans_matrix]))
             with open(os.path.join(dirname, fname + ".txt"), "w") as f:
                 f.write("\n".join(lines))
         track_actinides = [n for n in nucs if nucname.znum(n) in nucname.act]
