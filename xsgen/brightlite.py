@@ -77,7 +77,7 @@ class BrightliteWriter(object):
         #    json.dump(xsdata, f, sort_keys=True, indent=1, 
         #              separators=(', ', ': '))
         # write flux json file
-        with open(os.path.join(dirname, 'phi_g.json'), 'w') as f:
-            json.dump(libs['phi_g'], f, sort_keys=True, indent=1, 
-                      separators=(', ', ': '))
+        #with open(os.path.join(dirname, 'phi_g.json'), 'w') as f:
+        #    json.dump(libs['phi_g'], f, sort_keys=True, indent=1, 
+        #              separators=(', ', ': '))
 
