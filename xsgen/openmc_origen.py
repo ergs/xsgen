@@ -153,8 +153,7 @@ class OpenMCOrigen(object):
         self.eafds = data_source.EAFDataSource()
         self.omcds = data_source.OpenMCDataSource(
                         cross_sections=rc.openmc_cross_sections,
-                        src_group_struct=rc.openmc_group_struct,
-                        dst_group_struct=rc.openmc_group_struct)
+                        src_group_struct=rc.openmc_group_struct)
         data_sources = [self.omcds]
         if not rc.is_thermal:
             data_sources.append(self.eafds)
@@ -355,9 +354,9 @@ class OpenMCOrigen(object):
                             'OpenMC': self.omcds.src_phi_g}
         self.statelibs[state] = results
         statedir = os.path.join(self.builddir, str(hash(state)))
-        for dir in os.listdir(self.builddir):
-            if(os.path.join(self.builddir, dir) != statedir):
-                shutil.rmtree(os.path.join(self.builddir, dir))
+        #for dir in os.listdir(self.builddir):
+            #if(os.path.join(self.builddir, dir) != statedir):
+                #shutil.rmtree(os.path.join(self.builddir, dir))
         return results
 
     def run_all_the_origens(self, state, transmute_time, phi_tot, results):
@@ -548,7 +547,7 @@ class OpenMCOrigen(object):
         return {n.nucid for n in self.omcds.cross_sections.ace_tables
                 if n.nucid is not None}
 
-    def _parse_statepoint(self, statepoint_path, tally_id=3):
+    def _parse_statepoint(self, statepoint_path, tally_id=1):
         """Parses a statepoint file and reads in the relevant fluxes, assigns them
         to the DataSources or the XSCache, and returns k, phi_g, and E_g.
 
@@ -574,6 +573,7 @@ class OpenMCOrigen(object):
         temp_tally.append(sp.tallies[3].get_values(['flux']).flatten())
         # compute group fluxes for data sources
         for tally, ds in zip(temp_tally[0:2], (self.eafds, self.omcds)):
+            ds.scr_phi_g = np.array(tally[::-1])
             ds.src_phi_g /= tally.sum()
         # compute return values
         k, kerr = sp.k_combined
@@ -581,6 +581,7 @@ class OpenMCOrigen(object):
         phi_g = tally.flatten()
         phi_g /= phi_g.sum()
         e_g = sp.tallies[tally_id].find_filter('energy').bins
+        e_g = e_g[::-1]
         return k, phi_g, e_g
 
     def _generate_xs(self, e_g, phi_g):
@@ -613,12 +614,15 @@ class OpenMCOrigen(object):
         i = 0
         for nuc in nucs:
             for rx in rxs:
-                xs = xscache[nuc, rx, temp]
+                try:
+                    xs = xscache[nuc, rx, temp]
+                except KeyError:
+                    continue
                 ## TODO figure out why some XS arrays are not the right size. 
                 if(len(xs) < G):
                     continue
                 if verbose:
-                    print("OpenMC XS:", nucname.name(nuc), xs, temp)
+                    print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, type(xs), temp)
                 data[i] = nuc, rx, xs
                 i += 1
         return data

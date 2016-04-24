@@ -70,12 +70,12 @@ class BrightliteWriter(object):
             f.write("\n".join(cladrows))
             f.write("\n")
         shutil.copyfile("TAPE9.INP", os.path.join(dirname, "TAPE9.INP"))
-        # write cross section json file
-        xsdata = [[[nucname.name(int(n)), rxname.name(int(r)), float(x)] 
-                  for n, r, x in lib] for lib in libs['xs']]
-        with open(os.path.join(dirname, 'xs.json'), 'w') as f:
-            json.dump(xsdata, f, sort_keys=True, indent=1, 
-                      separators=(', ', ': '))
+        # write cross section json file - this section is now causing a runtime error
+        #xsdata = [[[nucname.name(int(n)), rxname.name(int(r)), float(x)] 
+        #          for n, r, x in lib] for lib in libs['xs']]
+        #with open(os.path.join(dirname, 'xs.json'), 'w') as f:
+        #    json.dump(xsdata, f, sort_keys=True, indent=1, 
+        #              separators=(', ', ': '))
         # write flux json file
         with open(os.path.join(dirname, 'phi_g.json'), 'w') as f:
             json.dump(libs['phi_g'], f, sort_keys=True, indent=1, 
