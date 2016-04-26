@@ -162,7 +162,7 @@ class OpenMCOrigen(object):
         for ds in data_sources[0:]:
             ds.load()
         self.xscache = XSCache(data_sources=data_sources)
-        self.xscache.load(293.6)
+        self.xscache.load()
         self.tape9 = None
 
         if self.rc.origen_call is NotSpecified:
@@ -226,8 +226,8 @@ class OpenMCOrigen(object):
             Libraries to write out - one for the full fuel and one for each tracked nuclide.
         """
         self.libs = {'xs': [], 'phi_g': {
-            'E_g': {'EAF': self.eafds.src_group_struct.tolist(),
-                    'OpenMC': self.omcds.src_group_struct.tolist()},
+            'E_g': {'EAF': self.eafds.src_group_struct,
+                    'OpenMC': self.omcds.src_group_struct},
             'phi_g': []}, 
           "fuel": {
             "TIME": [0],
@@ -323,7 +323,6 @@ class OpenMCOrigen(object):
         if 'flux' in rc:
             phi_tot = state.flux
         elif 'fuel_specific_power' in rc:
-            #raise RuntimeError('needs refactor for state')
             G = len(phi_g)
             fission_id = rxname.id("fission")
             if G == 1:
@@ -500,7 +499,6 @@ class OpenMCOrigen(object):
         valid_nucs = self.nucs_in_cross_sections()
         # discard Cd-119m1 as a valid nuc
         valid_nucs.discard(481190001)
-        # core_nucs = set(ctx['core_transmute'])
         ctx['_fuel_nucs'] = _mat_to_nucs(rc.fuel_material[valid_nucs])
         curr_fuel = self.libs['fuel']['material'][-1][valid_nucs]
         for nuc in curr_fuel.comp:
@@ -761,8 +759,8 @@ def _origen(origen_params):
         "material": list(out_mat.comp.items()),
         "phi_tot": phi_tot
         })
-    #if burnup < 0.0:
-    #    msg = 'Negative burnup found for {0}:\n{1}'
-    #    msg = msg.format(mat_id, pformat(results[1]))
-    #    raise ValueError(msg)
+    if burnup < 0.0:
+        msg = 'Negative burnup found for {0}:\n{1}'
+        msg = msg.format(mat_id, pformat(results[1]))
+        raise ValueError(msg)
     return results
