@@ -157,8 +157,8 @@ class OpenMCOrigen(object):
         data_sources = [self.omcds]
         if not rc.is_thermal:
             data_sources.append(self.eafds)
-        #data_sources += [data_source.SimpleDataSource(),
-        #                 data_source.NullDataSource()]
+        data_sources += [data_source.SimpleDataSource(),
+                         data_source.NullDataSource()]
         for ds in data_sources[0:]:
             ds.load()
         self.xscache = XSCache(data_sources=data_sources)
@@ -248,7 +248,7 @@ class OpenMCOrigen(object):
                 "BUd": [0],
                 "material": [Material({nuc: 1}, 1000)],
                 "tracked_nucs": {nucname.name(n): [0]
-                                 for n in self.rc.track_nucs},
+                	                 for n in self.rc.track_nucs},
                 "phi_tot": [0]
                 }
             self.libs[nuc]["tracked_nucs"][nucname.name(nuc)] = [1000]
@@ -618,7 +618,6 @@ class OpenMCOrigen(object):
                     xs = xscache[nuc, rx, temp]
                 except KeyError:
                     continue
-                ## TODO figure out why some XS arrays are not the right size. 
                 if(len(xs) < G):
                     continue
                 if verbose:

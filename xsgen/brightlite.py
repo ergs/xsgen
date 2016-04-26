@@ -30,8 +30,8 @@ class BrightliteWriter(object):
         for mat, matlib in libs.items():
             if isinstance(mat, int):
                 fname = str(nucname.zzaaam(mat))
-            #elif mat == 'fuel':
-            #    fname = mat
+            elif mat == 'fuel':
+                fname = mat
             else:
                 continue
             lines = [row + "   " + "   ".join(map(str, matlib[row]))
@@ -50,7 +50,6 @@ class BrightliteWriter(object):
                             trans_matrix[nuc_name].append(matlib['material'][i].comp[temp_nuc])
                 i+=1
             nucs = matlib["tracked_nucs"]
-            #print(trans_matrix)
             lines.extend(sorted([n + "   " + "   ".
                                  join(["{:.4g}".format(f) for f in trans_matrix[n]])
                                  for n in trans_matrix]))
