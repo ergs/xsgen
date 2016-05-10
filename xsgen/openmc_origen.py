@@ -155,12 +155,12 @@ class OpenMCOrigen(object):
                         cross_sections=rc.openmc_cross_sections,
                         src_group_struct=rc.openmc_group_struct)
         data_sources = [self.omcds]
-        if not rc.is_thermal:
-            data_sources.append(self.eafds)
+        #if not rc.is_thermal:
+        #    data_sources.append(self.eafds)
         data_sources += [data_source.SimpleDataSource(),
                          data_source.NullDataSource()]
         for ds in data_sources[0:]:
-            ds.load()
+            ds.load(rc.temperature)
         self.xscache = XSCache(data_sources=data_sources)
         self.xscache.load()
         self.tape9 = None
@@ -353,9 +353,9 @@ class OpenMCOrigen(object):
                             'OpenMC': self.omcds.src_phi_g}
         self.statelibs[state] = results
         statedir = os.path.join(self.builddir, str(hash(state)))
-        for dir in os.listdir(self.builddir):
-            if(os.path.join(self.builddir, dir) != statedir):
-                shutil.rmtree(os.path.join(self.builddir, dir))
+        #for dir in os.listdir(self.builddir):
+            #if(os.path.join(self.builddir, dir) != statedir):
+                #shutil.rmtree(os.path.join(self.builddir, dir))
         return results
 
     def run_all_the_origens(self, state, transmute_time, phi_tot, results):
@@ -453,10 +453,25 @@ class OpenMCOrigen(object):
         # parse & prepare results
         k, phi_g, e_g = self._parse_statepoint(statepoint)
         if self.rc.plot_group_flux:
+            plot_e_g, plot_phi_g = self._find_plot_data(statepoint)
             with indir(pwd):
-                self._plot_group_flux(e_g, phi_g)
+                self._plot_group_flux(plot_e_g, plot_phi_g)
+            plots = open('plotdata.txt', 'a')
+            for phi in plot_phi_g:
+                plots.write(str(phi) + " ")
+            plots.write('\n') 
+            plots.close()
         xstab = self._generate_xs(e_g, phi_g)
         return k, phi_g, xstab
+
+    def _find_plot_data(self, statepoint_path):
+        sp = statepoint.StatePoint(statepoint_path)
+        tally = sp.tallies[3].get_values(['flux'])
+        phi_g = tally.flatten()
+        phi_g /= phi_g.sum()
+        e_g = sp.tallies[3].find_filter('energy').bins
+        return e_g, phi_g
+
 
     def _plot_group_flux(self, e_g, phi_g):
         """Plot the group flux output by OpenMC and save plot to file.
@@ -502,7 +517,7 @@ class OpenMCOrigen(object):
         ctx['_fuel_nucs'] = _mat_to_nucs(rc.fuel_material[valid_nucs])
         curr_fuel = self.libs['fuel']['material'][-1][valid_nucs]
         for nuc in curr_fuel.comp:
-            if curr_fuel.comp[nuc] < 1e-5:
+            if curr_fuel.comp[nuc] < self.rc.track_nuc_threshold:
                 del curr_fuel.comp[nuc]
         ctx['_fuel_nucs'] = _mat_to_nucs(curr_fuel[valid_nucs])        
         ctx['_clad_nucs'] = _mat_to_nucs(rc.clad_material[valid_nucs])
@@ -571,7 +586,7 @@ class OpenMCOrigen(object):
         temp_tally.append(sp.tallies[3].get_values(['flux']).flatten())
         # compute group fluxes for data sources
         for tally, ds in zip(temp_tally[0:2], (self.eafds, self.omcds)):
-            ds.scr_phi_g = np.array(tally[::-1])
+            ds.src_phi_g = np.array(tally[::-1])
             ds.src_phi_g /= tally.sum()
         # compute return values
         k, kerr = sp.k_combined
@@ -588,7 +603,7 @@ class OpenMCOrigen(object):
         Parameters
         ----------
         e_g : list of floats
-            Group structure.
+            Groustructure.
         phi_g : list of floats
             Group flux.
 
@@ -642,14 +657,14 @@ class OpenMCOrigen(object):
         # may need to filter tape4 for Bad Nuclides
         # if sum(mat.comp.values()) > 1:
         for nuc in mat.comp:
-            if mat.comp[nuc] < 1e-5:
+            if mat.comp[nuc] < self.rc.track_nuc_threshold:
                 del mat.comp[nuc]
         origen22.write_tape4(mat)
         origen22.write_tape5_irradiation("IRF",
                                          transmute_time,
                                          phi_tot,
                                          xsfpy_nlb=(219, 220, 221),
-                                         cut_off=1e-300)
+                                         cut_off=1.e-6)
         origen22.write_tape9(self.tape9)
 
 

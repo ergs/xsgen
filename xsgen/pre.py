@@ -45,7 +45,7 @@ class XSGenPlugin(Plugin):
                  'is_thermal': True,
                  'group_structure': [10 ** x for x in range(1, -3, -1)],
                  'track_nucs': transmute,
-                 'track_nuc_threshold': 1e-4,
+                 'track_nuc_threshold': 1.e-5,
                  'energy_grid': 'nuclide',
                  'sab': 'HH2O',
                  'sab_xs': '71t',
@@ -317,6 +317,7 @@ class XSGenPlugin(Plugin):
         else:
             MW = (2 * 1.0) + (1 * 16.0) + (0.199 * 550 * 10.0**-6 * 10.0) + \
                                           (0.801 * 550 * 10.0**-6 * 11.0)
+            #MW = 18.
             rc.cool_material = Material({
                 10010: (2 * 1.0) / MW,
                 80160: (1 * 16.0) / MW,

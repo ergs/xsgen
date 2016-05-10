@@ -44,7 +44,7 @@ class BrightliteWriter(object):
                     try:
                         trans_matrix[nuc_name].append(matlib['material'][i].comp[temp_nuc])
                     except KeyError:
-                        if matlib['material'][i].comp[temp_nuc] > 1.E-4:
+                        if matlib['material'][i].comp[temp_nuc] > self.rc.track_nuc_threshold:
                             zero_array = [0]*i
                             trans_matrix[nuc_name] = zero_array
                             trans_matrix[nuc_name].append(matlib['material'][i].comp[temp_nuc])
