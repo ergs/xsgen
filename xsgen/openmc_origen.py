@@ -353,9 +353,9 @@ class OpenMCOrigen(object):
                             'OpenMC': self.omcds.src_phi_g}
         self.statelibs[state] = results
         statedir = os.path.join(self.builddir, str(hash(state)))
-        #for dir in os.listdir(self.builddir):
-            #if(os.path.join(self.builddir, dir) != statedir):
-                #shutil.rmtree(os.path.join(self.builddir, dir))
+        for dir in os.listdir(self.builddir):
+            if(os.path.join(self.builddir, dir) != statedir):
+                shutil.rmtree(os.path.join(self.builddir, dir))
         return results
 
     def run_all_the_origens(self, state, transmute_time, phi_tot, results):
