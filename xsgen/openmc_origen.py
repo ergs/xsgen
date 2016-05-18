@@ -155,11 +155,11 @@ class OpenMCOrigen(object):
                         cross_sections=rc.openmc_cross_sections,
                         src_group_struct=rc.openmc_group_struct)
         data_sources = [self.omcds]
-        #if not rc.is_thermal:
-        #    data_sources.append(self.eafds)
+        if not rc.is_thermal:
+            data_sources.append(self.eafds)
         data_sources += [data_source.SimpleDataSource(),
                          data_source.NullDataSource()]
-        for ds in data_sources[0:]:
+        for ds in data_sources[:]:
             ds.load(rc.temperature)
         self.xscache = XSCache(data_sources=data_sources)
         self.xscache.load()
@@ -585,7 +585,7 @@ class OpenMCOrigen(object):
         temp_tally.append(sp.tallies[2].get_values(['flux']).flatten())
         temp_tally.append(sp.tallies[3].get_values(['flux']).flatten())
         # compute group fluxes for data sources
-        for tally, ds in zip(temp_tally[0:2], (self.eafds, self.omcds)):
+        for tally, ds in zip(temp_tally[:2], (self.eafds, self.omcds)):
             ds.src_phi_g = np.array(tally[::-1])
             ds.src_phi_g /= tally.sum()
         # compute return values
@@ -603,7 +603,7 @@ class OpenMCOrigen(object):
         Parameters
         ----------
         e_g : list of floats
-            Groustructure.
+            Group structure.
         phi_g : list of floats
             Group flux.
 
@@ -664,7 +664,7 @@ class OpenMCOrigen(object):
                                          transmute_time,
                                          phi_tot,
                                          xsfpy_nlb=(219, 220, 221),
-                                         cut_off=1.e-6)
+                                         cut_off=self.rc.track_nuc_treshold)
         origen22.write_tape9(self.tape9)
 
 
