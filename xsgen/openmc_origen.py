@@ -1,12 +1,14 @@
 from __future__ import print_function
 import os
+import shutil
+import json
 import subprocess
+from pprint import pformat
 from multiprocessing import Pool
 
 import numpy as np
-import json
 
-from statepoint import StatePoint
+from openmc import statepoint
 
 from pyne import rxname
 from pyne import nucname
@@ -151,15 +153,16 @@ class OpenMCOrigen(object):
         self.eafds = data_source.EAFDataSource()
         self.omcds = data_source.OpenMCDataSource(
                         cross_sections=rc.openmc_cross_sections,
-                        src_group_struct=np.logspace(1, -9, 1001))
+                        src_group_struct=rc.openmc_group_struct)
         data_sources = [self.omcds]
         if not rc.is_thermal:
             data_sources.append(self.eafds)
         data_sources += [data_source.SimpleDataSource(),
                          data_source.NullDataSource()]
-        for ds in data_sources[1:]:
-            ds.load()
+        for ds in data_sources[:]:
+            ds.load(rc.temperature)
         self.xscache = XSCache(data_sources=data_sources)
+        self.xscache.load()
         self.tape9 = None
 
         if self.rc.origen_call is NotSpecified:
@@ -222,7 +225,11 @@ class OpenMCOrigen(object):
         libs : list of dicts
             Libraries to write out - one for the full fuel and one for each tracked nuclide.
         """
-        self.libs = {"fuel": {
+        self.libs = {'xs': [], 'phi_g': {
+            'E_g': {'EAF': self.eafds.src_group_struct,
+                    'OpenMC': self.omcds.src_group_struct},
+            'phi_g': []}, 
+          "fuel": {
             "TIME": [0],
             "NEUT_PROD": [0],
             "NEUT_DEST": [0],
@@ -231,7 +238,7 @@ class OpenMCOrigen(object):
             "tracked_nucs": {nucname.name(n): [self.rc.fuel_material.comp.get(n, 0) * 1000]
                              for n in self.rc.track_nucs},
             "phi_tot": [0]
-        }}
+            }}
 
         for nuc in self.rc.track_nucs:
             self.libs[nuc] = {
@@ -241,9 +248,9 @@ class OpenMCOrigen(object):
                 "BUd": [0],
                 "material": [Material({nuc: 1}, 1000)],
                 "tracked_nucs": {nucname.name(n): [0]
-                                 for n in self.rc.track_nucs},
+                	                 for n in self.rc.track_nucs},
                 "phi_tot": [0]
-            }
+                }
             self.libs[nuc]["tracked_nucs"][nucname.name(nuc)] = [1000]
 
         print([state.burn_times for state in run])
@@ -270,6 +277,12 @@ class OpenMCOrigen(object):
             The updated library.
         """
         for mat, newlib in newlibs.items():
+            if mat == 'xs':
+                matlibs[mat].append(newlib)
+                continue
+            elif mat == 'phi_g':
+                matlibs[mat][mat].append(newlib)
+                continue
             oldlib = matlibs[mat]
             for nuc in self.rc.track_nucs:
                 name = nucname.name(nuc)
@@ -301,30 +314,48 @@ class OpenMCOrigen(object):
             for the full fuel results.
         """
         print("generating for a state with transmute_time {}".format(transmute_time))
-        results = {"fuel": {}}
-        results.update(dict(zip(self.rc.track_nucs, [{} for _ in self.rc.track_nucs])))
         if state in self.statelibs:
             return self.statelibs[state]
+        rc = self.rc
         k, phi_g, xstab = self.openmc(state)
-        fission_xs = {xs[0]: xs[2] * 1e-24 for xs in xstab  # xs is in barns not cm2
-                      if xs[1] == rxname.id("fission")}
-        fuel_material = self.libs["fuel"]["material"][-1]
-        fuel_material.atoms_per_molecule = sum([self.rc.fuel_chemical_form[m]
-                                                for m in self.rc.fuel_chemical_form])
-        fuel_atom_frac = fuel_material.to_atom_frac()
-        fuel_number_density = 6.022e23 * self.rc.fuel_density / \
-            (fuel_material.molecular_mass() * fuel_material.atoms_per_molecule)
-        number_densities = {nuc: fuel_atom_frac[nuc] * fuel_number_density
-                            for nuc in fuel_material.comp}
-        sum_N_i_sig_fi = sum([number_densities[nuc] * fission_xs.get(nuc, 0)
-                              for nuc in fuel_material.comp])
-        sum_N_i_sig_fi = sum_N_i_sig_fi[sum_N_i_sig_fi != 0]
-        fuel_specific_power_mwcc = self.rc.fuel_density * 1e-6 * self.rc.fuel_specific_power
-        # see http://iriaxp.iri.tudelft.nl/~leege/SCALE44/origens.PDF for formula
-        # (search for "the specific power due to fission", on p. 22 of the PDF)
-        phi_tot = sum(3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi)
+        results = {"fuel": {}}
+        results.update(dict(zip(rc.track_nucs, [{} for _ in rc.track_nucs])))
+        if 'flux' in rc:
+            phi_tot = state.flux
+        elif 'fuel_specific_power' in rc:
+            G = len(phi_g)
+            fission_id = rxname.id("fission")
+            if G == 1:
+                fission_xs = {xs[0]: xs[2] * 1e-24 for xs in xstab  # xs is in barns not cm2
+                              if xs[1] == fission_id}
+            else:
+                fission_xs = {xs[0]: np.sum(xs[2]) * 1e-24 / len(xs[2]) 
+                              for xs in xstab  # xs is in barns not cm2
+                              if xs[1] == fission_id}
+            fuel_material = self.libs["fuel"]["material"][-1]
+            fuel_material.atoms_per_molecule = sum([self.rc.fuel_chemical_form[m]
+                                                    for m in self.rc.fuel_chemical_form])
+            fuel_atom_frac = fuel_material.to_atom_frac()
+            fuel_number_density = 6.022e23 * self.rc.fuel_density / \
+                (fuel_material.molecular_mass() * fuel_material.atoms_per_molecule)
+            number_densities = {nuc: fuel_atom_frac[nuc] * fuel_number_density
+                                for nuc in fuel_material.comp}
+            sum_N_i_sig_fi = sum([number_densities[nuc] * fission_xs.get(nuc, 0)
+                                  for nuc in fuel_material.comp])
+            sum_N_i_sig_fi = sum_N_i_sig_fi[sum_N_i_sig_fi != 0]
+            fuel_specific_power_mwcc = self.rc.fuel_density * 1e-6 * state.fuel_specific_power
+            # see http://iriaxp.iri.tudelft.nl/~leege/SCALE44/origens.PDF for formula
+            # (search for "the specific power due to fission", on p. 22 of the PDF)
+            phi_tot = sum(3.125e16*fuel_specific_power_mwcc/sum_N_i_sig_fi)
         results = self.run_all_the_origens(state, transmute_time, phi_tot, results)
+        results['xs'] = xstab
+        results['phi_g'] = {'EAF': self.eafds.src_phi_g,
+                            'OpenMC': self.omcds.src_phi_g}
         self.statelibs[state] = results
+        statedir = os.path.join(self.builddir, str(hash(state)))
+        for dir in os.listdir(self.builddir):
+            if(os.path.join(self.builddir, dir) != statedir):
+                shutil.rmtree(os.path.join(self.builddir, dir))
         return results
 
     def run_all_the_origens(self, state, transmute_time, phi_tot, results):
@@ -348,7 +379,7 @@ class OpenMCOrigen(object):
            A dict of all the ORIGEN results.
         """
         if self.rc.verbose:
-            print("making tape9")
+            print("making tape9 for {0} with phi={1}".format(state, phi_tot))
         self.tape9 = origen22.make_tape9(self.rc.track_nucs, self.xscache, nlb=(219, 220, 221))
         self.tape9 = origen22.merge_tape9((self.tape9,
                                           origen22.loads_tape9(brightlitetape9)))
@@ -422,10 +453,25 @@ class OpenMCOrigen(object):
         # parse & prepare results
         k, phi_g, e_g = self._parse_statepoint(statepoint)
         if self.rc.plot_group_flux:
+            plot_e_g, plot_phi_g = self._find_plot_data(statepoint)
             with indir(pwd):
-                self._plot_group_flux(e_g, phi_g)
+                self._plot_group_flux(plot_e_g, plot_phi_g)
+            plots = open('plotdata.txt', 'a')
+            for phi in plot_phi_g:
+                plots.write(str(phi) + " ")
+            plots.write('\n') 
+            plots.close()
         xstab = self._generate_xs(e_g, phi_g)
         return k, phi_g, xstab
+
+    def _find_plot_data(self, statepoint_path):
+        sp = statepoint.StatePoint(statepoint_path)
+        tally = sp.tallies[3].get_values(['flux'])
+        phi_g = tally.flatten()
+        phi_g /= phi_g.sum()
+        e_g = sp.tallies[3].find_filter('energy').bins
+        return e_g, phi_g
+
 
     def _plot_group_flux(self, e_g, phi_g):
         """Plot the group flux output by OpenMC and save plot to file.
@@ -468,8 +514,12 @@ class OpenMCOrigen(object):
         valid_nucs = self.nucs_in_cross_sections()
         # discard Cd-119m1 as a valid nuc
         valid_nucs.discard(481190001)
-        # core_nucs = set(ctx['core_transmute'])
         ctx['_fuel_nucs'] = _mat_to_nucs(rc.fuel_material[valid_nucs])
+        curr_fuel = self.libs['fuel']['material'][-1][valid_nucs]
+        for nuc in curr_fuel.comp:
+            if curr_fuel.comp[nuc] < self.rc.track_nuc_threshold:
+                del curr_fuel.comp[nuc]
+        ctx['_fuel_nucs'] = _mat_to_nucs(curr_fuel[valid_nucs])        
         ctx['_clad_nucs'] = _mat_to_nucs(rc.clad_material[valid_nucs])
         ctx['_cool_nucs'] = _mat_to_nucs(rc.cool_material[valid_nucs])
         materials = MATERIALS_TEMPLATE.format(**ctx)
@@ -491,7 +541,6 @@ class OpenMCOrigen(object):
         ctx['_eafds_egrid'] = " ".join(map(str, sorted(self.eafds.src_group_struct)))
         ctx['_omcds_egrid'] = " ".join(map(str, sorted(self.omcds.src_group_struct)))
         # nucs = core_nucs & valid_nucs
-        # ctx['_nucs'] = " ".join([nucname.serpent(nuc) for nuc in sorted(nucs)])
         tallies = TALLIES_TEMPLATE.format(**ctx)
         with open(os.path.join(pwd, 'tallies.xml'), 'w') as f:
             f.write(tallies)
@@ -511,7 +560,7 @@ class OpenMCOrigen(object):
         return {n.nucid for n in self.omcds.cross_sections.ace_tables
                 if n.nucid is not None}
 
-    def _parse_statepoint(self, statepoint, tally_id=1):
+    def _parse_statepoint(self, statepoint_path, tally_id=1):
         """Parses a statepoint file and reads in the relevant fluxes, assigns them
         to the DataSources or the XSCache, and returns k, phi_g, and E_g.
 
@@ -531,19 +580,21 @@ class OpenMCOrigen(object):
         e_g : list of floats
             Group structure.
         """
-        sp = StatePoint(statepoint)
-        sp.read_results()
+        sp = statepoint.StatePoint(statepoint_path)
+        temp_tally = []
+        temp_tally.append(sp.tallies[2].get_values(['flux']).flatten())
+        temp_tally.append(sp.tallies[3].get_values(['flux']).flatten())
         # compute group fluxes for data sources
-        for tally, ds in zip(sp.tallies[1:3], (self.eafds, self.omcds)):
-            ds.src_phi_g = tally.results[::-1, :, 0].flatten()
-            ds.src_phi_g /= ds.src_phi_g.sum()
+        for tally, ds in zip(temp_tally[:2], (self.eafds, self.omcds)):
+            ds.src_phi_g = np.array(tally[::-1])
+            ds.src_phi_g /= tally.sum()
         # compute return values
         k, kerr = sp.k_combined
-        tally = sp.tallies[tally_id - 1]
-        phi_g = tally.results[::-1, :, 0].flatten()
+        tally = sp.tallies[tally_id].get_values(['flux'])
+        phi_g = tally.flatten()
         phi_g /= phi_g.sum()
-        e_g = tally.filters["energyin"].bins
-
+        e_g = sp.tallies[tally_id].find_filter('energy').bins
+        e_g = e_g[::-1]
         return k, phi_g, e_g
 
     def _generate_xs(self, e_g, phi_g):
@@ -564,6 +615,7 @@ class OpenMCOrigen(object):
         rc = self.rc
         verbose = rc.verbose
         xscache = self.xscache
+        xscache.clear()
         xscache['E_g'] = e_g
         xscache['phi_g'] = phi_g
         G = len(phi_g)
@@ -575,9 +627,14 @@ class OpenMCOrigen(object):
         i = 0
         for nuc in nucs:
             for rx in rxs:
-                xs = xscache[nuc, rx, temp]
+                try:
+                    xs = xscache[nuc, rx, temp]
+                except KeyError:
+                    continue
+                if(len(xs) < G):
+                    continue
                 if verbose:
-                    print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, temp)
+                    print("OpenMC XS:", nucname.name(nuc), rxname.name(rx), xs, type(xs), temp)
                 data[i] = nuc, rx, xs
                 i += 1
         return data
@@ -599,12 +656,15 @@ class OpenMCOrigen(object):
         """
         # may need to filter tape4 for Bad Nuclides
         # if sum(mat.comp.values()) > 1:
+        for nuc in mat.comp:
+            if mat.comp[nuc] < self.rc.track_nuc_threshold:
+                del mat.comp[nuc]
         origen22.write_tape4(mat)
         origen22.write_tape5_irradiation("IRF",
                                          transmute_time,
                                          phi_tot,
                                          xsfpy_nlb=(219, 220, 221),
-                                         cut_off=1e-300)
+                                         cut_off=self.rc.track_nuc_treshold)
         origen22.write_tape9(self.tape9)
 
 
@@ -697,7 +757,6 @@ def _origen(origen_params):
 
         print("Parsing " + pwd + "/TAPE6.OUT...")
         tape6 = origen22.parse_tape6("TAPE6.OUT")
-
     out_mat = tape6["materials"][-1]
     out_mat.mass = 1000
     out_mat.comp = {n: frac for n, frac in out_mat.comp.items() if frac != 0}
@@ -715,4 +774,8 @@ def _origen(origen_params):
         "material": list(out_mat.comp.items()),
         "phi_tot": phi_tot
         })
+    if burnup < 0.0:
+        msg = 'Negative burnup found for {0}:\n{1}'
+        msg = msg.format(mat_id, pformat(results[1]))
+        raise ValueError(msg)
     return results

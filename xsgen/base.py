@@ -28,7 +28,7 @@ class XSGenPlugin(Plugin):
     defaultrc = RunControl(
         rc=DEFAULT_RC_FILE,
         plugins=DEFAULT_PLUGINS,
-        debug=False,
+        debug=True,
         verbose=False,
         version=False,
         bash_completion=True,

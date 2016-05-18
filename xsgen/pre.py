@@ -45,7 +45,7 @@ class XSGenPlugin(Plugin):
                  'is_thermal': True,
                  'group_structure': [10 ** x for x in range(1, -3, -1)],
                  'track_nucs': transmute,
-                 'track_nuc_threshold': 1e-4,
+                 'track_nuc_threshold': 1.e-5,
                  'energy_grid': 'nuclide',
                  'sab': 'HH2O',
                  'sab_xs': '71t',
@@ -58,7 +58,8 @@ class XSGenPlugin(Plugin):
                  'unit_cell_pitch': 1.5,
                  'unit_cell_height': 2,
                  'burn_regions': 1,
-                 'fuel_specific_power': 1,
+                 'flux': NotSpecified,
+                 'fuel_specific_power': NotSpecified,
                  'solver': "openmc+origen",
                  'reactor': "lwr",
                  'k_cycles': 20,
@@ -72,7 +73,9 @@ class XSGenPlugin(Plugin):
         'formats': 'The output formats to write out.',
         'is_thermal': ('Whether the reactor is a thermal system (True) or a '
                        'fast one (False)'),
-        'outdirs': 'Names of output files to write out. Must correspond with formats.',
+        'outdirs': ('Names of output files to write out. Must correspond '
+                    'with formats.'),
+        'flux': 'in units of [n/cm2/s].',
         }
 
     def update_argparser(self, parser):
@@ -201,7 +204,19 @@ class XSGenPlugin(Plugin):
         rc.clad_cell_radius = np.atleast_1d(rc.clad_cell_radius)
         rc.unit_cell_pitch = np.atleast_1d(rc.unit_cell_pitch)
         rc.burn_regions = np.atleast_1d(rc.burn_regions)
-        rc.fuel_specific_power = np.atleast_1d(rc.fuel_specific_power)
+        if rc.flux is NotSpecified and rc.fuel_specific_power is NotSpecified:
+            raise RuntimeError('Either the runtime parameter flux or '
+                               'fuel_specific_power must be given.')
+        elif rc.flux is not NotSpecified and \
+             rc.fuel_specific_power is not NotSpecified:
+            raise RuntimeError('Both of the runtime parameters flux and '
+                               'fuel_specific_power may not be given.')
+        elif rc.flux is not NotSpecified:
+            rc.flux = np.atleast_1d(rc.flux)
+            del rc.fuel_specific_power
+        else:
+            rc.fuel_specific_power = np.atleast_1d(rc.fuel_specific_power)
+            del rc.flux
 
     def _ensure_inp(self, rc):
         "Grab the initial nuclide perturbation."
@@ -232,7 +247,11 @@ class XSGenPlugin(Plugin):
         rc.perturbation_params = ['fuel_density', 'clad_density', 'cool_density',
                                   'fuel_cell_radius', 'void_cell_radius',
                                   'clad_cell_radius', 'unit_cell_pitch',
-                                  'burn_regions', 'fuel_specific_power']
+                                  'burn_regions',]
+        if hasattr(rc, 'flux'):
+            rc.perturbation_params.append('flux')
+        else:
+            rc.perturbation_params.append('fuel_specific_power')
 
         rc.perturbation_params.extend(rc.initial_nuc_keys)
         # burn_times needs to be the last element
