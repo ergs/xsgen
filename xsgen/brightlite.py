@@ -26,7 +26,7 @@ class BrightliteWriter(object):
         """
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
-        rownames = ["TIME", "NEUT_PROD", "NEUT_DEST", "BUd"]
+        rownames = ["TIME", "phi_tot", "NEUT_PROD", "NEUT_DEST", "BUd"]
         for mat, matlib in libs.items():
             if isinstance(mat, int):
                 fname = str(nucname.zzaaam(mat))
