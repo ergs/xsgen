@@ -664,7 +664,7 @@ class OpenMCOrigen(object):
                                          transmute_time,
                                          phi_tot,
                                          xsfpy_nlb=(219, 220, 221),
-                                         cut_off=self.rc.track_nuc_treshold)
+                                         cut_off=self.rc.track_nuc_threshold)
         origen22.write_tape9(self.tape9)
 
 
