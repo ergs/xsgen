@@ -456,11 +456,6 @@ class OpenMCOrigen(object):
             plot_e_g, plot_phi_g = self._find_plot_data(statepoint)
             with indir(pwd):
                 self._plot_group_flux(plot_e_g, plot_phi_g)
-            plots = open('plotdata.txt', 'a')
-            for phi in plot_phi_g:
-                plots.write(str(phi) + " ")
-            plots.write('\n') 
-            plots.close()
         xstab = self._generate_xs(e_g, phi_g)
         return k, phi_g, xstab
 
