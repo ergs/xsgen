@@ -380,6 +380,12 @@ class OpenMCOrigen(object):
         """
         if self.rc.verbose:
             print("making tape9 for {0} with phi={1}".format(state, phi_tot))
+        mat = self.libs['fuel']['material'][-1]
+        mat.density = self.rc.fuel_density
+        mat.atoms_per_molecule = 3.0
+        atom_dens = mat.to_atom_dens()
+        for ds in self.xscache.data_sources:
+            ds.atom_dens = atom_dens
         self.tape9 = origen22.make_tape9(self.rc.track_nucs, self.xscache, nlb=(219, 220, 221))
         self.tape9 = origen22.merge_tape9((self.tape9,
                                           origen22.loads_tape9(brightlitetape9)))
