@@ -161,7 +161,7 @@ class OpenMCOrigen(object):
                          data_source.NullDataSource()]
         for ds in data_sources[:]:
             ds.load(rc.temperature)
-        self.xscache = XSCache(data_sources=data_sources)
+        self.xscache = XSCache(data_sources=data_sources, scalars={922380000: 1.05})
         self.xscache.load()
         self.tape9 = None
 
@@ -229,7 +229,7 @@ class OpenMCOrigen(object):
             'E_g': {'EAF': self.eafds.src_group_struct,
                     'OpenMC': self.omcds.src_group_struct},
             'phi_g': []}, 
-          "fuel": {
+            "fuel": {
             "TIME": [0],
             "NEUT_PROD": [0],
             "NEUT_DEST": [0],
@@ -386,6 +386,8 @@ class OpenMCOrigen(object):
         atom_dens = mat.to_atom_dens()
         for ds in self.xscache.data_sources:
             ds.atom_dens = atom_dens
+        #temp_nucs = np.array(['942380000', '942390000', '942400000', '942410000', '942420000'])
+        #temp_nucs = np.append(temp_nucs, self.rc.track_nucs)
         self.tape9 = origen22.make_tape9(self.rc.track_nucs, self.xscache, nlb=(219, 220, 221))
         self.tape9 = origen22.merge_tape9((self.tape9,
                                           origen22.loads_tape9(brightlitetape9)))
@@ -755,7 +757,6 @@ def _origen(origen_params):
                     break
                 except subprocess.CalledProcessError:
                     print("Warning: ORIGEN2.2 in " + pwd + "failed. Retrying.")
-
         print("Parsing " + pwd + "/TAPE6.OUT...")
         tape6 = origen22.parse_tape6("TAPE6.OUT")
     out_mat = tape6["materials"][-1]
@@ -778,5 +779,6 @@ def _origen(origen_params):
     if burnup < 0.0:
         msg = 'Negative burnup found for {0}:\n{1}'
         msg = msg.format(mat_id, pformat(results[1]))
-        raise ValueError(msg)
+        burn = 0.0
+        #raise ValueError(msg)
     return results

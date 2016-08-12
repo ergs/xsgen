@@ -45,10 +45,14 @@ class BrightliteWriter(object):
                         trans_matrix[nuc_name].append(matlib['material'][i].comp[temp_nuc]*1000)
                     except KeyError:
                         if matlib['material'][i].comp[temp_nuc] > self.rc.track_nuc_threshold:
-                            zero_array = [0]*i
+                            zero_array = [0.]*i
                             trans_matrix[nuc_name] = zero_array
                             trans_matrix[nuc_name].append(matlib['material'][i].comp[temp_nuc]*1000)
                 i+=1
+            #for nuc in trans_matrix:
+            #    if len(trans_matrix[nuc]) < len(matlib['TIME']):
+            #        zero_array = [0.]*(len(matlib['TIME'])-len(trans_matrix[nuc])) 
+            #        trans_matrix[nuc].append(zero_array)
             nucs = matlib["tracked_nucs"]
             lines.extend(sorted([n + "   " + "   ".
                                  join(["{:.4g}".format(f) for f in trans_matrix[n]])
