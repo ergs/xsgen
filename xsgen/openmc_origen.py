@@ -386,8 +386,6 @@ class OpenMCOrigen(object):
         atom_dens = mat.to_atom_dens()
         for ds in self.xscache.data_sources:
             ds.atom_dens = atom_dens
-        #temp_nucs = np.array(['942380000', '942390000', '942400000', '942410000', '942420000'])
-        #temp_nucs = np.append(temp_nucs, self.rc.track_nucs)
         self.tape9 = origen22.make_tape9(self.rc.track_nucs, self.xscache, nlb=(219, 220, 221))
         self.tape9 = origen22.merge_tape9((self.tape9,
                                           origen22.loads_tape9(brightlitetape9)))
@@ -779,6 +777,6 @@ def _origen(origen_params):
     if burnup < 0.0:
         msg = 'Negative burnup found for {0}:\n{1}'
         msg = msg.format(mat_id, pformat(results[1]))
-        burn = 0.0
+        burnup = 0.0
         #raise ValueError(msg)
     return results
