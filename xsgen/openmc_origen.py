@@ -22,6 +22,7 @@ from matplotlib import pyplot as plt
 
 from xsgen.utils import indir, NotSpecified
 from xsgen.tape9 import brightlitetape9
+from xsgen.brightlite import BrightliteWriter
 
 # templates are from openmc/examples/lattice/simple
 
@@ -209,7 +210,7 @@ class OpenMCOrigen(object):
         ctx.update(zip(rc.perturbation_params, state))
         return ctx
 
-    def generate_run(self, run):
+    def generate_run(self, run, fname):
         """Generate transmutation tables, neutron production/destruction rates, and
         burnup statistics for a sequence of states with the same initial
         conditions.
@@ -259,6 +260,7 @@ class OpenMCOrigen(object):
                 transmute_time = state.burn_times - run[i-1].burn_times
                 results = self.generate(state, transmute_time)
                 self.libs = self._update_libs_with_results(self.libs, results)
+                self.rc.writers[0].write(self.libs, fname)
         return self.libs
 
     def _update_libs_with_results(self, matlibs, newlibs):
