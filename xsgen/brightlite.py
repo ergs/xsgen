@@ -57,8 +57,8 @@ class BrightliteWriter(object):
                                  for n in trans_matrix]))
             with open(os.path.join(dirname, fname + ".txt"), "w") as f:
                 f.write("\n".join(lines))
-        if not os.path.isfile(os.path.join(dirname, "manifest.txt")):
             nucs = matlib["tracked_nucs"]
+        if not os.path.isfile(os.path.join(dirname, "manifest.txt")):
             self.write_metadata(nucs, libs, dirname)
     
     def write_metadata(self, nucs, libs, dirname):
