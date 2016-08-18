@@ -57,7 +57,7 @@ class BrightliteWriter(object):
                                  for n in trans_matrix]))
             with open(os.path.join(dirname, fname + ".txt"), "w") as f:
                 f.write("\n".join(lines))
-        if not os.path.isfile(os.path.join(dirname, "manifest.txt"):
+        if not os.path.isfile(os.path.join(dirname, "manifest.txt")):
             nucs = matlib["tracked_nucs"]
             self.write_metadata(nucs, libs, dirname)
     
@@ -101,7 +101,7 @@ class BrightliteWriter(object):
                 fname = mat
             else:
                 continue
-            open(os.path.join(dirname, fname + ".txt"), "r") as f:         
+            f = open(os.path.join(dirname, fname + ".txt"), "r")         
             lines = f.readlines()
             time_steps = len(lines[0].split())
             i = 5
