@@ -53,7 +53,6 @@ MATERIALS_TEMPLATE = """<?xml version="1.0"?>
   <material id="2">
     <density value="{cool_density}" units="g/cc" />
     {_cool_nucs}
-    <sab name="{sab}" xs="{sab_xs}" />
   </material>
   <material id="3">
     <density value="{clad_density}" units="g/cc" />
