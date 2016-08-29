@@ -228,7 +228,7 @@ class OpenMCOrigen(object):
         self.libs = {'xs': [], 'phi_g': {
             'E_g': {'EAF': self.eafds.src_group_struct,
                     'OpenMC': self.omcds.src_group_struct},
-            'phi_g': []}, 
+            'phi_g': []},
             "fuel": {
             "TIME": [0],
             "NEUT_PROD": [0],
@@ -779,5 +779,4 @@ def _origen(origen_params):
         msg = 'Negative burnup found for {0}:\n{1}'
         msg = msg.format(mat_id, pformat(results[1]))
         burnup = 0.0
-        #raise ValueError(msg)
     return results
