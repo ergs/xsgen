@@ -229,7 +229,7 @@ class OpenMCOrigen(object):
             'E_g': {'EAF': self.eafds.src_group_struct,
                     'OpenMC': self.omcds.src_group_struct},
             'phi_g': []},
-            "fuel": {
+           "fuel": {
             "TIME": [0],
             "NEUT_PROD": [0],
             "NEUT_DEST": [0],
