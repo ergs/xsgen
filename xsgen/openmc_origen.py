@@ -22,6 +22,7 @@ from matplotlib import pyplot as plt
 
 from xsgen.utils import indir, NotSpecified
 from xsgen.tape9 import brightlitetape9
+from xsgen.brightlite import BrightliteWriter
 
 # templates are from openmc/examples/lattice/simple
 
@@ -52,7 +53,6 @@ MATERIALS_TEMPLATE = """<?xml version="1.0"?>
   <material id="2">
     <density value="{cool_density}" units="g/cc" />
     {_cool_nucs}
-    <sab name="{sab}" xs="{sab_xs}" />
   </material>
   <material id="3">
     <density value="{clad_density}" units="g/cc" />
@@ -161,7 +161,7 @@ class OpenMCOrigen(object):
                          data_source.NullDataSource()]
         for ds in data_sources[:]:
             ds.load(rc.temperature)
-        self.xscache = XSCache(data_sources=data_sources)
+        self.xscache = XSCache(data_sources=data_sources, scalars={922380000: 1.05})
         self.xscache.load()
         self.tape9 = None
 
@@ -209,7 +209,7 @@ class OpenMCOrigen(object):
         ctx.update(zip(rc.perturbation_params, state))
         return ctx
 
-    def generate_run(self, run):
+    def generate_run(self, run, fname):
         """Generate transmutation tables, neutron production/destruction rates, and
         burnup statistics for a sequence of states with the same initial
         conditions.
@@ -228,8 +228,8 @@ class OpenMCOrigen(object):
         self.libs = {'xs': [], 'phi_g': {
             'E_g': {'EAF': self.eafds.src_group_struct,
                     'OpenMC': self.omcds.src_group_struct},
-            'phi_g': []}, 
-          "fuel": {
+            'phi_g': []},
+           "fuel": {
             "TIME": [0],
             "NEUT_PROD": [0],
             "NEUT_DEST": [0],
@@ -259,6 +259,7 @@ class OpenMCOrigen(object):
                 transmute_time = state.burn_times - run[i-1].burn_times
                 results = self.generate(state, transmute_time)
                 self.libs = self._update_libs_with_results(self.libs, results)
+                self.rc.writers[0].write(self.libs, fname)
         return self.libs
 
     def _update_libs_with_results(self, matlibs, newlibs):
@@ -755,7 +756,6 @@ def _origen(origen_params):
                     break
                 except subprocess.CalledProcessError:
                     print("Warning: ORIGEN2.2 in " + pwd + "failed. Retrying.")
-
         print("Parsing " + pwd + "/TAPE6.OUT...")
         tape6 = origen22.parse_tape6("TAPE6.OUT")
     out_mat = tape6["materials"][-1]
@@ -778,5 +778,5 @@ def _origen(origen_params):
     if burnup < 0.0:
         msg = 'Negative burnup found for {0}:\n{1}'
         msg = msg.format(mat_id, pformat(results[1]))
-        raise ValueError(msg)
+        burnup = 0.0
     return results
